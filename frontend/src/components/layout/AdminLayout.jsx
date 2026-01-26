@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
 import {
-    LayoutDashboard, users, BookOpen, Settings, LogOut,
+    LayoutDashboard, BookOpen, Settings, LogOut,
     Menu, X, Shield, Bell, Search, User as UserIcon, Users
 } from 'lucide-react';
 import { useState } from 'react';
