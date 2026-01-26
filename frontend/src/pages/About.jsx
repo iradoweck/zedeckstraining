@@ -4,21 +4,42 @@ export default function About() {
     return (
         <PublicLayout>
             <div className="max-w-4xl mx-auto px-6 py-20">
-                <h1 className="text-4xl font-bold font-heading mb-8">About Zedeck's Training</h1>
+                <h1 className="text-4xl font-bold font-heading mb-8">Sobre a Zedeck's Training</h1>
                 <div className="prose dark:prose-invert max-w-none space-y-6 text-lg text-gray-600 dark:text-gray-300">
                     <p>
-                        Zedeck's Training is a premier educational platform dedicated to bridging the gap between academic learning and industry requirements.
-                        Founded with a mission to empower individuals, we provide high-quality, practical training in technology, business, and creative skills.
+                        A <strong>Zedeck’s Training</strong> é um centro de formação profissional criado para capacitar pessoas com conhecimentos práticos, atuais e alinhados às reais exigências do mercado de trabalho.
+                        Mais do que ensinar teoria, preparamos os formandos para executar, criar, trabalhar e empreender, com foco em resultados concretos.
                     </p>
                     <p>
-                        Our courses are designed by industry experts who bring real-world experience into the classroom.
-                        Whether you are a student looking to start your career or a professional aiming to upskill,
-                        we have the right resources for you.
+                        Fundada em 2025 como uma iniciativa estratégica ligada à <strong>Zedeck’s IT</strong>, nascemos da necessidade de formar talentos capazes de acompanhar a evolução tecnológica, empresarial e profissional.
                     </p>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white pt-6">Our Mission</h2>
+
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white pt-6">Nossa Missão</h2>
                     <p>
-                        To provide accessible, affordable, and high-quality education that enables learners to achieve their full potential and succeed in the global economy.
+                        Capacitar pessoas através de uma formação prática, acessível e orientada a resultados, preparando profissionais competentes para o mercado de trabalho, para projetos reais e para o empreendedorismo.
                     </p>
+
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white pt-6">Nossa Visão</h2>
+                    <p>
+                        Tornar-se um centro de referência em formação profissional e tecnológica, reconhecido pela qualidade do ensino, pela aplicação prática do conhecimento e pela capacidade de gerar impacto real na vida dos formandos.
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white pt-6">Nossos Valores</h2>
+                    <ul className="list-disc pl-5">
+                        <li>Prática acima da teoria</li>
+                        <li>Compromisso com resultados</li>
+                        <li>Ética e profissionalismo</li>
+                        <li>Inovação contínua</li>
+                        <li>Responsabilidade social</li>
+                    </ul>
+
+                    <div className="bg-primary/5 p-6 rounded-lg mt-8 border border-primary/20">
+                        <h3 className="font-bold text-gray-900 dark:text-white mb-2">Conecte-se Conosco</h3>
+                        <p className="text-sm">
+                            Telefone/WhatsApp: <strong>86 613 3052</strong><br />
+                            Redes Sociais: <strong>@zedeckstraining</strong>
+                        </p>
+                    </div>
                 </div>
             </div>
         </PublicLayout>

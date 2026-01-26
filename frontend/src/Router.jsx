@@ -15,6 +15,7 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import ErrorPage from './pages/ErrorPage';
 import ProtectedRoute from './components/layout/ProtectedRoute';
+import RegistrationWizard from './pages/RegistrationWizard';
 
 const router = createBrowserRouter([
     {
@@ -29,7 +30,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'register',
-                element: <Register />
+                element: <RegistrationWizard />
             },
             {
                 path: 'courses',

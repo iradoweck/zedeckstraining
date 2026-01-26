@@ -1,10 +1,14 @@
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
 import { Card } from '../ui/Card';
+import { Button } from '../ui/Button';
 import { BookOpen, Calendar, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import IDCardModal from './IDCardModal';
 
 export default function StudentDashboard({ user }) {
+    const [showIDModal, setShowIDModal] = useState(false);
     const { data: classes, isLoading } = useQuery({
         queryKey: ['my-classes'],
         queryFn: async () => {
@@ -29,6 +33,29 @@ export default function StudentDashboard({ user }) {
                     <p className="text-3xl font-bold text-green-600">100%</p>
                 </Card>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="p-6 flex items-center justify-between">
+                    <div>
+                        <h3 className="font-bold mb-1">Meus Documentos</h3>
+                        <p className="text-sm text-gray-500">Cartão de Estudante, Certificados</p>
+                    </div>
+                    <Button onClick={() => setShowIDModal(true)} variant="outline" size="sm">
+                        Ver Cartão
+                    </Button>
+                </Card>
+                <Card className="p-6 flex items-center justify-between">
+                    <div>
+                        <h3 className="font-bold mb-1">Financeiro</h3>
+                        <p className="text-sm text-gray-500">Mensalidades e Recibos</p>
+                    </div>
+                    <Button variant="outline" size="sm">
+                        Ver Histórico
+                    </Button>
+                </Card>
+            </div>
+
+            {showIDModal && <IDCardModal user={user} onClose={() => setShowIDModal(false)} />}
 
             <div>
                 <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">My Active Classes</h2>
