@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -8,18 +8,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [loading, setLoading] = useState(true);
 
-    const api = axios.create({
-        baseURL: 'http://127.0.0.1:8001/api/v1',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    });
-
-    if (token) {
-        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    }
-
+    // Initial auth check
     useEffect(() => {
         if (token) {
             api.get('/auth/me')
