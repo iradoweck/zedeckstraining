@@ -24,6 +24,13 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('courses', CourseController::class)->except(['index', 'show']);
         Route::apiResource('classes', AcademicClassController::class);
         Route::apiResource('enrollments', EnrollmentController::class);
+
+        // Attendance & Grades
+        Route::post('/attendance', [App\Http\Controllers\Api\AttendanceController::class, 'store']);
+        Route::get('/attendance', [App\Http\Controllers\Api\AttendanceController::class, 'index']);
+        
+        Route::post('/grades', [App\Http\Controllers\Api\GradeController::class, 'store']);
+        Route::get('/grades', [App\Http\Controllers\Api\GradeController::class, 'index']);
     });
 });
 
