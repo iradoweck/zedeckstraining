@@ -4,9 +4,39 @@
 
 @layer base {
   :root {
-    --color-primary: #048bfb;
-    --color-secondary: #7cc2fc;
-    --color-accent: #043098;
-    --color-dark: #025396;
+    /* Brand Colors */
+    --color-primary: 220 90% 56%;
+    /* #3b82f6 - Bright Blue */
+    --color-primary-dark: 217 91% 60%;
+    /* #2563eb */
+
+    --color-secondary: 262 83% 58%;
+    /* #8b5cf6 - Violet */
+    --color-accent: 14 89% 53%;
+    /* #f97316 - Orange */
+
+    /* Neutral Colors */
+    --background: 210 40% 98%;
+    /* Light Blue Grey */
+    --surface: 0 0% 100%;
+    --text-primary: 215 28% 17%;
+    --text-secondary: 215 16% 47%;
+    --border: 214 32% 91%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    /* #0f172a */
+    --surface: 217 33% 17%;
+    /* #1e293b */
+    --text-primary: 210 40% 98%;
+    --text-secondary: 215 20% 65%;
+    --border: 217 33% 17%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text-primary antialiased font-sans;
   }
 }

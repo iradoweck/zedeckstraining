@@ -7,10 +7,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#048bfb',    // color1
-        secondary: '#7cc2fc',  // color2
-        accent: '#043098',     // color3
-        dark: '#025396',       // color4 (and 5)
+        background: "hsl(var(--background))",
+        surface: "hsl(var(--surface))",
+        primary: {
+          DEFAULT: "hsl(var(--color-primary))",
+          dark: "hsl(var(--color-primary-dark))",
+        },
+        secondary: "hsl(var(--color-secondary))",
+        accent: "hsl(var(--color-accent))",
+        text: {
+          primary: "hsl(var(--text-primary))",
+          secondary: "hsl(var(--text-secondary))"
+        },
+        border: "hsl(var(--border))"
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
       }
     },
   },
