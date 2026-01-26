@@ -87,7 +87,7 @@ export default function Step4Payment({ formData, updateFormData, onNext, onBack 
             {/* Popup Simulation */}
             {showPopup && (
                 <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-2xl">
-                    <div className="bg-white p-8 rounded-xl shadow-2xl border border-gray-100 max-w-sm w-full text-center animate-in zoom-in-95">
+                    <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 max-w-sm w-full text-center animate-in zoom-in-95">
                         <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
                             <span className="animate-pulse">$$$</span>
                         </div>

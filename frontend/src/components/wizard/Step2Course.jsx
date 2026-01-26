@@ -54,8 +54,8 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
                             key={course.id}
                             onClick={() => handleCourseSelect(course.id)}
                             className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${formData.courses.includes(course.id)
-                                    ? 'border-primary bg-primary/5'
-                                    : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                                ? 'border-primary bg-primary/5'
+                                : 'border-gray-200 dark:border-gray-700 hover:border-primary/50'
                                 }`}
                         >
                             <h3 className="font-bold">{course.title}</h3>
@@ -76,7 +76,7 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
                         name="schedule"
                         value={formData.schedule}
                         onChange={(e) => updateFormData({ schedule: e.target.value })}
-                        className="w-full h-11 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                        className="w-full h-11 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         required
                     >
                         <option value="">Selecione...</option>
@@ -116,7 +116,7 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
                         name="programmingType"
                         value={formData.programmingType}
                         onChange={(e) => updateFormData({ programmingType: e.target.value })}
-                        className="w-full h-11 px-4 rounded-lg border border-blue-200 dark:border-gray-600"
+                        className="w-full h-11 px-4 rounded-lg border border-blue-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     >
                         <option value="">Selecione...</option>
                         <option value="Web Development">Web Development (Fullstack)</option>
