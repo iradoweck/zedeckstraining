@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Classroom from './pages/Classroom';
+import ClassManagement from './pages/ClassManagement';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 
 const router = createBrowserRouter([
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
     {
         path: '/classroom/:classId',
         element: <ProtectedRoute><Classroom /></ProtectedRoute>
+    },
+    {
+        path: '/manage-class/:classId',
+        element: <ProtectedRoute><ClassManagement /></ProtectedRoute>
     }
 ]);
 

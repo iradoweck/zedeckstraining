@@ -3,6 +3,7 @@ import api from '../../services/api';
 import { Card } from '../ui/Card';
 import { Users, GraduationCap, Calendar } from 'lucide-react';
 import { Button } from '../ui/Button';
+import { Link } from 'react-router-dom';
 
 export default function TrainerDashboard({ user }) {
     const { data: classes, isLoading } = useQuery({
@@ -96,7 +97,7 @@ export default function TrainerDashboard({ user }) {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button className="text-primary hover:text-blue-700 font-medium">Manage</button>
+                                        <Link to={`/manage-class/${cls.id}`} className="text-primary hover:text-blue-700 font-medium">Manage</Link>
                                     </td>
                                 </tr>
                             ))}
