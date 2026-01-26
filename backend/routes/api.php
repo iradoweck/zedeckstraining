@@ -30,7 +30,11 @@ Route::prefix('v1')->group(function () {
         Route::get('/attendance', [App\Http\Controllers\Api\AttendanceController::class, 'index']);
         
         Route::post('/grades', [App\Http\Controllers\Api\GradeController::class, 'store']);
+        Route::post('/grades', [App\Http\Controllers\Api\GradeController::class, 'store']);
         Route::get('/grades', [App\Http\Controllers\Api\GradeController::class, 'index']);
+
+        // User Management (Admin)
+        Route::apiResource('users', \App\Http\Controllers\Api\UserController::class);
     });
 });
 
