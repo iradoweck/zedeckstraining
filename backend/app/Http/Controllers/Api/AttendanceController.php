@@ -46,21 +46,28 @@ class AttendanceController extends Controller
     public function index(Request $request) 
     {
         $validated = $request->validate([
-            'class_id' => 'required|exists:classes,id'
+            'class_id' => 'required|exists:classes,id',
+            'date' => 'nullable|date'
         ]);
 
         $class = AcademicClass::with('course')->findOrFail($validated['class_id']);
         $user = $request->user();
 
+        $query = Attendance::where('class_id', $class->id);
+
+        if ($request->has('date')) {
+            $query->where('date', $validated['date']);
+        }
+
         if ($user->role === 'trainer') {
             if ($class->course->trainer_id !== $user->id) abort(403);
-            return Attendance::where('class_id', $class->id)->get();
+            return $query->get();
         }
 
         if ($user->role === 'student') {
             // Check if student is enrolled
              if (!$class->enrollments()->where('user_id', $user->id)->exists()) abort(403);
-             return Attendance::where('class_id', $class->id)->where('user_id', $user->id)->get();
+             return $query->where('user_id', $user->id)->get();
         }
 
         return abort(403);

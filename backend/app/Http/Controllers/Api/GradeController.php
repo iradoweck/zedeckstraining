@@ -42,14 +42,31 @@ class GradeController extends Controller
     }
 
     // Get grades for an enrollment (Student views own, Trainer views student's)
+    // OR Get all grades for a class (Trainer views gradebook)
     public function index(Request $request)
     {
+        $user = $request->user();
+
+        if ($request->has('class_id')) {
+            $classId = $request->validate(['class_id' => 'exists:classes,id'])['class_id'];
+            $academicClass = \App\Models\AcademicClass::with('course')->findOrFail($classId);
+
+            // Trainer check
+            if ($user->role !== 'admin' && $academicClass->course->trainer_id !== $user->id) {
+                abort(403, 'Unauthorized');
+            }
+
+            // Return all grades for this class, eager load enrollment and user
+            return Grade::whereHas('enrollment', function ($query) use ($classId) {
+                $query->where('class_id', $classId);
+            })->with('enrollment.user')->get();
+        }
+
         $validated = $request->validate([
             'enrollment_id' => 'required|exists:enrollments,id'
         ]);
 
         $enrollment = Enrollment::with('academicClass.course')->findOrFail($validated['enrollment_id']);
-        $user = $request->user();
 
         // Trainer check
         if ($user->role === 'trainer' && $enrollment->academicClass->course->trainer_id === $user->id) {
