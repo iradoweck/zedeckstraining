@@ -11,6 +11,13 @@ class Course extends Model
         'cover_image', 'trainer_id', 'is_published'
     ];
 
+    protected $casts = [
+        'is_published' => 'boolean',
+        'price' => 'decimal:2',
+        'schedules' => 'array',
+        'options' => 'array',
+    ];
+
     public function trainer()
     {
         return $this->belongsTo(User::class, 'trainer_id');

@@ -10,7 +10,13 @@ use App\Models\Grade;
 class Enrollment extends Model
 {
     protected $fillable = [
-        'user_id', 'class_id', 'status', 'enrolled_at'
+        'user_id', 'class_id', 'course_id', 'status', 'enrolled_at',
+        'payment_method', 'payment_proof', 'options'
+    ];
+
+    protected $casts = [
+        'options' => 'array',
+        'enrolled_at' => 'datetime',
     ];
 
     public function user()
@@ -21,6 +27,11 @@ class Enrollment extends Model
     public function academicClass()
     {
         return $this->belongsTo(AcademicClass::class, 'class_id');
+    }
+    
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
     }
 
     public function grades()

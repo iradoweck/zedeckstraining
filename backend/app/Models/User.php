@@ -24,6 +24,14 @@ class User extends Authenticatable
         'password',
         'role',
         'profile_photo',
+        'filiation',
+        'gender',
+        'marital_status',
+        'occupation',
+        'nationality',
+        'birth_date',
+        'document_type',
+        'document_number',
     ];
 
     /**

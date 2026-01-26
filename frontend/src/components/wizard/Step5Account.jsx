@@ -26,26 +26,53 @@ export default function Step5Account({ formData, updateFormData, onBack }) {
         setError('');
 
         try {
-            // Prepare payload for backend
-            // Note: This endpoint '/register/wizard' needs to be implemented or we adapt to '/auth/register'
-            // For now we simulate or try to hit a standard register if possible, but the data is complex.
-            // Let's assume we hit the standard register but with extra meta data, OR a new endpoint.
-            // Given I haven't made the backend endpoint yet, I will mock the success or try to send what I can.
+            // Create FormData for file upload support
+            const data = new FormData();
 
-            // payload
-            const payload = {
-                name: `${formData.firstName} ${formData.lastName}`,
-                email: formData.email,
-                password: formData.password,
-                role: 'student',
-                // Meta data would go here if backend supports it
-                // For MVP 1.0 -> 1.1 transition, we might not save EVERYTHING yet without backend update.
-                // But the user asked for the frontend flow.
-            };
+            // Standard Auth Fields
+            data.append('name', `${formData.firstName} ${formData.lastName}`);
+            data.append('email', formData.email);
+            data.append('password', formData.password);
+            data.append('role', 'student');
 
-            await api.post('/auth/register', payload); // Using standard auth for now to ensure user is created.
+            // Extended Profile Fields
+            data.append('filiation', formData.filiation || '');
+            data.append('gender', formData.gender || '');
+            data.append('marital_status', formData.maritalStatus || '');
+            data.append('occupation', formData.occupation || '');
+            data.append('nationality', formData.nationality || '');
+            data.append('birth_date', formData.birthDate || '');
+            data.append('document_type', formData.documentType || '');
+            data.append('document_number', formData.documentNumber || '');
 
-            // Redirect to Success Page or Student Dashboard
+            // Education
+            data.append('education_level', formData.educationLevel || '');
+
+            // Courses & Config (as JSON strings or indexed arrays)
+            // Laravel expects array inputs like courses[0], courses[1]
+            formData.courses.forEach((courseId, index) => {
+                data.append(`courses[${index}]`, courseId);
+            });
+
+            data.append('schedule', formData.schedule || '');
+
+            // Dynamic Options
+            if (formData.examModality) data.append('exam_modality', formData.examModality);
+            if (formData.programmingType) data.append('programming_type', formData.programmingType);
+
+            // Payment
+            data.append('payment_method', formData.paymentMethod || '');
+            if (formData.paymentProof) {
+                data.append('payment_proof', formData.paymentProof);
+            }
+
+            // generated ID
+            data.append('student_code', formData.generatedId);
+
+            await api.post('/auth/register', data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
             navigate('/student/dashboard');
 
         } catch (err) {

@@ -1,20 +1,15 @@
 import { useRef, useState, useEffect } from 'react';
 import { Button } from '../ui/Button';
-import { ArrowRight, ArrowLeft, Download, CreditCard } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Download, CreditCard, RefreshCw } from 'lucide-react';
 import html2canvas from 'html2canvas';
+import QRCode from 'react-qr-code';
 
 export default function Step3ID({ formData, updateFormData, onNext, onBack }) {
     const cardRef = useRef(null);
-    const [generatedImage, setGeneratedImage] = useState(null);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isFlipped, setIsFlipped] = useState(false);
 
-    // Calculate Costs
-    const isElectricity = formData.courses.some(id => id.toString() === 'electricidade' || id === 5); // Assuming ID 5 is electricity or title check needed. 
-    // Since we don't have titles in formData, we might need to rely on assumptions or pass course objects. 
-    // For MVP, lets assume uniform regular is 500.
-    const uniformCost = isElectricity ? 1500 : 500;
-
-    // Generate Student Code (Simulation)
+    // Generate Student Code (Simulation - Ideally this calls an API)
     useEffect(() => {
         if (!formData.generatedId) {
             const random = Math.floor(1000 + Math.random() * 9000);
@@ -22,20 +17,26 @@ export default function Step3ID({ formData, updateFormData, onNext, onBack }) {
             const code = `ZT-${year}-${random}`;
             updateFormData({ generatedId: code });
         }
-    }, []);
+    }, [formData.generatedId, updateFormData]);
 
     const handleDownload = async () => {
         setIsGenerating(true);
+        // Ensure the card is "front" side for download or capture both? 
+        // User said "Static when downloading". Usually front is consistent.
+        // We'll capture the front face container.
+
         if (cardRef.current) {
             try {
-                const canvas = await html2canvas(cardRef.current, { scale: 2 });
+                const canvas = await html2canvas(cardRef.current, {
+                    scale: 3, // Higher quality
+                    backgroundColor: null,
+                    useCORS: true
+                });
                 const image = canvas.toDataURL('image/png');
-                setGeneratedImage(image);
 
-                // Construct download link
                 const link = document.createElement('a');
                 link.href = image;
-                link.download = `Zedecks-Student-ID-${formData.generatedId}.png`;
+                link.download = `${formData.firstName}-${formData.lastName}-ID.png`;
                 link.click();
             } catch (err) {
                 console.error("Failed to generate card", err);
@@ -44,79 +45,95 @@ export default function Step3ID({ formData, updateFormData, onNext, onBack }) {
         setIsGenerating(false);
     };
 
+    const toggleFlip = () => setIsFlipped(!isFlipped);
+
     return (
         <div className="space-y-8">
             <div className="text-center">
                 <h2 className="text-2xl font-bold font-heading mb-2">Seu Cartão de Estudante</h2>
-                <p className="text-gray-500">Gere e baixe seu cartão digital provisório.</p>
+                <p className="text-gray-500">Clique no cartão para ver o verso. Baixe-o para finalizar.</p>
             </div>
 
-            <div className="flex justify-center">
-                {/* ID Card Simulation */}
+            <div className="flex justify-center perspective-1000">
+                {/* ID Card 3D Container - Click to Flip */}
                 <div
-                    ref={cardRef}
-                    className="w-[340px] h-[214px] bg-white relative rounded-xl shadow-2xl overflow-hidden border border-gray-200"
-                    style={{ backgroundImage: 'linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)' }}
+                    className={`relative w-[340px] h-[214px] transition-transform duration-700 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
+                    onClick={toggleFlip}
                 >
-                    {/* Header */}
-                    <div className="bg-gray-900 h-16 flex items-center px-4 justify-between">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white text-xs">ZT</div>
-                            <span className="text-white font-bold text-sm tracking-wide">ZEDECK'S TRAINING</span>
+                    {/* Front Face */}
+                    <div
+                        ref={cardRef}
+                        className="absolute inset-0 w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden backface-hidden border border-gray-200"
+                        style={{
+                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M0 0h20L0 20z'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)`
+                        }}
+                    >
+                        {/* Watermark Icon Pattern */}
+                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex flex-wrap gap-8 p-4 justify-center items-center rotate-12 scale-150">
+                            {Array.from({ length: 12 }).map((_, i) => (
+                                <img key={i} src="/assets/icon.png" className="w-16 h-16 grayscale" />
+                            ))}
                         </div>
-                    </div>
 
-                    {/* Content */}
-                    <div className="p-4 flex gap-4">
-                        <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden border-2 border-primary/20">
-                            <img src="/assets/icon.png" className="w-16 opacity-50" />
-                        </div>
-                        <div className="flex-1 space-y-1">
-                            <h3 className="font-bold text-gray-900 uppercase leading-tight">{formData.firstName} {formData.lastName}</h3>
-                            <p className="text-xs text-gray-500 uppercase">Estudante</p>
-                            <div className="pt-2 space-y-0.5">
-                                <p className="text-[10px] text-gray-400 uppercase">ID No.</p>
-                                <p className="font-mono text-sm font-bold text-primary">{formData.generatedId}</p>
+                        {/* Banner */}
+                        <div className="bg-gray-900 h-16 flex items-center px-4 justify-between relative z-10">
+                            <div className="flex items-center gap-2">
+                                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white text-xs">ZT</div>
+                                <span className="text-white font-bold text-sm tracking-wide">ZEDECK'S TRAINING</span>
+                            </div>
+                            <div className="text-[10px] text-white/50 text-right">
+                                ©{new Date().getMonth() + 1}/{new Date().getFullYear()}
                             </div>
                         </div>
+
+                        {/* Content */}
+                        <div className="p-4 flex gap-4 relative z-10">
+                            <div className="w-24 h-24 bg-white rounded-lg p-1 shadow-sm border border-gray-100">
+                                {formData.profilePhoto ? (
+                                    <img src={URL.createObjectURL(formData.profilePhoto)} className="w-full h-full object-cover rounded" />
+                                ) : (
+                                    <img src={`https://ui-avatars.com/api/?name=${formData.firstName}+${formData.lastName}&background=random`} className="w-full h-full object-cover rounded" />
+                                )}
+                            </div>
+                            <div className="flex-1 space-y-1">
+                                <h3 className="font-bold text-gray-900 uppercase leading-tight line-clamp-2">{formData.firstName} {formData.lastName}</h3>
+                                <p className="text-xs text-gray-500 uppercase">{formData.occupation || 'Estudante'}</p>
+                                <div className="pt-2 space-y-0.5">
+                                    <p className="text-[10px] text-gray-400 uppercase">ID CODE</p>
+                                    <p className="font-mono text-sm font-bold text-primary">{formData.generatedId}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer Stripe */}
+                        <div className="absolute bottom-0 w-full bg-primary/10 py-1 px-4 flex justify-between items-center z-10">
+                            <span className="text-[10px] text-gray-500 font-medium">STUDENT CARD</span>
+                        </div>
                     </div>
 
-                    {/* Footer */}
-                    <div className="absolute bottom-0 w-full bg-primary/10 py-2 px-4 flex justify-between items-center">
-                        <span className="text-[10px] text-gray-500 font-medium">Valido até: Dez {new Date().getFullYear()}</span>
-                        <div className="w-12 h-4 bg-gray-800 rounded"></div>
+                    {/* Back Face */}
+                    <div
+                        className="absolute inset-0 w-full h-full bg-gray-900 text-white rounded-xl shadow-2xl overflow-hidden backface-hidden rotate-y-180 flex flex-col items-center justify-center p-6 border border-gray-700"
+                    >
+                        <div className="bg-white p-2 rounded-lg">
+                            <QRCode value={`https://zedecks.com/verify/${formData.generatedId}`} size={100} />
+                        </div>
+                        <p className="mt-4 text-xs text-gray-400 text-center">
+                            Escaneie para validar a inscrição e status do estudante.
+                        </p>
+                        <p className="mt-2 font-mono text-sm text-primary font-bold">{formData.generatedId}</p>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700">
-                <div>
-                    <h3 className="font-bold mb-4 flex items-center gap-2">
-                        <CreditCard size={18} className="text-primary" /> Resumo de Custos Iniciais
-                    </h3>
-                    <ul className="space-y-3 text-sm">
-                        <li className="flex justify-between">
-                            <span>Taxa de Uniforme:</span>
-                            <span className="font-bold">{uniformCost.toLocaleString()} MT</span>
-                        </li>
-                        <li className="flex justify-between">
-                            <span>Primeira Mensalidade:</span>
-                            <span className="font-bold">A calcular...</span> {/* Ideal to pull price from selected courses */}
-                        </li>
-                        <li className="flex justify-between pt-3 border-t border-gray-200 dark:border-gray-700 text-base">
-                            <span className="font-bold">Total a Pagar:</span>
-                            <span className="font-bold text-primary">--- MT</span>
-                        </li>
-                    </ul>
+            <div className="flex flex-col items-center gap-4">
+                <div className="text-sm text-gray-400 flex items-center gap-2">
+                    <RefreshCw size={14} /> Toque no cartão para virar
                 </div>
-                <div className="flex flex-col justify-center items-center gap-4">
-                    <Button onClick={handleDownload} variant="outline" className="w-full flex items-center justify-center gap-2" disabled={isGenerating}>
-                        <Download size={18} /> {isGenerating ? 'Gerando...' : 'Baixar Cartão PNG'}
-                    </Button>
-                    <p className="text-xs text-center text-gray-400">
-                        O download do cartão é obrigatório para validação da inscrição.
-                    </p>
-                </div>
+
+                <Button onClick={handleDownload} variant="outline" className="w-full max-w-xs flex items-center justify-center gap-2" disabled={isGenerating}>
+                    <Download size={18} /> {isGenerating ? 'Gerando PNG...' : 'Baixar ID Card'}
+                </Button>
             </div>
 
             <div className="flex justify-between pt-4">
@@ -127,6 +144,14 @@ export default function Step3ID({ formData, updateFormData, onNext, onBack }) {
                     Continuar para Pagamento <ArrowRight size={18} />
                 </Button>
             </div>
+
+            {/* CSS for 3D Transform - Ideally in index.css but added here for encapsulation if not present */}
+            <style jsx="true">{`
+                .perspective-1000 { perspective: 1000px; }
+                .transform-style-3d { transform-style: preserve-3d; }
+                .backface-hidden { backface-visibility: hidden; }
+                .rotate-y-180 { transform: rotateY(180deg); }
+            `}</style>
         </div>
     );
 }

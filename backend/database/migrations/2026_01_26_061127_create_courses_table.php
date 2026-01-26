@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('cover_image')->nullable();
             $table->foreignId('trainer_id')->constrained('users')->onDelete('cascade');
             $table->boolean('is_published')->default(false);
+            $table->json('schedules')->nullable();
+            $table->json('options')->nullable(); // For specific rules like English Exams or Programming Stacks
             $table->timestamps();
         });
     }

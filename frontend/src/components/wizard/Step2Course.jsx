@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '../ui/Button';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -10,7 +10,7 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
         queryKey: ['public-courses'],
         queryFn: async () => {
             const res = await api.get('/courses');
-            return res.data; // Assuming API returns { data: [...] } or array
+            return res.data;
         }
     });
 
@@ -31,15 +31,24 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
         onNext();
     };
 
-    // Helper to check if English II/III is selected
-    const isEnglishSelected = availableCourses?.some(c =>
-        formData.courses.includes(c.id) && (c.title.includes('Inglês II') || c.title.includes('Inglês III'))
-    );
+    // Calculate Dynamic Options based on selected courses
+    const selectedCourseObjects = useMemo(() => {
+        if (!availableCourses) return [];
+        return availableCourses.filter(c => formData.courses.includes(c.id));
+    }, [availableCourses, formData.courses]);
 
-    // Helper to check if Programming - though API driven, we infer by Title or assume specific ID
-    const isProgrammingSelected = availableCourses?.some(c =>
-        formData.courses.includes(c.id) && c.title.toLowerCase().includes('programação')
-    );
+    // 1. Schedules: Merge all available schedules from selected courses
+    // If no specific schedules defined in DB, fallback to defaults.
+    const uniqueSchedules = useMemo(() => {
+        if (selectedCourseObjects.length === 0) return [];
+        const allSchedules = selectedCourseObjects.flatMap(c => c.schedules || []);
+        if (allSchedules.length === 0) return ["Manhã (08:00 - 10:00)", "Manhã (10:00 - 12:00)", "Tarde (14:00 - 16:00)", "Pós-Laboral (17:30 - 19:30)"];
+        return [...new Set(allSchedules)];
+    }, [selectedCourseObjects]);
+
+    // 2. Conditional Fields
+    const languageCourse = selectedCourseObjects.find(c => c.options?.type === 'language');
+    const programmingCourse = selectedCourseObjects.find(c => c.options?.type === 'programming');
 
     return (
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -59,7 +68,7 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
                                 }`}
                         >
                             <h3 className="font-bold">{course.title}</h3>
-                            <p className="text-sm text-gray-500">{course.price} MT</p>
+                            <p className="text-sm text-gray-500">{Number(course.price).toLocaleString()} MT</p>
                         </div>
                     ))}
                 </div>
@@ -69,60 +78,63 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
                 <p className="text-red-500 text-sm">Selecione pelo menos um curso.</p>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Horário Preferencial</label>
-                    <select
-                        name="schedule"
-                        value={formData.schedule}
-                        onChange={(e) => updateFormData({ schedule: e.target.value })}
-                        className="w-full h-11 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                        required
-                    >
-                        <option value="">Selecione...</option>
-                        <option value="Manhã (08:00 - 10:00)">Manhã (08:00 - 10:00)</option>
-                        <option value="Manhã (10:00 - 12:00)">Manhã (10:00 - 12:00)</option>
-                        <option value="Tarde (14:00 - 16:00)">Tarde (14:00 - 16:00)</option>
-                        <option value="Pos-Laboral (17:30 - 19:30)">Pós-Laboral (17:30 - 19:30)</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Conditional Fields */}
-            {isEnglishSelected && (
-                <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
-                    <h4 className="font-bold text-yellow-800 dark:text-yellow-200 mb-2">Opção de Exame (Inglês)</h4>
-                    <div className="flex gap-4">
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="examModality" value="Cambridge" checked={formData.examModality === 'Cambridge'} onChange={(e) => updateFormData({ examModality: e.target.value })} />
-                            <span>Cambridge</span>
-                        </label>
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="examModality" value="TOEFL" checked={formData.examModality === 'TOEFL'} onChange={(e) => updateFormData({ examModality: e.target.value })} />
-                            <span>TOEFL</span>
-                        </label>
-                        <label className="flex items-center gap-2">
-                            <input type="radio" name="examModality" value="Normal" checked={formData.examModality === 'Normal'} onChange={(e) => updateFormData({ examModality: e.target.value })} />
-                            <span>Normal (Interno)</span>
-                        </label>
+            {formData.courses.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Horário Preferencial</label>
+                        <select
+                            name="schedule"
+                            value={formData.schedule}
+                            onChange={(e) => updateFormData({ schedule: e.target.value })}
+                            className="w-full h-11 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+                            required
+                        >
+                            <option value="">Selecione...</option>
+                            {uniqueSchedules.map(sch => (
+                                <option key={sch} value={sch}>{sch}</option>
+                            ))}
+                        </select>
                     </div>
-                </div>
-            )}
 
-            {isProgrammingSelected && (
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
-                    <h4 className="font-bold text-blue-800 dark:text-blue-200 mb-2">Foco da Programação</h4>
-                    <select
-                        name="programmingType"
-                        value={formData.programmingType}
-                        onChange={(e) => updateFormData({ programmingType: e.target.value })}
-                        className="w-full h-11 px-4 rounded-lg border border-blue-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                    >
-                        <option value="">Selecione...</option>
-                        <option value="Web Development">Web Development (Fullstack)</option>
-                        <option value="Mobile Development">Mobile Apps</option>
-                        <option value="Software Engineering">Software Engineering (Java/C#)</option>
-                    </select>
+                    {/* Language Options */}
+                    {languageCourse && languageCourse.options?.exams && (
+                        <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-700">
+                            <h4 className="font-bold text-yellow-800 dark:text-yellow-200 mb-2">Opção de Exame ({languageCourse.title})</h4>
+                            <div className="flex flex-col sm:flex-row gap-4">
+                                {languageCourse.options.exams.map(exam => (
+                                    <label key={exam} className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="examModality"
+                                            value={exam}
+                                            checked={formData.examModality === exam}
+                                            onChange={(e) => updateFormData({ examModality: e.target.value })}
+                                            className="text-yellow-600 focus:ring-yellow-500"
+                                        />
+                                        <span className="text-gray-900 dark:text-gray-100">{exam}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Programming Options */}
+                    {programmingCourse && programmingCourse.options?.stacks && (
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+                            <h4 className="font-bold text-blue-800 dark:text-blue-200 mb-2">Foco da Programação</h4>
+                            <select
+                                name="programmingType"
+                                value={formData.programmingType}
+                                onChange={(e) => updateFormData({ programmingType: e.target.value })}
+                                className="w-full h-11 px-4 rounded-lg border border-blue-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                            >
+                                <option value="">Selecione...</option>
+                                {programmingCourse.options.stacks.map(stack => (
+                                    <option key={stack} value={stack}>{stack}</option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
                 </div>
             )}
 
