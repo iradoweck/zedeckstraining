@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
 import { Card } from '../ui/Card';
 import { BookOpen, Calendar, Clock } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function StudentDashboard({ user }) {
     const { data: classes, isLoading } = useQuery({
@@ -62,9 +63,12 @@ export default function StudentDashboard({ user }) {
                                         </div>
                                     </div>
 
-                                    <button className="mt-4 w-full py-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-primary font-medium rounded-lg transition-colors text-sm">
+                                    <Link
+                                        to={`/classroom/${cls.id}`}
+                                        className="mt-4 block w-full py-2 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-primary font-medium rounded-lg transition-colors text-sm text-center"
+                                    >
                                         Access Classroom
-                                    </button>
+                                    </Link>
                                 </div>
                             </Card>
                         ))}
