@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Button } from '../ui/Button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';

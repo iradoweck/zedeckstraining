@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { ArrowRight, ArrowLeft, Download, RefreshCw } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import QRCode from 'react-qr-code';

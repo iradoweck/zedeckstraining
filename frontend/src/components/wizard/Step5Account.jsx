@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 import { ArrowLeft, CheckCircle, Loader } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api'; // Ensure this exists

@@ -2,8 +2,8 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';
 import { PlayCircle, FileText, CheckCircle, Lock } from 'lucide-react';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
 
 export default function Classroom() {
     const { classId } = useParams();

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdminLayout from '../components/layout/AdminLayout';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card } from '../components/ui/card';
 import { Modal } from '../components/ui/Modal';
-import { Select } from '../components/ui/Select';
+import { Select } from '../components/ui/select';
 import { Search, Plus, Edit2, Trash2, User } from 'lucide-react';
 import api from '../services/api';
 

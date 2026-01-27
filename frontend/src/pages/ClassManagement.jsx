@@ -2,10 +2,10 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, useEffect } from 'react';
 import api from '../services/api';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Select } from '../components/ui/select';
 import { CheckCircle, XCircle, Clock, ArrowLeft, Plus, Save } from 'lucide-react';
 import { Modal } from '../components/ui/Modal';
 

@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
 import { Modal } from '../ui/Modal';
-import { Input } from '../ui/Input';
-import { Select } from '../ui/Select';
-import { Button } from '../ui/Button';
+import { Input } from '../ui/input';
+import { Select } from '../ui/select';
+import { Button } from '../ui/button';
 
 export function ClassModal({ isOpen, onClose, classToEdit = null, courses = [] }) {
     const queryClient = useQueryClient();

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../services/api';
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 import { Users, GraduationCap, Calendar, Edit2, Trash2, Plus } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { Link } from 'react-router-dom';
 import { ClassModal } from './ClassModal';
 

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import PublicLayout from '../components/layout/PublicLayout';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/card';
+import { Button } from '../components/ui/button';
 import { Search } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../services/api';

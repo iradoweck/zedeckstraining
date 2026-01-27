@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import {
     LayoutDashboard, BookOpen, Settings, LogOut,
     Menu, X, Shield, Bell, Search, User as UserIcon, Users

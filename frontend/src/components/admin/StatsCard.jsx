@@ -1,4 +1,4 @@
-import { Card } from '../ui/Card';
+import { Card } from '../ui/card';
 import clsx from 'clsx';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 

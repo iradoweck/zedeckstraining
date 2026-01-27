@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 import { ArrowRight } from 'lucide-react';
 
 const COUNTRIES = [
@@ -119,8 +119,8 @@ export default function Step1Personal({ formData, updateFormData, onNext }) {
                                         type="button"
                                         onClick={() => updateFormData({ documentType: doc })}
                                         className={`flex-1 py-2 text-sm transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${formData.documentType === doc
-                                                ? 'bg-primary text-white shadow-md z-10 scale-105 font-medium'
-                                                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200'
+                                            ? 'bg-primary text-white shadow-md z-10 scale-105 font-medium'
+                                            : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200'
                                             }`}
                                     >
                                         {doc}

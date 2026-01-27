@@ -1,8 +1,8 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import PublicLayout from '../components/layout/PublicLayout';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/button';
+import { Card } from '../components/ui/card';
 import { useAuth } from '../context/AuthContext'; // To check if user is logged in
 import api from '../services/api';
 import { PlayCircle, FileText, Lock, CheckCircle2 } from 'lucide-react';

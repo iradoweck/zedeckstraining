@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api';
-import { Card } from '../ui/Card';
-import { Button } from '../ui/Button';
+import { Card } from '../ui/card';
+import { Button } from '../ui/button';
 import { BookOpen, Calendar, Clock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import IDCardModal from './IDCardModal';

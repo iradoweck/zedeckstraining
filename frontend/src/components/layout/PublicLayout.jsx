@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { LogOut, User as UserIcon, Menu, X, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 
@@ -22,10 +22,8 @@ export default function PublicLayout({ children }) {
                     <div className="flex justify-between items-center h-16">
                         {/* Logo */}
                         <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
-                                <BookOpen size={20} />
-                            </div>
-                            <Link to="/" className="text-xl font-bold font-heading tracking-tight">
+                            <img src="/assets/logo.png" alt="Zedeck's Training" className="h-10 w-auto object-contain" />
+                            <Link to="/" className="text-xl font-bold font-heading tracking-tight hidden sm:block">
                                 Zedeck<span className="text-primary">'s</span> Training
                             </Link>
                         </div>

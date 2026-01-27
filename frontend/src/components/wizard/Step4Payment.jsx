@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Button } from '../ui/Button';
+import { Button } from '../ui/button';
 import { ArrowRight, ArrowLeft, Download, Upload, CheckCircle } from 'lucide-react';
 import jsPDF from 'jspdf';
-import { Input } from '../ui/Input';
+import { Input } from '../ui/input';
 
 export default function Step4Payment({ formData, updateFormData, onNext, onBack }) {
     const [selectedMethod, setSelectedMethod] = useState('');
@@ -62,8 +62,8 @@ export default function Step4Payment({ formData, updateFormData, onNext, onBack 
                         key={m.id}
                         onClick={() => handleMethodSelect(m.id)}
                         className={`p-4 rounded-xl border-2 cursor-pointer flex flex-col items-center justify-center gap-2 transition-all ${selectedMethod === m.id
-                                ? `border-${m.border} bg-${m.bg} ring-2 ring-${m.border} ring-offset-2`
-                                : 'border-gray-200 dark:border-gray-700 hover:border-gray-400'
+                            ? `border-${m.border} bg-${m.bg} ring-2 ring-${m.border} ring-offset-2`
+                            : 'border-gray-200 dark:border-gray-700 hover:border-gray-400'
                             }`}
                     >
                         <span className={`font-bold text-${m.color}`}>{m.label || m.id}</span>

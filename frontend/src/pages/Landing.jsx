@@ -1,44 +1,65 @@
 import { Link } from 'react-router-dom';
 import PublicLayout from '../components/layout/PublicLayout';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
+import { TypewriterEffect } from '../components/ui/typewriter-effect';
+import IntegrationHero from '../components/ui/integration-hero';
 import { BookOpen, Award, Users, Mic, Layers, Cpu, CheckCircle } from 'lucide-react';
 
 export default function Landing() {
     return (
         <PublicLayout>
             {/* Hero Section */}
-            <section className="relative overflow-hidden bg-white dark:bg-gray-900 pt-16 pb-32">
+            <section className="relative overflow-hidden bg-white dark:bg-gray-900 pt-20 pb-32">
                 <div className="absolute top-0 left-0 w-full h-full bg-grid-gray-900/[0.04] dark:bg-grid-white/[0.05]"></div>
-                <div className="max-w-7xl mx-auto px-6 relative z-10">
-                    <div className="flex flex-col md:flex-row items-center gap-12">
-                        <div className="flex-1 text-center md:text-left">
-                            <h1 className="text-4xl md:text-6xl font-extrabold font-heading tracking-tight text-gray-900 dark:text-white mb-6">
-                                Transforme Conhecimento em <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-yellow-200">Resultados Reais</span>
-                            </h1>
-                            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                                A Zedeck’s Training é um centro de formação profissional focado em capacitar pessoas com conhecimentos práticos, atuais e alinhados às reais exigências do mercado.
-                                Aprenda a executar, criar e empreender.
-                            </p>
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                                <Link to="/register">
-                                    <Button size="lg" className="w-full sm:w-auto shadow-xl shadow-primary/20">
-                                        Inscreva-se Agora
-                                    </Button>
-                                </Link>
-                                <Link to="/courses">
-                                    <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                                        Ver Cursos
-                                    </Button>
-                                </Link>
-                            </div>
-                        </div>
-                        <div className="flex-1 relative">
-                            <div className="relative w-full aspect-square max-w-lg mx-auto bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-full blur-3xl opacity-50 absolute inset-0"></div>
-                            <img src="/assets/logo.png" alt="Zedeck's Training Logo" className="relative z-10 w-full max-w-md mx-auto drop-shadow-2xl" />
+                <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
+                    <div className="mb-8">
+                        <TypewriterEffect
+                            words={[
+                                { text: "Transforme", className: "text-gray-900 dark:text-white" },
+                                { text: "Conhecimento", className: "text-gray-900 dark:text-white" },
+                                { text: "em", className: "text-gray-900 dark:text-white" },
+                                { text: "Resultados", className: "text-primary" },
+                                { text: "Reais.", className: "text-primary" },
+                            ]}
+                            className="text-4xl md:text-6xl font-extrabold font-heading mb-6"
+                        />
+                    </div>
+
+                    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed max-w-3xl mx-auto">
+                        A Zedeck’s Training é um centro de formação profissional focado em capacitar pessoas com conhecimentos práticos, atuais e alinhados às reais exigências do mercado.
+                        Aprenda a executar, criar e empreender.
+                    </p>
+
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                        <Link to="/register">
+                            <Button size="lg" className="w-full sm:w-auto shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full">
+                                Inscreva-se Agora
+                            </Button>
+                        </Link>
+                        <Link to="/courses">
+                            <Button size="lg" variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full">
+                                Ver Cursos
+                            </Button>
+                        </Link>
+                    </div>
+
+                    {/* Simple Image Slider Placeholder - Replaced static image with array of related images */}
+                    <div className="relative w-full max-w-5xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800">
+                        {/* We can use a simple flex scroll for now or just one hero image that represents 'Classrooms' */}
+                        <img
+                            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
+                            alt="Sala de Aula Zedecks"
+                            className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
+                            <p className="text-white font-medium text-lg">Ambientes de aprendizado práticos e modernos.</p>
                         </div>
                     </div>
                 </div>
             </section>
+
+            {/* Integrations / Partners */}
+            <IntegrationHero />
 
             {/* About / Mission Section */}
             <section className="py-24 bg-gray-50 dark:bg-gray-800/50">

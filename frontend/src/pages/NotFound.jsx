@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import PublicLayout from '../components/layout/PublicLayout';
-import { Button } from '../components/ui/Button';
+import { Button } from '../components/ui/button';
 import { FileQuestion } from 'lucide-react';
 
 export default function NotFound() {

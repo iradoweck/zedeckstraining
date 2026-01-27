@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdminLayout from '../components/layout/AdminLayout';
-import { Button } from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/button';
+import { Card } from '../components/ui/card';
 import { Search, Eye, CheckCircle, XCircle, BookOpen } from 'lucide-react';
 import api from '../services/api';
 
