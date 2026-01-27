@@ -35,16 +35,16 @@ export default function IntegrationHero() {
             {/* Content */}
             <div className="relative max-w-7xl mx-auto px-6 text-center">
                 <span className="inline-block px-3 py-1 mb-4 text-sm rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-black dark:text-white">
-                    ⚡ Partners & Integrations
+                    ⚡ Parceiros & Integrações
                 </span>
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-                    Integrate with favorite tools
+                    Integração com as melhores ferramentas
                 </h1>
                 <p className="mt-4 text-lg text-gray-500 dark:text-white max-w-xl mx-auto">
-                    250+ top apps are available to integrate seamlessly with your workflow.
+                    Conectamos você às principais plataformas do mercado para potenciar o seu aprendizado.
                 </p>
                 <Button variant="default" className="mt-8 px-6 py-3 rounded-lg bg-black text-white font-medium hover:bg-gray-800 transition">
-                    Get started
+                    Saiba Mais
                 </Button>
 
                 {/* Carousel */}

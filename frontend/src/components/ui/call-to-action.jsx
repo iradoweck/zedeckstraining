@@ -1,61 +1,67 @@
 "use client";
+
 import React from "react";
+import { Link } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export default function CallToAction() {
     return (
-        <div className="max-w-5xl w-full mx-auto p-10 text-gray-800 bg-white dark:bg-gray-900 rounded-3xl shadow-xl">
-            <span className="px-2 py-1 text-xs border border-gray-300 rounded-full dark:text-white dark:border-gray-600">Fale Conosco</span>
-            <h1 className="text-4xl font-bold text-left mt-4 dark:text-white">
-                Adoraríamos ouvir você.
-            </h1>
-            <p className="text-left mt-4 dark:text-gray-300">
-                Ou entre em contato diretamente pelo
-                <a href="mailto:training@zedecks.com" className="text-indigo-600 hover:underline ml-1">training@zedecks.com</a>
-            </p>
-            <div className="grid md:grid-cols-3 mt-16 gap-8">
-                <div>
-                    <div className="text-indigo-500 bg-indigo-500/20 p-2.5 aspect-square rounded-full size-10 flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M21 4.125H3A1.125 1.125 0 0 0 1.875 5.25V18a1.875 1.875 0 0 0 1.875 1.875h16.5A1.875 1.875 0 0 0 22.125 18V5.25A1.125 1.125 0 0 0 21 4.125m-2.892 2.25L12 11.974 5.892 6.375zM4.125 17.625V7.808l7.115 6.522a1.125 1.125 0 0 0 1.52 0l7.115-6.522v9.817z"
-                                fill="currentColor" />
-                        </svg>
-                    </div>
-                    <p className="text-lg font-bold mt-2 dark:text-white">Email Support</p>
-                    <p className="text-gray-500 mt-1 mb-4">Respondemos em tempo real.</p>
-                    <a href="mailto:training@zedecks.com" className="text-indigo-600 font-semibold break-words">
-                        training@zedecks.com
-                    </a>
+        <section className="relative py-24 overflow-hidden bg-gray-900 text-white isolate">
+            {/* Animated Background Gradients */}
+            <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/30 rounded-full blur-3xl opacity-50 animate-pulse-slow"></div>
+            <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-purple-600/30 rounded-full blur-3xl opacity-50 animate-pulse-slow delay-1000"></div>
+
+            {/* Grid Pattern */}
+            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150 mix-blend-overlay"></div>
+
+            <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-sm mb-6 animate-fade-in-up">
+                    <Sparkles size={14} className="text-yellow-400" />
+                    <span className="font-medium text-gray-200">Comece sua jornada hoje</span>
                 </div>
-                <div>
-                    <div className="text-indigo-500 bg-indigo-500/20 p-2.5 aspect-square rounded-full size-10 flex items-center justify-center">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M22.875 19.125H21.75V9.309a1.125 1.125 0 0 0-.375-2.184h-3.75V4.809a1.125 1.125 0 0 0-.375-2.184H3.75a1.125 1.125 0 0 0-.375 2.184v14.316H2.25a1.125 1.125 0 1 0 0 2.25h20.625a1.125 1.125 0 1 0 0-2.25M19.5 9.375v9.75h-1.875v-9.75zm-13.875-4.5h9.75v14.25h-1.5V15a1.125 1.125 0 0 0-1.125-1.125h-4.5A1.125 1.125 0 0 0 7.125 15v4.125h-1.5zm6 14.25h-2.25v-3h2.25zM6.75 7.5a1.125 1.125 0 0 1 1.125-1.125h.75a1.125 1.125 0 0 1 0 2.25h-.75A1.125 1.125 0 0 1 6.75 7.5m4.5 0a1.125 1.125 0 0 1 1.125-1.125h.75a1.125 1.125 0 0 1 0 2.25h-.75A1.125 1.125 0 0 1 11.25 7.5m-4.5 3.75a1.125 1.125 0 0 1 1.125-1.125h.75a1.125 1.125 0 1 1 0 2.25h-.75A1.125 1.125 0 0 1 6.75 11.25m4.5 0a1.125 1.125 0 0 1 1.125-1.125h.75a1.125 1.125 0 1 1 0 2.25h-.75a1.125 1.125 0 0 1-1.125-1.125"
-                                fill="currentColor" />
-                        </svg>
-                    </div>
-                    <p className="text-lg font-bold mt-2 dark:text-white">Visite Nossa Sede</p>
-                    <p className="text-gray-500 mt-1 mb-4">Av. Trabalho, na entrada da STEIA, Jamila.</p>
-                    <span className="text-indigo-600 font-semibold">
-                        Cidade de Nampula, MZ
-                    </span>
-                </div>
-                <div>
-                    <div className="text-indigo-500 bg-indigo-500/20 p-2.5 aspect-square rounded-full size-10 flex items-center justify-center">
-                        <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="m19 13.513-4.415-1.98-.017-.007a1.87 1.87 0 0 0-1.886.243l-2.091 1.781c-1.22-.66-2.478-1.91-3.14-3.113l1.787-2.125q.043-.051.08-.108a1.88 1.88 0 0 0 .148-1.782L7.488 2A1.88 1.88 0 0 0 5.539.89 5.65 5.65 0 0 0 .625 6.5c0 7.651 6.224 13.875 13.875 13.875a5.65 5.65 0 0 0 5.61-4.914A1.88 1.88 0 0 0 19 13.513m-4.5 4.612A11.64 11.64 0 0 1 2.875 6.5a3.4 3.4 0 0 1 2.67-3.332l1.764 3.938-1.796 2.14q-.044.051-.08.108a1.88 1.88 0 0 0-.12 1.841c.883 1.808 2.702 3.615 4.529 4.5a1.88 1.88 0 0 0 1.845-.136q.055-.036.105-.08l2.102-1.787 3.938 1.763a3.4 3.4 0 0 1-3.332 2.67"
-                                fill="currentColor" />
-                        </svg>
-                    </div>
-                    <p className="text-lg font-bold mt-2 dark:text-white">Ligue Agora</p>
-                    <p className="text-gray-500 mt-1 mb-4">Disponível em horário comercial.</p>
-                    <span className="text-indigo-600 font-semibold">
-                        +258 86 613 3052
-                    </span>
+
+                <h2 className="text-4xl md:text-6xl font-bold font-heading mb-6 tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent animate-fade-in-up delay-100">
+                    Pronto para transformar <br /> seu futuro?
+                </h2>
+
+                <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed animate-fade-in-up delay-200">
+                    Junte-se a centenas de alunos que já estão construindo carreiras de sucesso com a Zedeck's Training.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up delay-300">
+                    <Link to="/register">
+                        <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 hover:scale-105 transition-all duration-300 text-lg px-8 py-6 rounded-full shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                            Inscreva-se Agora <ArrowRight className="ml-2 w-5 h-5" />
+                        </Button>
+                    </Link>
+                    <Link to="/courses">
+                        <Button variant="outline" size="lg" className="border-white/20 hover:bg-white/10 text-white px-8 py-6 rounded-full backdrop-blur-sm">
+                            Ver Cursos Disponíveis
+                        </Button>
+                    </Link>
                 </div>
             </div>
-        </div>
+
+            <style jsx>{`
+                @keyframes pulse-slow {
+                    0%, 100% { transform: scale(1); opacity: 0.5; }
+                    50% { transform: scale(1.2); opacity: 0.3; }
+                }
+                .animate-pulse-slow {
+                    animation: pulse-slow 8s infinite ease-in-out;
+                }
+                @keyframes fade-in-up {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up {
+                    animation: fade-in-up 0.8s ease-out forwards;
+                }
+                .delay-100 { animation-delay: 0.1s; }
+                .delay-200 { animation-delay: 0.2s; }
+                .delay-300 { animation-delay: 0.3s; }
+            `}</style>
+        </section>
     );
-};
+}

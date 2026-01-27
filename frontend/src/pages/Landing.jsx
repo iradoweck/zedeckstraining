@@ -2,7 +2,8 @@ import { Link } from 'react-router-dom';
 import PublicLayout from '../components/layout/PublicLayout';
 import { Button } from '../components/ui/button';
 import { TypewriterEffect } from '../components/ui/typewriter-effect';
-import IntegrationHero from '../components/ui/integration-hero';
+import CallToAction from '../components/ui/call-to-action';
+import Partners from '../components/ui/partners';
 import { BookOpen, Award, Users, Mic, Layers, Cpu, CheckCircle } from 'lucide-react';
 
 export default function Landing() {
@@ -37,29 +38,19 @@ export default function Landing() {
                             </Button>
                         </Link>
                         <Link to="/courses">
-                            <Button size="lg" variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full">
+                            <Button size="lg" variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white">
                                 Ver Cursos
                             </Button>
                         </Link>
                     </div>
 
-                    {/* Simple Image Slider Placeholder - Replaced static image with array of related images */}
-                    <div className="relative w-full max-w-5xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800">
-                        {/* We can use a simple flex scroll for now or just one hero image that represents 'Classrooms' */}
-                        <img
-                            src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=2070&auto=format&fit=crop"
-                            alt="Sala de Aula Zedecks"
-                            className="w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-8">
-                            <p className="text-white font-medium text-lg">Ambientes de aprendizado práticos e modernos.</p>
-                        </div>
-                    </div>
+                    {/* Image Removed as per request */}
+
                 </div>
             </section>
 
-            {/* Integrations / Partners */}
-            <IntegrationHero />
+            {/* Partners Section */}
+            <Partners />
 
             {/* About / Mission Section */}
             <section className="py-24 bg-gray-50 dark:bg-gray-800/50">
@@ -133,20 +124,7 @@ export default function Landing() {
             </section>
 
             {/* CTA Section */}
-            <section className="py-24 bg-gray-900 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-primary/10"></div>
-                <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-                    <h2 className="text-4xl font-bold font-heading mb-6">Pronto para transformar seu futuro?</h2>
-                    <p className="text-xl text-gray-300 mb-8">
-                        Junte-se a centenas de alunos que já estão construindo carreiras de sucesso.
-                    </p>
-                    <Link to="/register">
-                        <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100 border-none">
-                            Inscreva-se Agora
-                        </Button>
-                    </Link>
-                </div>
-            </section>
+            <CallToAction />
         </PublicLayout>
     );
 }
