@@ -3,7 +3,6 @@ import PublicLayout from '../components/layout/PublicLayout';
 import { Button } from '../components/ui/button';
 import { TypewriterEffect } from '../components/ui/typewriter-effect';
 import CallToAction from '../components/ui/call-to-action';
-import Partners from '../components/ui/partners';
 import { BookOpen, Award, Users, Mic, Layers, Cpu, CheckCircle } from 'lucide-react';
 
 export default function Landing() {
@@ -49,8 +48,6 @@ export default function Landing() {
                 </div>
             </section>
 
-            {/* Partners Section */}
-            <Partners />
 
             {/* About / Mission Section */}
             <section className="py-24 bg-gray-50 dark:bg-gray-800/50">
