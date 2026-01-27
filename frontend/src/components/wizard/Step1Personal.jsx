@@ -78,9 +78,9 @@ export default function Step1Personal({ formData, updateFormData, onNext }) {
                                 key={g}
                                 type="button"
                                 onClick={() => updateFormData({ gender: g })}
-                                className={`flex-1 py-2 px-4 rounded-lg border transition-all ${formData.gender === g
-                                        ? 'bg-primary text-white border-primary'
-                                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50'
+                                className={`flex-1 py-2 px-4 rounded-lg border transition-all duration-300 transform hover:scale-[1.02] active:scale-95 ${formData.gender === g
+                                    ? 'bg-primary text-white border-primary shadow-lg shadow-primary/30'
+                                    : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:border-primary/50 hover:bg-gray-50 dark:hover:bg-gray-600'
                                     }`}
                             >
                                 {g}
@@ -118,9 +118,9 @@ export default function Step1Personal({ formData, updateFormData, onNext }) {
                                         key={doc}
                                         type="button"
                                         onClick={() => updateFormData({ documentType: doc })}
-                                        className={`flex-1 py-2 text-sm transition-all ${formData.documentType === doc
-                                                ? 'bg-primary text-white'
-                                                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50'
+                                        className={`flex-1 py-2 text-sm transition-all duration-300 hover:bg-gray-100 dark:hover:bg-gray-600 ${formData.documentType === doc
+                                                ? 'bg-primary text-white shadow-md z-10 scale-105 font-medium'
+                                                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200'
                                             }`}
                                     >
                                         {doc}
