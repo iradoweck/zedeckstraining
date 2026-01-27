@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from './button';
+import { Button } from '../ui/button';
 import { logger } from '../../services/logger';
 
 class ErrorBoundary extends React.Component {
