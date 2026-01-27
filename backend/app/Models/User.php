@@ -24,7 +24,8 @@ class User extends Authenticatable
         'password',
         'role',
         'profile_photo',
-        'filiation',
+        'father_name',
+        'mother_name',
         'gender',
         'marital_status',
         'occupation',
@@ -32,6 +33,9 @@ class User extends Authenticatable
         'birth_date',
         'document_type',
         'document_number',
+        'education_level',
+        'has_special_needs',
+        'special_needs_description',
     ];
 
     /**

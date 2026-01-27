@@ -33,8 +33,9 @@ export default function Step1Personal({ formData, updateFormData, onNext }) {
                 <Input label="Nome" name="firstName" value={formData.firstName} onChange={handleChange} required />
                 <Input label="Apelido" name="lastName" value={formData.lastName} onChange={handleChange} required />
 
-                <div className="md:col-span-2">
-                    <Input label="Filiação (Pais)" placeholder="Nome Completo do Pai / Mãe" name="filiation" value={formData.filiation} onChange={handleChange} />
+                <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Input label="Nome do Pai" name="fatherName" value={formData.fatherName} onChange={handleChange} />
+                    <Input label="Nome da Mãe" name="motherName" value={formData.motherName} onChange={handleChange} />
                 </div>
 
                 <div className="md:col-span-2">
@@ -71,17 +72,21 @@ export default function Step1Personal({ formData, updateFormData, onNext }) {
 
                 <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gênero</label>
-                    <select
-                        name="gender"
-                        value={formData.gender}
-                        onChange={handleChange}
-                        className="w-full h-11 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
-                        required
-                    >
-                        <option value="">Selecione...</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Feminino">Feminino</option>
-                    </select>
+                    <div className="flex gap-2">
+                        {['Masculino', 'Feminino'].map(g => (
+                            <button
+                                key={g}
+                                type="button"
+                                onClick={() => updateFormData({ gender: g })}
+                                className={`flex-1 py-2 px-4 rounded-lg border transition-all ${formData.gender === g
+                                        ? 'bg-primary text-white border-primary'
+                                        : 'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50'
+                                    }`}
+                            >
+                                {g}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 <div>
@@ -106,17 +111,23 @@ export default function Step1Personal({ formData, updateFormData, onNext }) {
                 <div className="grid grid-cols-2 gap-4 md:col-span-2">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo de Documento</label>
-                        <select
-                            name="documentType"
-                            value={formData.documentType}
-                            onChange={handleChange}
-                            className="w-full h-11 px-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
-                        >
-                            <option value="BI">Bilhete de Identidade (BI)</option>
-                            <option value="Passaporte">Passaporte</option>
-                            <option value="DIRE">DIRE</option>
-                            <option value="Outro">Outro</option>
-                        </select>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex rounded-lg border border-gray-300 dark:border-gray-600 overflow-hidden">
+                                {['BI', 'Passaporte', 'DIRE'].map(doc => (
+                                    <button
+                                        key={doc}
+                                        type="button"
+                                        onClick={() => updateFormData({ documentType: doc })}
+                                        className={`flex-1 py-2 text-sm transition-all ${formData.documentType === doc
+                                                ? 'bg-primary text-white'
+                                                : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50'
+                                            }`}
+                                    >
+                                        {doc}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                     <Input label="Número do Documento" name="documentNumber" value={formData.documentNumber} onChange={handleChange} required />
                 </div>

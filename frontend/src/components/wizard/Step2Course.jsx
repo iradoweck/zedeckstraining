@@ -68,7 +68,9 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
                                 }`}
                         >
                             <h3 className="font-bold">{course.title}</h3>
-                            <p className="text-sm text-gray-500">{Number(course.price).toLocaleString()} MT</p>
+                            <p className="text-sm text-gray-500">
+                                {Number(course.price).toLocaleString('pt-MZ', { minimumFractionDigits: 2 })} MT
+                            </p>
                         </div>
                     ))}
                 </div>
@@ -78,7 +80,7 @@ export default function Step2Course({ formData, updateFormData, onNext, onBack }
                 <p className="text-red-500 text-sm">Selecione pelo menos um curso.</p>
             )}
 
-            {formData.courses.length > 0 && (
+            {formData.courses.length > 0 && uniqueSchedules.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-bottom-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Horário Preferencial</label>

@@ -36,7 +36,8 @@ export default function Step5Account({ formData, updateFormData, onBack }) {
             data.append('role', 'student');
 
             // Extended Profile Fields
-            data.append('filiation', formData.filiation || '');
+            data.append('father_name', formData.fatherName || '');
+            data.append('mother_name', formData.motherName || '');
             data.append('gender', formData.gender || '');
             data.append('marital_status', formData.maritalStatus || '');
             data.append('occupation', formData.occupation || '');

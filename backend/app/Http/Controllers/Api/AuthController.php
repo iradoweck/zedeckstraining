@@ -21,11 +21,11 @@ class AuthController extends Controller
             'role' => 'sometimes|string|in:admin,trainer,student',
             
             // Profile
-            'filiation' => 'nullable|string',
+            'father_name' => 'nullable|string',
+            'mother_name' => 'nullable|string',
             'gender' => 'nullable|string',
             'birth_date' => 'nullable|date',
             'document_number' => 'nullable|string',
-            // ... add others as strict validation if needed, for now nullable strings are safe
             
             // Enrollment Data
             'courses' => 'required', // Array or single ID
@@ -36,8 +36,9 @@ class AuthController extends Controller
         // Create User
         $userPayload = $request->only([
             'name', 'email', 'role', 
-            'filiation', 'gender', 'marital_status', 'occupation', 
-            'nationality', 'birth_date', 'document_type', 'document_number'
+            'father_name', 'mother_name', 'gender', 'marital_status', 'occupation', 
+            'nationality', 'birth_date', 'document_type', 'document_number',
+            'education_level', 'has_special_needs', 'special_needs_description'
         ]);
         $userPayload['password'] = Hash::make($request->password);
         $userPayload['role'] = $request->role ?? 'student';

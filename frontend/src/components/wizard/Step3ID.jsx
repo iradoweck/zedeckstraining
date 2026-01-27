@@ -78,8 +78,7 @@ export default function Step3ID({ formData, updateFormData, onNext, onBack }) {
                         {/* Banner */}
                         <div className="bg-gray-900 h-16 flex items-center px-4 justify-between relative z-10">
                             <div className="flex items-center gap-2">
-                                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-bold text-white text-xs">ZT</div>
-                                <span className="text-white font-bold text-sm tracking-wide">ZEDECK'S TRAINING</span>
+                                <img src="/logo.png" alt="Zedeck's Training" className="h-8 w-auto mix-blend-screen" />
                             </div>
                             <div className="text-[10px] text-white/50 text-right">
                                 ©{new Date().getMonth() + 1}/{new Date().getFullYear()}

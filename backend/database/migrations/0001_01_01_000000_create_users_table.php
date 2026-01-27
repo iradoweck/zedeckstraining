@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('password');
             
             // Expanded Profile
-            $table->string('filiation')->nullable(); // Names of parents
+            $table->string('father_name')->nullable();
+            $table->string('mother_name')->nullable();
             $table->string('gender')->nullable();
             $table->string('marital_status')->nullable();
             $table->string('occupation')->nullable();
@@ -27,6 +28,9 @@ return new class extends Migration
             $table->date('birth_date')->nullable();
             $table->string('document_type')->nullable();
             $table->string('document_number')->nullable();
+            $table->string('education_level')->nullable();
+            $table->boolean('has_special_needs')->default(false);
+            $table->text('special_needs_description')->nullable();
             
             $table->rememberToken();
             $table->timestamps();
