@@ -4,40 +4,46 @@
 
 @layer base {
   :root {
-    /* Brand Colors */
+    /* Updated Brand Colors for Premium Feel */
     --color-primary: 220 90% 56%;
-    /* #3b82f6 - Bright Blue */
     --color-primary-dark: 217 91% 60%;
-    /* #2563eb */
 
-    --color-secondary: 262 83% 58%;
-    /* #8b5cf6 - Violet */
-    --color-accent: 14 89% 53%;
-    /* #f97316 - Orange */
-
-    /* Neutral Colors */
+    /* Neutral/Surface */
     --background: 210 40% 98%;
-    /* Light Blue Grey */
     --surface: 0 0% 100%;
-    --text-primary: 215 28% 17%;
-    --text-secondary: 215 16% 47%;
+
+    /* Text - Increased Contrast */
+    --text-primary: 217 33% 17%;
+    /* Dark Slate */
+    --text-secondary: 215 25% 40%;
     --border: 214 32% 91%;
   }
 
   .dark {
     --background: 222 47% 11%;
-    /* #0f172a */
     --surface: 217 33% 17%;
-    /* #1e293b */
     --text-primary: 210 40% 98%;
-    --text-secondary: 215 20% 65%;
-    --border: 217 33% 17%;
+    --text-secondary: 215 20% 75%;
+    /* Lighter secondary in dark mode */
+    --border: 217 33% 25%;
   }
 }
 
 @layer base {
   body {
     @apply bg-background text-text-primary antialiased font-sans;
+  }
+
+  /* Global Input Polish */
+  input,
+  select,
+  textarea {
+    @apply text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500;
+  }
+
+  /* Smooth transitions */
+  * {
+    @apply transition-colors duration-200;
   }
 }
 

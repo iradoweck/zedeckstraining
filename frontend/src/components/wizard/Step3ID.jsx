@@ -1,150 +1,161 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from '../ui/Button';
-import { ArrowRight, ArrowLeft, Download, CreditCard, RefreshCw } from 'lucide-react';
+import { ArrowRight, ArrowLeft, Download, RefreshCw } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import QRCode from 'react-qr-code';
 
 export default function Step3ID({ formData, updateFormData, onNext, onBack }) {
     const cardRef = useRef(null);
-    const [isGenerating, setIsGenerating] = useState(false);
+    const [isToDownload, setIsToDownload] = useState(false);
     const [isFlipped, setIsFlipped] = useState(false);
 
-    // Generate Student Code (Simulation - Ideally this calls an API)
-    useEffect(() => {
-        if (!formData.generatedId) {
-            const random = Math.floor(1000 + Math.random() * 9000);
-            const year = new Date().getFullYear();
-            const code = `ZT-${year}-${random}`;
-            updateFormData({ generatedId: code });
-        }
-    }, [formData.generatedId, updateFormData]);
+    // Ensure ID exists
+    if (!formData.generatedId) {
+        const random = Math.floor(1000 + Math.random() * 9000);
+        const year = new Date().getFullYear();
+        updateFormData({ generatedId: `ZT-${year}-${random}` });
+    }
 
     const handleDownload = async () => {
-        setIsGenerating(true);
-        // Ensure the card is "front" side for download or capture both? 
-        // User said "Static when downloading". Usually front is consistent.
-        // We'll capture the front face container.
+        setIsToDownload(true);
+        // Force flip to front for download if needed, or handle both sides.
+        // For simplicity, we download the CURRENT visible side or just the front.
+        // Let's assume user wants the front standard ID.
+        if (isFlipped) setIsFlipped(false);
 
-        if (cardRef.current) {
-            try {
-                const canvas = await html2canvas(cardRef.current, {
-                    scale: 3, // Higher quality
-                    backgroundColor: null,
-                    useCORS: true
-                });
-                const image = canvas.toDataURL('image/png');
-
-                const link = document.createElement('a');
-                link.href = image;
-                link.download = `${formData.firstName}-${formData.lastName}-ID.png`;
-                link.click();
-            } catch (err) {
-                console.error("Failed to generate card", err);
+        // Wait for render
+        setTimeout(async () => {
+            if (cardRef.current) {
+                try {
+                    const canvas = await html2canvas(cardRef.current, {
+                        scale: 3,
+                        backgroundColor: null,
+                        useCORS: true
+                    });
+                    const image = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.href = image;
+                    link.download = `${formData.firstName}-${formData.lastName}-ID.png`;
+                    link.click();
+                } catch (err) {
+                    console.error("Failed", err);
+                }
+                setIsToDownload(false);
             }
-        }
-        setIsGenerating(false);
+        }, 100);
     };
 
-    const toggleFlip = () => setIsFlipped(!isFlipped);
-
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 flex flex-col items-center">
             <div className="text-center">
                 <h2 className="text-2xl font-bold font-heading mb-2">Seu Cartão de Estudante</h2>
-                <p className="text-gray-500">Clique no cartão para ver o verso. Baixe-o para finalizar.</p>
+                <p className="text-gray-500">Toque para ver o verso. Baixe para salvar.</p>
             </div>
 
-            <div className="flex justify-center perspective-1000">
-                {/* ID Card 3D Container - Click to Flip */}
+            <div className="perspective-1000 w-full flex justify-center">
                 <div
-                    className={`relative w-[340px] h-[214px] transition-transform duration-700 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
-                    onClick={toggleFlip}
+                    className={`relative w-[360px] h-[220px] transition-transform duration-700 transform-style-3d cursor-pointer ${isFlipped ? 'rotate-y-180' : ''}`}
+                    onClick={() => !isToDownload && setIsFlipped(!isFlipped)}
                 >
-                    {/* Front Face */}
+                    {/* FRONT SIDE */}
                     <div
-                        ref={cardRef}
-                        className="absolute inset-0 w-full h-full bg-white rounded-xl shadow-2xl overflow-hidden backface-hidden border border-gray-200"
-                        style={{
-                            backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M0 0h20L0 20z'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(135deg, #ffffff 0%, #f9fafb 100%)`
-                        }}
+                        ref={!isFlipped ? cardRef : null}
+                        className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden backface-hidden shadow-2xl bg-slate-900 border border-slate-800"
                     >
-                        {/* Watermark Icon Pattern */}
-                        <div className="absolute inset-0 opacity-[0.03] pointer-events-none flex flex-wrap gap-8 p-4 justify-center items-center rotate-12 scale-150">
-                            {Array.from({ length: 12 }).map((_, i) => (
-                                <img key={i} src="/assets/icon.png" className="w-16 h-16 grayscale" />
-                            ))}
-                        </div>
+                        {/* Decorative Shapes */}
+                        <div className="absolute top-0 right-0 w-48 h-48 bg-gradient-to-bl from-amber-400 to-orange-600 rounded-full blur-2xl opacity-20 -translate-y-10 translate-x-10 pointer-events-none"></div>
+                        <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-blue-600 to-purple-600 rounded-full blur-2xl opacity-10 translate-y-10 -translate-x-10 pointer-events-none"></div>
 
-                        {/* Banner */}
-                        <div className="bg-gray-900 h-16 flex items-center px-4 justify-between relative z-10">
-                            <div className="flex items-center gap-2">
-                                <img src="/logo.png" alt="Zedeck's Training" className="h-8 w-auto mix-blend-screen" />
-                            </div>
-                            <div className="text-[10px] text-white/50 text-right">
-                                ©{new Date().getMonth() + 1}/{new Date().getFullYear()}
-                            </div>
-                        </div>
+                        {/* Gold Accent Line */}
+                        <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-amber-300 via-orange-500 to-amber-300"></div>
 
-                        {/* Content */}
-                        <div className="p-4 flex gap-4 relative z-10">
-                            <div className="w-24 h-24 bg-white rounded-lg p-1 shadow-sm border border-gray-100">
-                                {formData.profilePhoto ? (
-                                    <img src={URL.createObjectURL(formData.profilePhoto)} className="w-full h-full object-cover rounded" />
-                                ) : (
-                                    <img src={`https://ui-avatars.com/api/?name=${formData.firstName}+${formData.lastName}&background=random`} className="w-full h-full object-cover rounded" />
-                                )}
+                        <div className="relative z-10 h-full flex flex-col p-5 pl-7">
+                            {/* Header */}
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="flex items-center gap-2">
+                                    <img src="/logo.png" alt="ZT" className="h-8 w-auto object-contain brightness-0 invert" />
+                                </div>
+                                <div className="text-[10px] text-white/40 font-mono border border-white/10 px-2 py-0.5 rounded">
+                                    {new Date().getFullYear()}
+                                </div>
                             </div>
-                            <div className="flex-1 space-y-1">
-                                <h3 className="font-bold text-gray-900 uppercase leading-tight line-clamp-2">{formData.firstName} {formData.lastName}</h3>
-                                <p className="text-xs text-gray-500 uppercase">{formData.occupation || 'Estudante'}</p>
-                                <div className="pt-2 space-y-0.5">
-                                    <p className="text-[10px] text-gray-400 uppercase">ID CODE</p>
-                                    <p className="font-mono text-sm font-bold text-primary">{formData.generatedId}</p>
+
+                            {/* Body */}
+                            <div className="flex gap-4 items-center">
+                                {/* Photo Container with Gold Ring */}
+                                <div className="relative">
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 to-orange-600 rounded-full blur-sm opacity-50"></div>
+                                    <div className="w-20 h-20 rounded-full p-0.5 bg-gradient-to-tr from-amber-300 to-orange-500 relative z-10">
+                                        <div className="w-full h-full rounded-full overflow-hidden bg-slate-800">
+                                            {formData.profilePhoto ? (
+                                                <img src={URL.createObjectURL(formData.profilePhoto)} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <img src={`https://ui-avatars.com/api/?name=${formData.firstName}+${formData.lastName}&background=1e293b&color=fbbf24`} className="w-full h-full object-cover" />
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Text Info */}
+                                <div className="text-white space-y-0.5">
+                                    <h3 className="font-bold text-lg leading-tight tracking-wide">{formData.firstName}</h3>
+                                    <h3 className="font-light text-lg leading-tight tracking-wide text-white/90">{formData.lastName}</h3>
+                                    <p className="text-xs text-amber-500 font-bold uppercase tracking-wider mt-1">{formData.occupation || 'STUDENT'}</p>
+                                    <p className="text-[10px] text-slate-400 font-mono mt-1">{formData.generatedId}</p>
+                                </div>
+                            </div>
+
+                            {/* Footer */}
+                            <div className="mt-auto flex justify-between items-end border-t border-white/5 pt-2">
+                                <div className="text-[9px] text-slate-500">
+                                    www.zedecks-training.com <br /> Maputo, Moçambique
+                                </div>
+                                <div className="text-[9px] text-amber-500/80 font-mono">
+                                    VALID: 12/{new Date().getFullYear()}
                                 </div>
                             </div>
                         </div>
-
-                        {/* Footer Stripe */}
-                        <div className="absolute bottom-0 w-full bg-primary/10 py-1 px-4 flex justify-between items-center z-10">
-                            <span className="text-[10px] text-gray-500 font-medium">STUDENT CARD</span>
-                        </div>
                     </div>
 
-                    {/* Back Face */}
+                    {/* BACK SIDE */}
                     <div
-                        className="absolute inset-0 w-full h-full bg-gray-900 text-white rounded-xl shadow-2xl overflow-hidden backface-hidden rotate-y-180 flex flex-col items-center justify-center p-6 border border-gray-700"
+                        ref={isFlipped ? cardRef : null}
+                        className="absolute inset-0 w-full h-full rounded-2xl overflow-hidden backface-hidden shadow-2xl bg-slate-900 border border-slate-800 rotate-y-180 flex flex-col items-center justify-center p-6"
                     >
-                        <div className="bg-white p-2 rounded-lg">
-                            <QRCode value={`https://zedecks.com/verify/${formData.generatedId}`} size={100} />
+                        {/* Slanted Background */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 z-0"></div>
+                        <div className="absolute right-0 bottom-0 w-full h-32 bg-slate-950 -skew-y-6 translate-y-12 z-0"></div>
+
+                        <div className="relative z-10 bg-white p-2 rounded-lg shadow-lg">
+                            <QRCode value={`https://zedecks.com/verify/${formData.generatedId}`} size={90} />
                         </div>
-                        <p className="mt-4 text-xs text-gray-400 text-center">
-                            Escaneie para validar a inscrição e status do estudante.
-                        </p>
-                        <p className="mt-2 font-mono text-sm text-primary font-bold">{formData.generatedId}</p>
+                        <div className="relative z-10 mt-4 text-center">
+                            <p className="text-xs text-slate-300 font-light tracking-wide mb-1">SCAN PARA VALIDAR</p>
+                            <p className="text-xs text-amber-500 font-bold font-mono tracking-widest">{formData.generatedId}</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="flex flex-col items-center gap-4">
-                <div className="text-sm text-gray-400 flex items-center gap-2">
-                    <RefreshCw size={14} /> Toque no cartão para virar
+            <div className="flex flex-col items-center gap-4 w-full max-w-sm">
+                <div className="text-sm text-gray-400 flex items-center gap-2 animate-pulse">
+                    <RefreshCw size={14} /> Flip Card
                 </div>
 
-                <Button onClick={handleDownload} variant="outline" className="w-full max-w-xs flex items-center justify-center gap-2" disabled={isGenerating}>
-                    <Download size={18} /> {isGenerating ? 'Gerando PNG...' : 'Baixar ID Card'}
+                <Button onClick={handleDownload} variant="outline" className="w-full border-amber-500/30 hover:bg-amber-500/10 hover:text-amber-600 dark:text-amber-500" disabled={isToDownload}>
+                    <Download size={18} className="mr-2" /> {isToDownload ? 'Gerando...' : 'Baixar Cartão (PNG)'}
                 </Button>
             </div>
 
-            <div className="flex justify-between pt-4">
+            <div className="flex justify-between w-full pt-4">
                 <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
                     <ArrowLeft size={18} /> Voltar
                 </Button>
                 <Button onClick={onNext} className="flex items-center gap-2">
-                    Continuar para Pagamento <ArrowRight size={18} />
+                    Continuar <ArrowRight size={18} />
                 </Button>
             </div>
 
-            {/* CSS for 3D Transform - Ideally in index.css but added here for encapsulation if not present */}
             <style jsx="true">{`
                 .perspective-1000 { perspective: 1000px; }
                 .transform-style-3d { transform-style: preserve-3d; }
