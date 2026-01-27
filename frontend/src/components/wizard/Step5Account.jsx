@@ -56,6 +56,7 @@ export default function Step5Account({ formData, updateFormData, onBack }) {
             });
 
             data.append('schedule', formData.schedule || '');
+            data.append('uniform_option', formData.uniformOption || 'include_now');
 
             // Dynamic Options
             if (formData.examModality) data.append('exam_modality', formData.examModality);
@@ -74,7 +75,7 @@ export default function Step5Account({ formData, updateFormData, onBack }) {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 
-            navigate('/student/dashboard');
+            navigate('/dashboard');
 
         } catch (err) {
             console.error(err);

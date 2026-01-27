@@ -79,7 +79,16 @@ export default function Step4Payment({ formData, updateFormData, onNext, onBack 
                 </div>
                 <label className="flex items-center cursor-pointer">
                     <div className="relative">
-                        <input type="checkbox" className="sr-only" checked={payUniformLater} onChange={() => setPayUniformLater(!payUniformLater)} />
+                        <input
+                            type="checkbox"
+                            className="sr-only"
+                            checked={payUniformLater}
+                            onChange={() => {
+                                const newValue = !payUniformLater;
+                                setPayUniformLater(newValue);
+                                updateFormData({ uniformOption: newValue ? 'pay_later' : 'include_now' });
+                            }}
+                        />
                         <div className={`block w-14 h-8 rounded-full transition-colors ${payUniformLater ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                         <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${payUniformLater ? 'transform translate-x-6' : ''}`}></div>
                     </div>
