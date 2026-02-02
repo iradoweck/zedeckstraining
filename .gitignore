@@ -1,6 +1,13 @@
-node_modules
+node_modules/
 .env
-dist
-build
-.DS_Store
+.env.backup
+.env.production
+project_structure.txt
 *.log
+.DS_Store
+.vscode/
+.idea/
+
+# Ignorar pacote de deploy, exceto as instruções
+DEPLOY_CPANEL/
+!DEPLOY_CPANEL/INSTRUÇÕES.md
