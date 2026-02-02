@@ -5,8 +5,12 @@ import { LogIn } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
+import { useTranslation } from 'react-i18next';
+import LanguageToggle from '../components/LanguageToggle';
+import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -20,19 +24,24 @@ export default function Login() {
             await login(email, password);
             navigate('/dashboard');
         } catch (err) {
-            setError('Invalid credentials');
+            setError(t('invalid_credentials', 'Invalid credentials'));
         }
     };
 
     return (
-        <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+        <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 relative">
+            <div className="absolute top-4 right-4 flex gap-2">
+                <LanguageToggle />
+                <ThemeToggle />
+            </div>
+
             <Card className="w-full max-w-md p-8">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center justify-center gap-2">
                         <span className="bg-primary text-white p-2 rounded-lg"><LogIn size={24} /></span>
                         Portal ZT
                     </h1>
-                    <p className="text-gray-500 mt-2">Sign in to your account</p>
+                    <p className="text-gray-500 mt-2">{t('login_title')}</p>
                 </div>
 
                 {error && (
@@ -43,7 +52,7 @@ export default function Login() {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <Input
-                        label="Email Address"
+                        label={t('email_label')}
                         type="email"
                         placeholder="student@example.com"
                         value={email}
@@ -52,7 +61,7 @@ export default function Login() {
                     />
 
                     <Input
-                        label="Password"
+                        label={t('password_label')}
                         type="password"
                         placeholder="••••••••"
                         value={password}
@@ -61,7 +70,7 @@ export default function Login() {
                     />
 
                     <Button type="submit">
-                        Sign In
+                        {t('login_button')}
                     </Button>
                 </form>
             </Card>

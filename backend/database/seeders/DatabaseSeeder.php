@@ -15,9 +15,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Check if admin exists to prevent duplicate entry errors during updates
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@zedecks.com'],
+            [
+                'name' => 'Administrator',
+                'password' => 'password', // Will be hashed by model cast
+                'role' => 'admin',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Optional: Seed courses if needed
+        // $this->call(CourseSeeder::class);
     }
 }
