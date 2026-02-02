@@ -13,6 +13,17 @@ $app = require_once __DIR__.'/../../../zedecks-core/backend/bootstrap/app.php';
 $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 $kernel->handle(\Illuminate\Http\Request::capture());
 
+// 0. Limpar Caches (CRITICO para o CORS funcionar)
+echo "--- 0. Limpando Caches ---\n";
+try {
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    echo "Config Cache Limpo: " . \Illuminate\Support\Facades\Artisan::output() . "\n";
+    \Illuminate\Support\Facades\Artisan::call('route:clear');
+    echo "Route Cache Limpo: " . \Illuminate\Support\Facades\Artisan::output() . "\n";
+} catch (Exception $e) {
+    echo "Aviso ao limpar cache: " . $e->getMessage() . "\n";
+}
+
 echo "Conectado ao DB: " . config('database.default') . "\n\n";
 
 // 1. Resetar Admin

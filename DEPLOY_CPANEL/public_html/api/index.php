@@ -5,7 +5,33 @@ define('LARAVEL_START', microtime(true));
 
 // Bridge para o Backend
 // Ajustado para estrutura: public_html/training/api -> home/zedecks/zedecks-core/backend
+// --- DEBUG START ---
+try {
+    $logMsg = date('[Y-m-d H:i:s] ') . $_SERVER['REQUEST_METHOD'] . ' ' . $_SERVER['REQUEST_URI'] . "\n";
+    file_put_contents(__DIR__ . '/request_log.txt', $logMsg, FILE_APPEND);
+} catch (Exception $e) {}
+
+// Rota de Health Check (Bypass Laravel)
+if (strpos($_SERVER['REQUEST_URI'], '/api/health') !== false) {
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Origin: *');
+    echo json_encode(['status' => 'alive', 'timestamp' => time()]);
+    exit;
+}
+// --- DEBUG END ---
+
 require __DIR__.'/../../../zedecks-core/backend/vendor/autoload.php';
 
-(require_once __DIR__.'/../../../zedecks-core/backend/bootstrap/app.php')
-    ->handleRequest(Request::capture());
+try {
+    $app = require_once __DIR__.'/../../../zedecks-core/backend/bootstrap/app.php';
+    $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+    $response = $kernel->handle(
+        $request = Illuminate\Http\Request::capture()
+    );
+    $response->send();
+    $kernel->terminate($request, $response);
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo "SERVER ERROR: " . $e->getMessage();
+    file_put_contents(__DIR__ . '/error_log.txt', $e->getMessage(), FILE_APPEND);
+}
