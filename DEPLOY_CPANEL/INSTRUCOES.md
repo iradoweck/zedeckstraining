@@ -1,48 +1,109 @@
-# Guia de Instalação Limpa (Clean Install)
+# Guia Completo de Instalação (v1.2.0)
 
-Este pacote contém TODOS os arquivos necessários para uma instalação do zero.
+Este pacote contém **tudo** o que você precisa para colocar o sistema no ar.
+Siga os passos na ordem exata para evitar erros.
 
-## 1. Limpeza do Servidor (Começando do Zero)
-Antes de subir qualquer coisa:
-1.  **Arquivos**: Apague TUDO da pasta `/public_html/training` e `/home/usuario/zedecks-core/backend` (se existirem).
-2.  **Banco de Dados**: Apague TODAS as tabelas do seu banco de dados atual.
+## O Que Tem no Pacote?
+- `zedecks-core/` → Contém o Backend (Laravel) completo.
+- `public_html/` → Contém o Frontend (Site) e ferramentas.
+- `install.sql` → Arquivo para criar o Banco de Dados.
 
-## 2. Upload de Arquivos
-A pasta `DEPLOY_CPANEL` está organizada assim:
-1.  `public_html`: Conteúdo do Site (Frontend).
-2.  `backend`: Código do Sistema (API).
-3.  `install.sql`: Banco de dados pronto.
-4.  `db_import.php`: Script auxiliar de importação.
-5.  `setup_server.php`: Script de configuração.
+---
 
-**Onde colocar cada coisa:**
-- Conteúdo de `public_html` -> Na pasta `/public_html/training`.
-- Conteúdo de `backend` -> Na pasta `/home/usuario/zedecks-core/backend`.
-- Arquivos `install.sql` e `db_import.php` -> Coloque na raiz (`/public_html/training`) TEMPORARIAMENTE para importar o banco.
+## Passo 1: Limpeza (Opcional, mas Recomendado)
+Se já tiver uma instalação antiga, **apague** para não misturar arquivos.
+1. Apague a pasta `/public_html/training` do servidor.
+2. Apague a pasta `/home/seuusuario/zedecks-core/backend` do servidor.
 
-## 3. Importando o Banco de Dados (Método Infalível)
-Como você teve problemas com upload no PHPMyAdmin:
+---
 
-1.  Edite o arquivo `db_import.php` (pode ser antes de subir ou no gerenciador de arquivos do cPanel).
-2.  Coloque seus dados:
-    ```php
-    define('DB_USER', 'seu_usuario_cpanel');
-    define('DB_PASS', 'sua_senha_banco');
-    define('DB_NAME', 'seu_nome_banco');
+## Passo 2: Upload de Arquivos
+O pacote já está na estrutura correta do cPanel.
+
+1.  **Backend**:
+    - Pegue a pasta `zedecks-core` deste pacote.
+    - Arraste para a **raiz** do seu usuário no Gerenciador de Arquivos (`/home/seuusuario/`).
+    - *Nota: Fica no mesmo nível de `public_html`, não dentro dela.*
+
+2.  **Frontend**:
+    - Pegue a pasta `public_html` deste pacote.
+    - Arraste para a **raiz** do seu usuário.
+    - O cPanel vai perguntar se quer mesclar/substituir. Diga **SIM**.
+    - Isso vai criar/atualizar a pasta `/public_html/training`.
+
+---
+
+## Passo 3: Configuração do Banco de Dados ⚠️
+Este é o passo mais importante.
+
+1.  **Criar o Banco (No cPanel)**:
+    - Vá em "Bancos de Dados MySQL".
+    - Crie um banco (ex: `seuusuario_zedecks`).
+    - Crie um usuário (ex: `seuusuario_admin`).
+    - Adicione o usuário ao banco com **TODOS OS PRIVILÉGIOS**.
+    - **Anote a senha!**
+
+2.  **Importar as Tabelas**:
+    - Vá no "PHPMyAdmin".
+    - Selecione o banco que criou.
+    - Clique em "Importar" e escolha o arquivo `install.sql` (está na raiz deste pacote).
+    - *Se der erro no PHPMyAdmin, use nossa ferramenta: acesse `https://training.zedecks.com/db_import.php` após o passo 4.*
+
+---
+
+## Passo 4: Conectar o Backend ao Banco 🔌
+Agora vamos dizer ao Laravel qual é o banco.
+
+1.  No Gerenciador de Arquivos, vá em: `/home/seuusuario/zedecks-core/backend`.
+2.  Procure o arquivo `.env.example`.
+3.  **Renomeie** ele para `.env` (apague o final .example).
+4.  Clique com botão direito -> **Edit** (Editar).
+5.  Procure estas linhas e mude para os seus dados:
+
+    ```ini
+    APP_NAME="Zedeck's Training"
+    APP_ENV=production
+    APP_DEBUG=false
+    APP_URL=https://training.zedecks.com
+
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=nome_do_seu_banco_aqui
+    DB_USERNAME=usuario_do_banco_aqui
+    DB_PASSWORD=senha_do_banco_aqui
     ```
-3.  Acesse no navegador: `https://training.zedecks.com/db_import.php`
-    - Ele vai ler o `install.sql` e criar tudo para você.
-    - Se der sucesso, DELETE os arquivos `db_import.php` e `install.sql` do servidor imediatamente por segurança.
+6.  Salve o arquivo.
 
-## 4. Configuração Final
-1.  **Env**: Vá na pasta do backend, renomeie `.env.example` para `.env` e configure o banco de dados.
-2.  **Setup**: Se tiver acesso SSH, vá na pasta backend e rode:
-    ```bash
-    php setup_server.php
-    ```
-    Isso vai limpar caches e criar os links.
+---
 
-## 5. Login
-- **URL**: `https://training.zedecks.com/login`
-- **Email**: `admin@zedecks.com`
-- **Senha**: `password`
+## Passo 5: Finalização e Limpeza 🧹
+Para garantir que tudo funcione, vamos limpar os caches e configurar o servidor.
+
+1.  Ainda na pasta do backend (`zedecks-core/backend`), procure o arquivo `setup_server.php`.
+2.  Se tiver terminal SSH, rode: `php setup_server.php`.
+3.  Se não tiver SSH, não tem problema. O sistema deve funcionar mesmo assim.
+    - *Apenas garanta que as pastas `storage` e `bootstrap/cache` tenham permissão 775*.
+
+---
+
+## Passo 6: Login e Teste ✅
+1.  Acesse: `https://training.zedecks.com`
+2.  Tente fazer login com:
+    - **Email**: `admin@zedecks.com`
+    - **Senha**: `password`
+
+### Solução de Problemas
+Se der erro no login ("Network Error" ou "Invalid Credentials"):
+1.  Acesse `https://training.zedecks.com/api/fix_admin.php`
+2.  Essa ferramenta vai:
+    - Limpar os caches de configuração (importante se você editou o .env).
+    - Garantir que a senha do admin seja `password`.
+    - Garantir que os cursos estejam publicados.
+
+**Depois que tudo funcionar, APAGUE os arquivos:**
+- `public_html/training/db_import.php`
+- `public_html/training/api/fix_admin.php`
+- `public_html/training/api/debug.php`
+- `public_html/training/api/request_log.txt`
+
