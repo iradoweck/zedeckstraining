@@ -23,20 +23,22 @@ $user = \App\Models\User::where('email', $email)->first();
 if ($user) {
     echo "Usuário encontrado: {$user->name} (ID: {$user->id})\n";
     
+    // IMPORTANTE: O modelo User tem cast 'hashed', então NÃO use Hash::make aqui se usar Eloquent
     $newPassword = 'password';
-    $user->password = \Illuminate\Support\Facades\Hash::make($newPassword);
-    $user->role = 'admin'; // Garantir cargo
+    $user->password = $newPassword; // O Laravel faz o hash automaticamente
+    $user->role = 'admin';
     $user->save();
     
     echo "SENHA REDEFINIDA COM SUCESSO! ✅\n";
     echo "Nova senha: $newPassword\n";
-    echo "Hash gerado: " . $user->password . "\n";
+    echo "Login deve funcionar agora.\n";
 } else {
-    echo "ERRO: Usuário $email não encontrado! Criando agora...\n";
+    echo "ERRO: Usuário $email não encontrado! Criando...\n";
+    // Para criar, o cast também funciona
     $user = \App\Models\User::create([
         'name' => 'Admin Emergency',
         'email' => $email,
-        'password' => \Illuminate\Support\Facades\Hash::make('password'),
+        'password' => 'password', // Cast automático
         'role' => 'admin'
     ]);
     echo "Usuário Criado! Senha: password\n";
@@ -44,17 +46,17 @@ if ($user) {
 
 // 2. Checar Cursos
 echo "\n--- 2. Verificando Cursos ---\n";
-$courses = \App\Models\Course::all();
-echo "Total de cursos no banco: " . $courses->count() . "\n";
+// Forçar publicação de todos os cursos
+\App\Models\Course::query()->update(['is_published' => true]);
+echo "Todos os cursos foram marcados como PUBLICADOS (is_published = 1).\n";
+
+$courses = \App\Models\Course::where('is_published', true)->get();
+echo "Total de cursos VISÍVEIS: " . $courses->count() . "\n";
 
 if ($courses->count() > 0) {
-    echo "Listando primeiros 3 cursos:\n";
     foreach ($courses->take(3) as $c) {
-        echo "- [{$c->id}] {$c->title} ({$c->status})\n";
+        echo "- [{$c->id}] {$c->title} (Publicado)\n";
     }
-} else {
-    echo "⚠️ NENHUM CURSO ENCONTRADO via Eloquent.\n";
-    echo "Verifique se a tabela 'courses' não está vazia no PHPMyAdmin.\n";
 }
 
 echo "\n--- FIM ---\n";
