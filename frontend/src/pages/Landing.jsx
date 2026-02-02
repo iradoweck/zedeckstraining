@@ -15,30 +15,30 @@ export default function Landing() {
                     <div className="mb-8">
                         <TypewriterEffect
                             words={[
-                                { text: "Transforme", className: "text-gray-900 dark:text-white" },
-                                { text: "Conhecimento", className: "text-gray-900 dark:text-white" },
-                                { text: "em", className: "text-gray-900 dark:text-white" },
-                                { text: "Resultados", className: "text-primary" },
-                                { text: "Reais.", className: "text-primary" },
+                                { text: "Potencialize", className: "text-gray-900 dark:text-white" },
+                                { text: "Sua", className: "text-gray-900 dark:text-white" },
+                                { text: "Carreira", className: "text-gray-900 dark:text-white" },
+                                { text: "com", className: "text-gray-900 dark:text-white" },
+                                { text: "Excelência.", className: "text-primary" },
                             ]}
                             className="text-4xl md:text-6xl font-extrabold font-heading mb-6"
                         />
                     </div>
 
                     <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed max-w-3xl mx-auto">
-                        A Zedeck’s Training é um centro de formação profissional focado em capacitar pessoas com conhecimentos práticos, atuais e alinhados às reais exigências do mercado.
-                        Aprenda a executar, criar e empreender.
+                        O <strong>Zedeck Training System (ZTS)</strong> é a plataforma de ensino de elite da Zedeck’s IT.
+                        Oferecemos formação técnica de alto nível, conectando teoria avançada à prática exigida pelo mercado global.
                     </p>
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
                         <Link to="/register">
-                            <Button size="lg" className="w-full sm:w-auto shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full">
-                                Inscreva-se Agora
+                            <Button size="lg" className="w-full sm:w-auto shadow-xl shadow-primary/20 bg-primary hover:bg-primary/90 text-white px-8 py-6 text-lg rounded-full font-bold transition-all hover:scale-105">
+                                Iniciar Jornada
                             </Button>
                         </Link>
                         <Link to="/courses">
-                            <Button size="lg" variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white">
-                                Ver Cursos
+                            <Button size="lg" variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white font-medium">
+                                Explorar Cursos
                             </Button>
                         </Link>
                     </div>
@@ -57,10 +57,10 @@ export default function Landing() {
                             <h2 className="text-3xl font-bold font-heading mb-6">Quem Somos</h2>
                             <div className="space-y-4 text-gray-600 dark:text-gray-300">
                                 <p>
-                                    Fundada em 2025 como uma iniciativa estratégica ligada à <strong>Zedeck’s IT</strong>, a Zedeck’s Training nasce da necessidade de formar talentos capazes de acompanhar a evolução tecnológica.
+                                    Fundada em 2025 como braço educacional da <strong>Zedeck’s IT</strong>, o ZTS nasce para suprir a lacuna de talentos tecnológicos de alta performance.
                                 </p>
                                 <p>
-                                    Nossa missão é <strong>capacitar pessoas através de uma formação prática</strong>, acessível e orientada a resultados. Acreditamos que a formação só faz sentido quando gera transformação real, oportunidades concretas e profissionais preparados.
+                                    Nossa missão é <strong>forjar profissionais completos</strong> através de uma metodologia imersiva. Acreditamos que a educação técnica deve ser um catalisador direto para inovação e empregabilidade.
                                 </p>
                             </div>
                         </div>
