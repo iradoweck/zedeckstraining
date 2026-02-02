@@ -38,19 +38,22 @@ Opções comuns:
    php artisan migrate
    ```
 
-## 4. Garantir Acesso Admin (Script de Reset)
-Se o login ainda falhar, use o script de emergência que criei.
+## 4. Instalação Zerada (Recomendado)
+Para garantir que o banco de dados do servidor esteja idêntico ao que funcionou no teste local:
 
-1.  **Via Terminal (SSH)**:
-    Na pasta do backend (`~/zedecks-core/backend`), rode:
-    ```bash
-    php reset_admin.php
-    ```
-    Isso vai recriar o usuário `admin@zedecks.com` e resetar a senha para `password` (garantido).
+1.  **Limpar o Banco**:
+    - Vá no PHPMyAdmin do servidor.
+    - Selecione seu banco de dados.
+    - Selecione todas as tabelas e escolha a opção "DROP" (Apagar).
 
-2.  **Via Navegador (Sem SSH)**:
-    Se não tiver SSH, você pode tentar importar o arquivo SQL manualmente ou pedir suporte.
-    Mas como você tem acesso aos arquivos, verifique se o arquivo `.env` no servidor está apontando para o banco de dados correto.
+2.  **Importar o Correto**:
+    - Ainda no PHPMyAdmin, clique em "Importar".
+    - Selecione o arquivo `install.sql` que está dentro da pasta `DEPLOY_CPANEL`.
+    - Isso vai criar toda a estrutura E o usuário admin correto.
+
+3.  **Limpar Caches do Servidor**:
+    - Suba o arquivo `setup_server.php` (da pasta `DEPLOY_CPANEL/backend`) para sua pasta backend.
+    - Rode no terminal: `php setup_server.php`.
 
 ## 5. Configuração do Frontend e API (Personalizada)
 A pasta `DEPLOY_CPANEL/public_html` agora contém:
@@ -59,8 +62,8 @@ A pasta `DEPLOY_CPANEL/public_html` agora contém:
 
 **Passos:**
 1.  Mova **todo** o conteúdo de `DEPLOY_CPANEL/public_html` para a pasta `public_html` do seu servidor (sobrescreva se necessário).
-2.  **Crucial**: Certifique-se de que a pasta `backend` esteja em `/home/seuusuario/backend`.
-    - A pasta `api` que enviei já está configurada para procurar o backend em `../../backend` (dois níveis acima).
+2.  **Crucial**: Certifique-se de que a pasta `backend` esteja em `/home/seuusuario/zedecks-core/backend`.
+    - A pasta `api` que enviei já está configurada para procurar o backend em `../../../zedecks-core/backend` (três níveis acima + zedecks-core).
     - Se você colocar o backend em outro lugar, precisará editar o arquivo `public_html/api/index.php`.
 
 ### Teste Final
