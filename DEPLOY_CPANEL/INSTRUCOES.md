@@ -1,72 +1,48 @@
-# Guia de Deploy Manual no cPanel (v1.2.0)
+# Guia de Instalação Limpa (Clean Install)
 
-Este guia descreve como subir os arquivos da pasta `DEPLOY_CPANEL` para o seu servidor cPanel.
-**Versão 1.2.0**: Inclui correção de login, rota de API segura e script de reset de admin.
+Este pacote contém TODOS os arquivos necessários para uma instalação do zero.
 
-## 1. Preparação (Local)
-A pasta `DEPLOY_CPANEL` já contém:
-- **public_html**: O build do frontend (Site/React) atualizado.
-- **backend**: O código do Laravel (API) com correções de compatibilidade PHP 8.3.
+## 1. Limpeza do Servidor (Começando do Zero)
+Antes de subir qualquer coisa:
+1.  **Arquivos**: Apague TUDO da pasta `/public_html/training` e `/home/usuario/zedecks-core/backend` (se existirem).
+2.  **Banco de Dados**: Apague TODAS as tabelas do seu banco de dados atual.
 
-> **Atenção**: Esta pasta **não** contém a pasta `vendor` (dependências do PHP) para economizar tempo de upload e evitar conflitos. Você precisará rodar o comando `composer install` no servidor ou fazer o upload da pasta `vendor` separadamente se não tiver acesso SSH/Terminal.
+## 2. Upload de Arquivos
+A pasta `DEPLOY_CPANEL` está organizada assim:
+1.  `public_html`: Conteúdo do Site (Frontend).
+2.  `backend`: Código do Sistema (API).
+3.  `install.sql`: Banco de dados pronto.
+4.  `db_import.php`: Script auxiliar de importação.
+5.  `setup_server.php`: Script de configuração.
 
-## 2. Upload para o cPanel
-1. Comprima (Zip) o conteúdo da pasta `DEPLOY_CPANEL`.
-2. Acesse o **Gerenciador de Arquivos** do cPanel.
-3. Faça o upload do arquivo Zip.
-4. Extraia os arquivos.
+**Onde colocar cada coisa:**
+- Conteúdo de `public_html` -> Na pasta `/public_html/training`.
+- Conteúdo de `backend` -> Na pasta `/home/usuario/zedecks-core/backend`.
+- Arquivos `install.sql` e `db_import.php` -> Coloque na raiz (`/public_html/training`) TEMPORARIAMENTE para importar o banco.
 
-### Estrutura Sugerida no Servidor
-Você pode colocar a pasta `backend` na raiz do seu usuário, fora da pasta pública.
-Opções comuns:
-- `/home/seuusuario/backend` (Mais simples)
-- `/home/seuusuario/repositories/backend` (Mais organizado)
+## 3. Importando o Banco de Dados (Método Infalível)
+Como você teve problemas com upload no PHPMyAdmin:
 
-*O importante é NÃO colocar o backend dentro de `public_html`, para que ninguém baixe seu código fonte.*
+1.  Edite o arquivo `db_import.php` (pode ser antes de subir ou no gerenciador de arquivos do cPanel).
+2.  Coloque seus dados:
+    ```php
+    define('DB_USER', 'seu_usuario_cpanel');
+    define('DB_PASS', 'sua_senha_banco');
+    define('DB_NAME', 'seu_nome_banco');
+    ```
+3.  Acesse no navegador: `https://training.zedecks.com/db_import.php`
+    - Ele vai ler o `install.sql` e criar tudo para você.
+    - Se der sucesso, DELETE os arquivos `db_import.php` e `install.sql` do servidor imediatamente por segurança.
 
-## 3. Configuração do Backend
-1. Navegue até a pasta do backend no gerenciador de arquivos.
-2. Renomeie o arquivo `.env.example` para `.env` (se já não existir).
-3. Edite o `.env` e configure:
-   - `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` (Dados do banco de dados).
-   - `APP_URL`: Insira a URL do seu site (ex: `https://training.zedecks.com`).
-4. Se tiver acesso ao Terminal do cPanel, entre na pasta do backend e rode:
-   ```bash
-   composer install --optimize-autoloader --no-dev
-   php artisan key:generate
-   php artisan storage:link
-   php artisan migrate
-   ```
+## 4. Configuração Final
+1.  **Env**: Vá na pasta do backend, renomeie `.env.example` para `.env` e configure o banco de dados.
+2.  **Setup**: Se tiver acesso SSH, vá na pasta backend e rode:
+    ```bash
+    php setup_server.php
+    ```
+    Isso vai limpar caches e criar os links.
 
-## 4. Instalação Zerada (Recomendado)
-Para garantir que o banco de dados do servidor esteja idêntico ao que funcionou no teste local:
-
-1.  **Limpar o Banco**:
-    - Vá no PHPMyAdmin do servidor.
-    - Selecione seu banco de dados.
-    - Selecione todas as tabelas e escolha a opção "DROP" (Apagar).
-
-2.  **Importar o Correto**:
-    - Ainda no PHPMyAdmin, clique em "Importar".
-    - Selecione o arquivo `install.sql` que está dentro da pasta `DEPLOY_CPANEL`.
-    - Isso vai criar toda a estrutura E o usuário admin correto.
-
-3.  **Limpar Caches do Servidor**:
-    - Suba o arquivo `setup_server.php` (da pasta `DEPLOY_CPANEL/backend`) para sua pasta backend.
-    - Rode no terminal: `php setup_server.php`.
-
-## 5. Configuração do Frontend e API (Personalizada)
-A pasta `DEPLOY_CPANEL/public_html` agora contém:
-1.  **O Site (React)**: Arquivos como `index.html`, `assets`, etc.
-2.  **A Ponte da API**: Uma pasta chamada `api`.
-
-**Passos:**
-1.  Mova **todo** o conteúdo de `DEPLOY_CPANEL/public_html` para a pasta `public_html` do seu servidor (sobrescreva se necessário).
-2.  **Crucial**: Certifique-se de que a pasta `backend` esteja em `/home/seuusuario/zedecks-core/backend`.
-    - A pasta `api` que enviei já está configurada para procurar o backend em `../../../zedecks-core/backend` (três níveis acima + zedecks-core).
-    - Se você colocar o backend em outro lugar, precisará editar o arquivo `public_html/api/index.php`.
-
-### Teste Final
-- Acesse `https://training.zedecks.com` -> Deve carregar o site.
-- Acesse `https://training.zedecks.com/api` -> Deve dar erro do Laravel ou página em branco (mas não erro 404 Apache).
-- Acesse o Login -> Deve conectar sem erro de "Network Error".
+## 5. Login
+- **URL**: `https://training.zedecks.com/login`
+- **Email**: `admin@zedecks.com`
+- **Senha**: `password`
