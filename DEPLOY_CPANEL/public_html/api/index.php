@@ -34,6 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 require __DIR__.'/../../../zedecks-core/backend/vendor/autoload.php';
 
+// --- PATH FIX (Subdirectory Issue) ---
+// O Laravel vê que estamos na pasta "api" e remove "api" da URL.
+// Mas nossas rotas esperam "api".
+// Solução: Fingimos que o script está na raiz, assim o "api" conta como rota.
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+// -------------------------------------
+
 try {
     $app = require_once __DIR__.'/../../../zedecks-core/backend/bootstrap/app.php';
     $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
