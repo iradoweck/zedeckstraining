@@ -1,11 +1,12 @@
-# Guia de Deploy Manual no cPanel
+# Guia de Deploy Manual no cPanel (v1.2.0)
 
 Este guia descreve como subir os arquivos da pasta `DEPLOY_CPANEL` para o seu servidor cPanel.
+**Versão 1.2.0**: Inclui correção de login, rota de API segura e script de reset de admin.
 
 ## 1. Preparação (Local)
 A pasta `DEPLOY_CPANEL` já contém:
-- **public_html**: O build do frontend (Site/React).
-- **backend**: O código do Laravel (API).
+- **public_html**: O build do frontend (Site/React) atualizado.
+- **backend**: O código do Laravel (API) com correções de compatibilidade PHP 8.3.
 
 > **Atenção**: Esta pasta **não** contém a pasta `vendor` (dependências do PHP) para economizar tempo de upload e evitar conflitos. Você precisará rodar o comando `composer install` no servidor ou fazer o upload da pasta `vendor` separadamente se não tiver acesso SSH/Terminal.
 
@@ -37,25 +38,21 @@ Opções comuns:
    php artisan migrate
    ```
 
-## 4. Criar Usuário Admin
-Para acessar o painel, você precisa criar o primeiro usuário.
+## 4. Garantir Acesso Admin (Script de Reset)
+Se o login ainda falhar, use o script de emergência que criei.
+
 1.  **Via Terminal (SSH)**:
-    Na pasta do backend, rode:
+    Na pasta do backend (`~/zedecks-core/backend`), rode:
     ```bash
-    php create_test_users.php
+    php reset_admin.php
     ```
-    Isso vai criar o usuário `admin@zedecks.com` com senha `password`.
+    Isso vai recriar o usuário `admin@zedecks.com` e resetar a senha para `password` (garantido).
 
-2.  **Via Banco de Dados (Se não tiver Terminal)**:
-    - Vá no PHPMyAdmin.
-    - Abra a tabela `users`.
-    - Insira um usuário manualmente com:
-        - name: Admin
-        - email: admin@zedecks.com
-        - password: A senha precisa ser "Hashada". Use este hash para a senha 'password': `$2y$12$K.l.Pqq.m.d.Q.u.o.t.e.d.h.a.s.h` (ou use um gerador de Bcrypt online).
-        - role: admin
+2.  **Via Navegador (Sem SSH)**:
+    Se não tiver SSH, você pode tentar importar o arquivo SQL manualmente ou pedir suporte.
+    Mas como você tem acesso aos arquivos, verifique se o arquivo `.env` no servidor está apontando para o banco de dados correto.
 
-## 5. Configuração do Frontend e API
+## 5. Configuração do Frontend e API (Personalizada)
 A pasta `DEPLOY_CPANEL/public_html` agora contém:
 1.  **O Site (React)**: Arquivos como `index.html`, `assets`, etc.
 2.  **A Ponte da API**: Uma pasta chamada `api`.
