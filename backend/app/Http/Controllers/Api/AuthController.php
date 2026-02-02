@@ -88,6 +88,8 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('Login Attempt', $request->all());
+
         $validated = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
