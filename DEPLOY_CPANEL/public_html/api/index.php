@@ -18,7 +18,19 @@ if (strpos($_SERVER['REQUEST_URI'], '/api/health') !== false) {
     echo json_encode(['status' => 'alive', 'timestamp' => time()]);
     exit;
 }
-// --- DEBUG END ---
+
+// --- CORS BRUTE FORCE (Nuclear Fix) ---
+// Se o Laravel falhar, nós garantimos o header aqui
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Origin, Content-Type, Accept, Authorization, X-Requested-With");
+
+// Opção rápida para Preflight
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    header("HTTP/1.1 200 OK");
+    exit();
+}
+// --------------------------------------
 
 require __DIR__.'/../../../zedecks-core/backend/vendor/autoload.php';
 
