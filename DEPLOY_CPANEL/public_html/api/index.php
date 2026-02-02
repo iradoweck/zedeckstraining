@@ -40,6 +40,12 @@ try {
     $response = $kernel->handle(
         $request = Illuminate\Http\Request::capture()
     );
+
+    // --- DEBUG PATH MATCHING ---
+    $debugMsg = "Laravel Path: " . $request->path() . " | Full URL: " . $request->url() . "\n";
+    file_put_contents(__DIR__ . '/request_log.txt', $debugMsg, FILE_APPEND);
+    // ---------------------------
+
     $response->send();
     $kernel->terminate($request, $response);
 } catch (Throwable $e) {
