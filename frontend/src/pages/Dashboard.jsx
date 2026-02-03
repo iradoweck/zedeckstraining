@@ -63,6 +63,16 @@ export default function Dashboard() {
                     </div>
                 )}
             </main>
+
+            <footer className="py-6 text-center text-xs text-gray-400 dark:text-gray-600">
+                <p>
+                    &copy; 2025-{new Date().getFullYear()} Zedeck's Training | Todos os direitos reservados | Powered by <a href="https://zedecks.com" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline">ZEDECK'S IT</a>
+                </p>
+            </footer>
+            {/* Version in Corner */}
+            <div className="fixed bottom-2 right-2 text-[10px] opacity-50 text-gray-400 pointer-events-none">
+                v1.2.1
+            </div>
         </div>
     );
 }

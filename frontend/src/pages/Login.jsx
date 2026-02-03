@@ -96,6 +96,17 @@ export default function Login() {
                     </p>
                 </div>
             </div>
+
+            {/* Footer */}
+            <footer className="absolute bottom-0 w-full py-4 text-center text-xs text-gray-400 dark:text-gray-600">
+                <p>
+                    &copy; 2025-{new Date().getFullYear()} Zedeck's Training | {t('rights_reserved', 'Todos os direitos reservados')} | Powered by <a href="https://zedecks.com" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline">ZEDECK'S IT</a>
+                </p>
+                {/* Version in Corner */}
+                <div className="absolute bottom-4 right-4 text-[10px] opacity-70">
+                    v1.2.1
+                </div>
+            </footer>
         </div>
     );
 }

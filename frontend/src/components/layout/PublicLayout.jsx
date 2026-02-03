@@ -139,8 +139,11 @@ export default function PublicLayout({ children }) {
                         </div>
                     </div>
                 </div>
+
                 <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400">
-                    &copy; {new Date().getFullYear()} Zedeck's Training. All rights reserved.
+                    <p>
+                        &copy; 2025-{new Date().getFullYear()} Zedeck's Training | Todos os direitos reservados | Powered by <a href="https://zedecks.com" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline">ZEDECK'S IT</a>
+                    </p>
                 </div>
             </footer>
         </div>
