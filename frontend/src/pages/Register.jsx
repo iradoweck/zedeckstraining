@@ -13,38 +13,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
 
-// --- Constants ---
-const COUNTRIES = [
-    { code: 'MZ', name: 'Moçambique', flag: '🇲🇿' },
-    { code: 'AO', name: 'Angola', flag: '🇦🇴' },
-    { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
-    { code: 'CV', name: 'Cabo Verde', flag: '🇨🇻' },
-    { code: 'GW', name: 'Guiné-Bissau', flag: '🇬🇼' },
-    { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
-    { code: 'ST', name: 'São Tomé e Príncipe', flag: '🇸🇹' },
-    { code: 'ZA', name: 'África do Sul', flag: '🇿🇦' },
-    { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
-    { code: 'CN', name: 'China', flag: '🇨🇳' },
-    { code: 'IN', name: 'Índia', flag: '🇮🇳' },
-    { code: 'FR', name: 'França', flag: '🇫🇷' },
-    { code: 'DE', name: 'Alemanha', flag: '🇩🇪' },
-];
-
-const PHONE_CODES = [
-    { code: '+258', country: 'MZ', flag: '🇲🇿' },
-    { code: '+244', country: 'AO', flag: '🇦🇴' },
-    { code: '+55', country: 'BR', flag: '🇧🇷' },
-    { code: '+238', country: 'CV', flag: '🇨🇻' },
-    { code: '+245', country: 'GW', flag: '🇬🇼' },
-    { code: '+351', country: 'PT', flag: '🇵🇹' },
-    { code: '+239', country: 'ST', flag: '🇸🇹' },
-    { code: '+27', country: 'ZA', flag: '🇿🇦' },
-    { code: '+1', country: 'US', flag: '🇺🇸' },
-];
-
-const MOZ_PROVINCES = [
-    "Maputo Cidade", "Maputo Província", "Gaza", "Inhambane", "Sofala", "Manica", "Tete", "Zambézia", "Nampula", "Cabo Delgado", "Niassa"
-];
+import { MOZ_PROVINCES, COUNTRIES, BR_STATES, US_STATES } from '../components/constants';
 
 // --- Helpers ---
 const toTitleCase = (str) => {
@@ -75,13 +44,11 @@ export default function Register() {
         // Phase 1: Personal (Extended)
         first_name: '',
         last_name: '',
-        father_name: '',
-        mother_name: '',
         birth_date: '',
-        birth_place_type: 'Other', // 'MZ', 'BR', 'US', 'Other'
+        birth_place_type: 'MZ', // 'MZ', 'BR', 'US', 'Other' (Default matches nationality 'MZ')
         birth_place: '', // State or Custom Text
         gender: '',
-        nationality: 'Moçambique',
+        nationality: 'MZ',
         phone_code: '+258',
         phone_number: '',
         civil_status: '',
@@ -136,8 +103,8 @@ export default function Register() {
             age--;
         }
 
-        if (age < 12) {
-            setError(t('age_restriction_error', 'Must be at least 12 years old'));
+        if (age < 14) {
+            setError(t('age_restriction_error', 'Must be at least 14 years old'));
         } else {
             setError('');
         }
@@ -238,88 +205,72 @@ export default function Register() {
                             </div>
                         </div>
 
-                        {/* Parents (Optional/Standard) */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="father_name">{t('father_name_label', 'Father Name')}</Label>
-                                <Input
-                                    id="father_name"
-                                    name="father_name"
-                                    value={formData.father_name}
-                                    onChange={handleNameChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="mother_name">{t('mother_name_label', 'Mother Name')}</Label>
-                                <Input
-                                    id="mother_name"
-                                    name="mother_name"
-                                    value={formData.mother_name}
-                                    onChange={handleNameChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
-                                />
-                            </div>
-                        </div>
-
                         {/* Date, Gender, Phone */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="birth_date">{t('birth_date_label', 'Date of Birth')} <span className="text-red-500">*</span></Label>
-                                <Input
-                                    id="birth_date"
-                                    name="birth_date"
-                                    type="date"
-                                    value={formData.birth_date}
-                                    onChange={handleDateChange} // Validates >12
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="gender">{t('gender_label', 'Gender')} <span className="text-red-500">*</span></Label>
-                                <Select
-                                    name="gender"
-                                    value={formData.gender || undefined}
-                                    onValueChange={(val) => handleSelectChange('gender', val)}
-                                    required
-                                >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                                        <SelectValue placeholder={t('select_gender', 'Select')} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="M">{t('gender_male', 'Male')}</SelectItem>
-                                        <SelectItem value="F">{t('gender_female', 'Female')}</SelectItem>
-                                        <SelectItem value="O">{t('gender_other', 'Other')}</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="phone">{t('phone_label', 'Phone')} <span className="text-red-500">*</span></Label>
-                                <div className="flex gap-2">
-                                    <Select
-                                        value={formData.phone_code}
-                                        onValueChange={(val) => handleSelectChange('phone_code', val)}
-                                    >
-                                        <SelectTrigger className="w-[100px] bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {PHONE_CODES.map(c => (
-                                                <SelectItem key={c.country} value={c.code}>
-                                                    <span className="mr-2">{c.flag}</span> {c.code}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="birth_date">{t('birth_date_label', 'Date of Birth')} <span className="text-red-500">*</span></Label>
                                     <Input
-                                        name="phone_number"
-                                        placeholder="840000000"
-                                        value={formData.phone_number}
-                                        onChange={handleChange}
-                                        className="flex-1 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                                        id="birth_date"
+                                        name="birth_date"
+                                        type="date"
+                                        value={formData.birth_date}
+                                        onChange={handleDateChange} // Validates >14
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                         required
                                     />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone">{t('phone_label', 'Phone')} <span className="text-red-500">*</span></Label>
+                                    <div className="flex gap-2">
+                                        <Select
+                                            value={formData.phone_code}
+                                            onValueChange={(val) => handleSelectChange('phone_code', val)}
+                                        >
+                                            <SelectTrigger className="w-[80px] bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 px-2 justify-center">
+                                                <span className={`fi fi-${COUNTRIES.find(c => c.dial_code === formData.phone_code)?.code.toLowerCase()} text-lg`}></span>
+                                            </SelectTrigger>
+                                            <SelectContent className="max-h-[200px]">
+                                                {COUNTRIES.map(c => (
+                                                    <SelectItem key={c.code} value={c.dial_code}>
+                                                        <span className={`fi fi-${c.code.toLowerCase()} mr-2`}></span> {c.dial_code}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <Input
+                                            name="phone_number"
+                                            placeholder="840000000"
+                                            value={formData.phone_number}
+                                            onChange={handleChange}
+                                            className="flex-1 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Visual Gender Selection */}
+                            <div className="space-y-2">
+                                <Label>{t('gender_label', 'Gender')} <span className="text-red-500">*</span></Label>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {['M', 'F', 'O'].map((g) => (
+                                        <div
+                                            key={g}
+                                            onClick={() => handleSelectChange('gender', g)}
+                                            className={`cursor-pointer rounded-lg border-2 p-2 flex flex-col items-center justify-center transition-all ${formData.gender === g
+                                                ? 'border-primary bg-primary/5 text-primary'
+                                                : 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:border-primary/50'
+                                                }`}
+                                        >
+                                            <span className="text-xl">
+                                                {g === 'M' ? '👨' : g === 'F' ? '👩' : '🧑'}
+                                            </span>
+                                            <span className="text-[10px] font-medium uppercase tracking-wide">
+                                                {g === 'M' ? t('gender_male', 'Male') : g === 'F' ? t('gender_female', 'Female') : t('gender_other', 'Other')}
+                                            </span>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -332,18 +283,21 @@ export default function Register() {
                                     name="nationality"
                                     value={formData.nationality}
                                     onValueChange={(val) => {
-                                        // Auto-set birth place type if needed
-                                        const type = val === 'Moçambique' ? 'MZ' : val === 'Brasil' ? 'BR' : val === 'Estados Unidos' ? 'US' : 'Other';
+                                        // Val is now the Country Code (e.g., 'MZ')
+                                        const type = ['MZ', 'BR', 'US'].includes(val) ? val : 'Other';
                                         setFormData(prev => ({ ...prev, nationality: val, birth_place_type: type, birth_place: '' }));
                                     }}
                                 >
                                     <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                                        <SelectValue />
+                                        <span className="flex items-center">
+                                            <span className={`fi fi-${formData.nationality.toLowerCase()} mr-2 text-lg`}></span>
+                                            {t(`country_${formData.nationality.toLowerCase()}`)}
+                                        </span>
                                     </SelectTrigger>
-                                    <SelectContent>
+                                    <SelectContent className="max-h-[300px]">
                                         {COUNTRIES.map(c => (
-                                            <SelectItem key={c.code} value={c.name}>
-                                                <span className="mr-2">{c.flag}</span> {c.name}
+                                            <SelectItem key={c.code} value={c.code}>
+                                                <span className={`fi fi-${c.code.toLowerCase()} mr-2`}></span> {t(`country_${c.code.toLowerCase()}`)}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -351,16 +305,16 @@ export default function Register() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="birth_place">{t('birth_place_label', 'Place of Birth')}</Label>
-                                {formData.birth_place_type === 'MZ' ? (
+                                {['MZ', 'BR', 'US'].includes(formData.birth_place_type) ? (
                                     <Select
                                         value={formData.birth_place}
                                         onValueChange={(val) => handleSelectChange('birth_place', val)}
                                     >
                                         <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
-                                            <SelectValue placeholder="Selecione Província" />
+                                            <SelectValue placeholder={t('select_state', 'Select State/Province')} />
                                         </SelectTrigger>
-                                        <SelectContent>
-                                            {MOZ_PROVINCES.map(p => (
+                                        <SelectContent className="max-h-[200px]">
+                                            {(formData.birth_place_type === 'MZ' ? MOZ_PROVINCES : formData.birth_place_type === 'BR' ? BR_STATES : US_STATES).map(p => (
                                                 <SelectItem key={p} value={p}>{p}</SelectItem>
                                             ))}
                                         </SelectContent>
@@ -371,7 +325,7 @@ export default function Register() {
                                         name="birth_place"
                                         value={formData.birth_place}
                                         onChange={handleChange}
-                                        placeholder={formData.nationality === 'Moçambique' ? 'Província' : 'Cidade/Estado'}
+                                        placeholder={formData.nationality === 'MZ' ? 'Província' : 'Cidade/Estado'}
                                         className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                     />
                                 )}
@@ -379,8 +333,9 @@ export default function Register() {
                         </div>
 
                         {/* Civil Status & Document */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Civil Status (Smaller width) */}
+                            <div className="space-y-2 col-span-1">
                                 <Label htmlFor="civil_status">{t('civil_status_label', 'Civil Status')}</Label>
                                 <Select
                                     name="civil_status"
@@ -399,10 +354,11 @@ export default function Register() {
                                 </Select>
                             </div>
 
-                            {/* Document Type + Number (Grid inside) */}
-                            <div className="space-y-2">
-                                <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
-                                <div className={`grid ${formData.document_type === 'Other' ? 'grid-cols-2' : 'grid-cols-1'} gap-2`}>
+                            {/* Document Info (Wider to fit on one line) */}
+                            <div className="space-y-2 col-span-1 md:col-span-2">
+                                <Label htmlFor="document_type">{t('doc_type_label', 'Identification Document')}</Label>
+                                <div className={`grid gap-2 ${formData.document_type === 'Other' ? 'grid-cols-1 md:grid-cols-3' : 'grid-cols-1 md:grid-cols-2'}`}>
+                                    {/* Doc Type */}
                                     <Select
                                         name="document_type"
                                         value={formData.document_type || undefined}
@@ -420,6 +376,7 @@ export default function Register() {
                                         </SelectContent>
                                     </Select>
 
+                                    {/* Doc Fields */}
                                     {formData.document_type === 'Other' ? (
                                         <>
                                             <Input
@@ -434,7 +391,7 @@ export default function Register() {
                                                 placeholder={t('doc_number_label', 'Number')}
                                                 value={formData.document_number}
                                                 onChange={handleChange}
-                                                className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 col-span-2"
+                                                className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                             />
                                         </>
                                     ) : (
