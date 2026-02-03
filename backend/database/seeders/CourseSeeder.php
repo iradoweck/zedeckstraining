@@ -43,6 +43,10 @@ class CourseSeeder extends Seeder
                 'schedules' => $commonSchedules,
                 'options' => [
                     'type' => 'programming',
+                    'icon' => 'code',
+                    'uniform_required' => true,
+                    'uniform_cost' => 1500,
+                    'modalities' => ['Presencial', 'Online', 'Híbrido'],
                     'stacks' => [
                         'Web Development (Fullstack)',
                         'Mobile Apps (Flutter/React Native)',
@@ -57,9 +61,13 @@ class CourseSeeder extends Seeder
                 'price' => 3500.00,
                 'is_published' => true,
                 'trainer_id' => $trainer->id,
-                'schedules' => $commonSchedules,
+                'schedules' => ["08:00 - 09:30", "18:00 - 19:30"], // Fewer options
                 'options' => [
                     'type' => 'language',
+                    'icon' => 'globe',
+                    'uniform_required' => true,
+                    'uniform_cost' => 1200,
+                    'modalities' => ['Presencial', 'Online'],
                     'exams' => [
                         'Cambridge',
                         'TOEFL',
@@ -75,6 +83,12 @@ class CourseSeeder extends Seeder
                 'is_published' => true,
                 'trainer_id' => $trainer->id,
                 'schedules' => $commonSchedules,
+                'options' => [
+                    'icon' => 'calculator',
+                    'uniform_required' => true,
+                    'uniform_cost' => 1500,
+                    'modalities' => ['Presencial', 'Híbrido']
+                ]
             ],
             [
                 'title' => 'Design Gráfico & Marketing Digital',
@@ -83,7 +97,13 @@ class CourseSeeder extends Seeder
                 'price' => 4000.00,
                 'is_published' => true,
                 'trainer_id' => $trainer->id,
-                'schedules' => ["Tarde (14:00 - 16:00)", "Pós-Laboral (17:30 - 19:30)"], // Limited schedules example
+                'schedules' => ["14:00 - 15:30", "16:00 - 17:30"],
+                'options' => [
+                    'icon' => 'palette',
+                    'uniform_required' => true,
+                    'uniform_cost' => 1200,
+                    'modalities' => ['Presencial', 'Online']
+                ]
             ],
              [
                 'title' => 'Electricidade Instaladora',
@@ -94,7 +114,10 @@ class CourseSeeder extends Seeder
                 'trainer_id' => $trainer->id,
                 'schedules' => $commonSchedules,
                 'options' => [
-                    'uniform_cost' => 1500 // Specific override
+                    'icon' => 'zap',
+                    'uniform_required' => true,
+                    'uniform_cost' => 1800,
+                    'modalities' => ['Presencial']
                 ]
             ],
         ];

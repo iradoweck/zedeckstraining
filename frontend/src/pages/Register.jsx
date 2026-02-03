@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus, ArrowLeft, ChevronRight, ChevronLeft, CreditCard, BookOpen, User, Fingerprint, Lock } from 'lucide-react';
+import { UserPlus, ArrowLeft, ChevronRight, ChevronLeft, CreditCard, BookOpen, User, Fingerprint, Lock, Code, Globe, Calculator, Palette, Zap, Shirt } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -14,6 +14,7 @@ import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 import { MOZ_PROVINCES, COUNTRIES, BR_STATES, US_STATES } from '../components/constants';
+import { useQuery } from '@tanstack/react-query';
 
 // --- Helpers ---
 const toTitleCase = (str) => {
@@ -21,6 +22,15 @@ const toTitleCase = (str) => {
         return match.toUpperCase();
     });
 };
+
+const COURSE_ICONS = {
+    'code': Code,
+    'globe': Globe,
+    'calculator': Calculator,
+    'palette': Palette,
+    'zap': Zap
+};
+
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Register() {
@@ -39,6 +49,23 @@ export default function Register() {
     // Wizard State
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = 5;
+    const [availableCourses, setAvailableCourses] = useState([]);
+    const [isLoadingCourses, setIsLoadingCourses] = useState(false);
+
+    useEffect(() => {
+        const fetchCourses = async () => {
+            setIsLoadingCourses(true);
+            try {
+                const response = await api.get('/courses'); // Ensure this endpoint exists
+                setAvailableCourses(response.data.data || response.data);
+            } catch (error) {
+                console.error("Failed to fetch courses", error);
+            } finally {
+                setIsLoadingCourses(false);
+            }
+        };
+        fetchCourses();
+    }, []);
 
     const [formData, setFormData] = useState({
         // Phase 1: Personal (Extended)
@@ -56,6 +83,9 @@ export default function Register() {
         education_level: '',
         has_special_needs: false,
         special_needs_description: '',
+
+        // Phase 2: Courses
+        selected_courses: [], // Array of { id, title, schedule } (Max 2)
 
         // Documents
         document_type: 'BI',
@@ -478,71 +508,195 @@ export default function Register() {
 
             case 2: // Courses
                 return (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                        <div className="text-center mb-6">
-                            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                                <BookOpen className="text-primary" size={24} />
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="text-center mb-8">
+                            <div className="inline-flex items-center justify-center p-3 bg-primary/10 rounded-2xl mb-4 ring-4 ring-primary/5">
+                                <BookOpen className="text-primary" size={28} />
                             </div>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('courses_selection', 'Course Selection')}</h2>
-                            <p className="text-sm text-gray-500">{t('step_2_desc', 'Choose your learning path')}</p>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{t('courses_selection', 'Selecione seu Curso')}</h2>
+                            <p className="text-gray-500 max-w-md mx-auto">{t('step_2_desc', 'Escolha até 2 cursos para começar sua jornada profissional.')}</p>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="course">{t('course_label', 'Select Course')}</Label>
-                                <Select
-                                    name="course"
-                                    value={formData.course || undefined}
-                                    onValueChange={(val) => handleSelectChange('course', val)}
-                                >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                        <SelectValue placeholder={t('select_course', 'Select a Course')} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="web_design">Web Design & Development</SelectItem>
-                                        <SelectItem value="accounting">Contabilidade e Gestão</SelectItem>
-                                        <SelectItem value="english">Inglês Profissional</SelectItem>
-                                        <SelectItem value="informatics">Informática Avançada</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                        {isLoadingCourses ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {[1, 2, 3, 4].map(i => (
+                                    <div key={i} className="h-48 rounded-2xl bg-gray-100 dark:bg-gray-800 animate-pulse" />
+                                ))}
                             </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar pb-4">
+                                {availableCourses.map(course => {
+                                    const isSelected = formData.selected_courses?.some(c => c.id === course.id);
+                                    const selectedData = formData.selected_courses?.find(c => c.id === course.id);
+                                    const Icon = COURSE_ICONS[course.options?.icon] || BookOpen;
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="modality">{t('modality_label', 'Modality')}</Label>
-                                    <Select
-                                        name="modality"
-                                        value={formData.modality || undefined}
-                                        onValueChange={(val) => handleSelectChange('modality', val)}
-                                    >
-                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                            <SelectValue placeholder={t('select_modality', 'Select Mode')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="presencial">Presencial</SelectItem>
-                                            <SelectItem value="online">Online</SelectItem>
-                                            <SelectItem value="hybrid">Híbrido</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="shift">{t('shift_label', 'Shift')}</Label>
-                                    <Select
-                                        name="shift"
-                                        value={formData.shift || undefined}
-                                        onValueChange={(val) => handleSelectChange('shift', val)}
-                                    >
-                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                            <SelectValue placeholder={t('select_shift', 'Select Shift')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="morning">Manhã (08:00 - 12:00)</SelectItem>
-                                            <SelectItem value="afternoon">Tarde (13:00 - 17:00)</SelectItem>
-                                            <SelectItem value="evening">Noite (18:00 - 21:00)</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
+                                    // Dynamic Uniform Logic
+                                    const isOnline = selectedData?.modality === 'Online';
+                                    const showUniform = course.options?.uniform_required && !isOnline;
+                                    const uniformCost = course.options?.uniform_cost || 0;
+
+                                    // Modalities available for this course
+                                    const availableModalities = course.options?.modalities || ['Presencial'];
+
+                                    return (
+                                        <div
+                                            key={course.id}
+                                            onClick={() => {
+                                                if (!isSelected) {
+                                                    if (formData.selected_courses.length >= 2) return;
+                                                    // Initialize with first modality if available, else empty
+                                                    const defaultModality = availableModalities.includes('Presencial') ? 'Presencial' : availableModalities[0];
+
+                                                    setFormData(prev => ({
+                                                        ...prev,
+                                                        selected_courses: [...prev.selected_courses, {
+                                                            id: course.id,
+                                                            title: course.title,
+                                                            price: course.price,
+                                                            schedule: '',
+                                                            modality: defaultModality,
+                                                            uniform_required: course.options?.uniform_required,
+                                                            uniform_cost: uniformCost || 0
+                                                        }]
+                                                    }));
+                                                }
+                                                // Allow toggle deselect (optional, kept simple here to match existing ux pattern or enhanced)
+                                                // Actually, let's keep the card click as "Select" and provide a distinct close button for "Deselect" to avoid accidental clicks? 
+                                                // Or toggle. Toggle is better for UX if it's clear.
+                                            }}
+                                            className={`
+                                                relative overflow-hidden rounded-2xl border-2 transition-all duration-300 flex flex-col
+                                                ${isSelected
+                                                    ? 'border-primary shadow-lg shadow-primary/10 bg-white dark:bg-gray-800'
+                                                    : 'border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 hover:border-gray-300 dark:hover:border-gray-700 hover:bg-white dark:hover:bg-gray-800'
+                                                }
+                                                ${(!isSelected && formData.selected_courses.length >= 2) ? 'opacity-40 grayscale pointer-events-none' : 'cursor-pointer'}
+                                            `}
+                                        >
+
+                                            {/* Header Section */}
+                                            <div className="p-5 flex items-start gap-4">
+                                                <div className={`
+                                                    p-3 rounded-xl shrink-0 transition-colors duration-300
+                                                    ${isSelected ? 'bg-primary text-white' : 'bg-white dark:bg-gray-800 text-gray-400 dark:text-gray-500 shadow-sm'}
+                                                `}>
+                                                    <Icon size={24} strokeWidth={isSelected ? 2 : 1.5} />
+                                                </div>
+
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex justify-between items-start">
+                                                        <h3 className={`font-bold text-lg leading-tight truncate pr-2 ${isSelected ? 'text-primary' : 'text-gray-900 dark:text-gray-100'}`}>
+                                                            {course.title}
+                                                        </h3>
+                                                        {isSelected && (
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    setFormData(prev => ({ ...prev, selected_courses: prev.selected_courses.filter(c => c.id !== course.id) }));
+                                                                }}
+                                                                className="text-gray-400 hover:text-red-500 p-1 hover:bg-red-50 rounded-full transition-colors"
+                                                            >
+                                                                ✕
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <p className="mt-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                                        {new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(course.price)}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* Expanded Controls */}
+                                            {isSelected && (
+                                                <div className="px-5 pb-5 pt-0 space-y-4 animate-in slide-in-from-top-2 fade-in" onClick={e => e.stopPropagation()}>
+
+                                                    {/* Divider */}
+                                                    <div className="h-px w-full bg-gray-100 dark:bg-gray-700 my-2" />
+
+                                                    {/* Modality Selector (Pills) */}
+                                                    <div className="space-y-2">
+                                                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Modalidade</Label>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {availableModalities.map(m => {
+                                                                const isActive = selectedData.modality === m;
+                                                                return (
+                                                                    <button
+                                                                        key={m}
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            const updated = formData.selected_courses.map(c => c.id === course.id ? { ...c, modality: m } : c);
+                                                                            setFormData(prev => ({ ...prev, selected_courses: updated }));
+                                                                        }}
+                                                                        className={`
+                                                                            px-3 py-1.5 text-xs font-medium rounded-lg border transition-all
+                                                                            ${isActive
+                                                                                ? 'bg-primary text-white border-primary shadow-sm'
+                                                                                : 'bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-primary/50'
+                                                                            }
+                                                                        `}
+                                                                    >
+                                                                        {m}
+                                                                    </button>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Shift Selector */}
+                                                    <div className="space-y-2">
+                                                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Turno / Horário</Label>
+                                                        <Select
+                                                            value={selectedData.schedule}
+                                                            onValueChange={(val) => {
+                                                                const updated = formData.selected_courses.map(c => c.id === course.id ? { ...c, schedule: val } : c);
+                                                                setFormData(prev => ({ ...prev, selected_courses: updated }));
+                                                            }}
+                                                        >
+                                                            <SelectTrigger className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-sm h-10">
+                                                                <SelectValue placeholder="Selecione o Horário" />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {course.schedules?.map((s, idx) => (
+                                                                    <SelectItem key={idx} value={s}>{s}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+
+                                                    {/* Uniform Box */}
+                                                    <div className={`rounded-xl p-3 flex items-center gap-3 text-sm transition-colors
+                                                        ${showUniform
+                                                            ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-100 border border-amber-100 dark:border-amber-900/50'
+                                                            : 'bg-green-50 dark:bg-green-950/30 text-green-800 dark:text-green-100 border border-green-100 dark:border-green-900/50'
+                                                        }
+                                                    `}>
+                                                        <div className={`p-2 rounded-full ${showUniform ? 'bg-amber-100 dark:bg-amber-900/50' : 'bg-green-100 dark:bg-green-900/50'}`}>
+                                                            {showUniform ? <Shirt size={16} /> : <Zap size={16} />}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            {showUniform ? (
+                                                                <div className="flex justify-between items-center">
+                                                                    <span className="font-medium">Uniforme Obrigatório</span>
+                                                                    <span className="font-bold">{new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(uniformCost)}</span>
+                                                                </div>
+                                                            ) : (
+                                                                <span className="font-medium">Isento de Uniforme (Online)</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            )}
+                                        </div>
+                                    );
+                                })}
                             </div>
+                        )}
+
+                        <div className="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <p className="text-sm text-gray-500">
+                                {formData.selected_courses.length} de 2 cursos selecionados
+                            </p>
                         </div>
                     </div>
                 );
