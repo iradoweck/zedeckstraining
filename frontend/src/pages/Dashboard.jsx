@@ -3,7 +3,6 @@ import { LogOut } from 'lucide-react';
 import StudentDashboard from '../components/student/StudentDashboard';
 import TrainerDashboard from '../components/trainer/TrainerDashboard';
 import { useTranslation } from 'react-i18next';
-import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
 
 export default function Dashboard() {
@@ -19,7 +18,6 @@ export default function Dashboard() {
                 </h1>
                 <div className="flex items-center gap-4">
                     <div className="hidden md:flex gap-2">
-                        <LanguageToggle />
                         <ThemeToggle />
                     </div>
 
@@ -49,7 +47,6 @@ export default function Dashboard() {
 
                     {/* Mobile Toggles */}
                     <div className="flex md:hidden gap-2">
-                        <LanguageToggle />
                         <ThemeToggle />
                     </div>
                 </div>

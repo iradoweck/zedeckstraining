@@ -4,6 +4,7 @@ import { Button } from '../ui/button';
 import { LogOut, User as UserIcon, Menu, X, BookOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import LanguageToggle from '../LanguageToggle';
 
 export default function PublicLayout({ children }) {
     const { t } = useTranslation();
@@ -52,6 +53,7 @@ export default function PublicLayout({ children }) {
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-3">
+                                    <LanguageToggle />
                                     <Link to="/login" className="text-sm font-medium hover:text-primary">{t('nav_login', 'Login')}</Link>
                                     <Link to="/register">
                                         <Button className="w-auto px-5 py-2 text-sm">{t('nav_get_started', 'Get Started')}</Button>
