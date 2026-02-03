@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus, ArrowLeft } from 'lucide-react';
+import { UserPlus, ArrowLeft, ChevronRight, ChevronLeft, CreditCard, BookOpen, User, Fingerprint, Lock } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -11,11 +11,12 @@ import ThemeToggle from '../components/ThemeToggle';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Register() {
     usePageTitle();
     const { t } = useTranslation();
-    const { user } = useAuth(); // To check if logged in
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     // Redirect if already logged in
@@ -25,17 +26,44 @@ export default function Register() {
         }
     }, [user, navigate]);
 
+    // Wizard State
+    const [currentStep, setCurrentStep] = useState(1);
+    const totalSteps = 5;
+
     const [formData, setFormData] = useState({
+        // Phase 1: Personal (Extended)
         name: '',
+        father_name: '',
+        mother_name: '',
+        birth_date: '',
+        birth_place: '',
+        gender: '',
+        nationality: '',
+        civil_status: '',
+        occupation: '',
+        education_level: '',
+        has_special_needs: false,
+        special_needs_description: '',
+        // Documents (Moved to Phase 1)
+        document_type: 'BI',
+        document_number: '',
+
+        // Phase 2: Courses
+        course: '',
+        modality: '',
+
+        // Phase 3: Identity (Renamed/Placeholder if emptied)
+        // ...
+
+        // Phase 4: Payment
+        payment_method: '',
+
+        // Phase 5: Account
         email: '',
         password: '',
         password_confirmation: '',
-        gender: '',
-        birth_date: '',
-        nationality: '',
-        document_type: 'BI',
-        document_number: '',
     });
+
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -45,6 +73,22 @@ export default function Register() {
 
     const handleSelectChange = (name, value) => {
         setFormData({ ...formData, [name]: value });
+    };
+
+    const nextStep = (e) => {
+        e.preventDefault();
+        setError('');
+        // Simple validation per step could go here
+        if (currentStep < totalSteps) {
+            setCurrentStep(curr => curr + 1);
+        }
+    };
+
+    const prevStep = () => {
+        setError('');
+        if (currentStep > 1) {
+            setCurrentStep(curr => curr - 1);
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -61,9 +105,8 @@ export default function Register() {
         try {
             await api.post('/auth/register', {
                 ...formData,
-                role: 'student' // Force student role
+                role: 'student'
             });
-            // Auto login or redirect to login? Let's redirect to login for now with strict message
             navigate('/login');
         } catch (err) {
             setError(err.response?.data?.message || t('registration_failed', 'Registration failed'));
@@ -74,6 +117,448 @@ export default function Register() {
 
     const currentYear = new Date().getFullYear();
     const version = "v1.2.2";
+
+    // Step Rendering Logic
+    const renderStep = () => {
+        switch (currentStep) {
+            case 1: // Personal Info
+                return (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="text-center mb-6">
+                            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <User className="text-primary" size={24} />
+                            </div>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('personal_info', 'Personal Information')}</h2>
+                            <p className="text-sm text-gray-500">{t('step_1_desc', 'Tell us about yourself')}</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="name">{t('name_label', 'Full Name')}</Label>
+                                <Input
+                                    id="name"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="birth_place">{t('birth_place_label', 'Place of Birth')}</Label>
+                                <Input
+                                    id="birth_place"
+                                    name="birth_place"
+                                    value={formData.birth_place}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="father_name">{t('father_name_label', 'Father Name')}</Label>
+                                <Input
+                                    id="father_name"
+                                    name="father_name"
+                                    value={formData.father_name}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="mother_name">{t('mother_name_label', 'Mother Name')}</Label>
+                                <Input
+                                    id="mother_name"
+                                    name="mother_name"
+                                    value={formData.mother_name}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="birth_date">{t('birth_date_label', 'Date of Birth')}</Label>
+                                <Input
+                                    id="birth_date"
+                                    name="birth_date"
+                                    type="date"
+                                    value={formData.birth_date}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 block w-full"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="gender">{t('gender_label', 'Gender')}</Label>
+                                <Select
+                                    name="gender"
+                                    value={formData.gender || undefined}
+                                    onValueChange={(val) => handleSelectChange('gender', val)}
+                                    required
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                        <SelectValue placeholder={t('select_gender', 'Select')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="M">{t('gender_male', 'Male')}</SelectItem>
+                                        <SelectItem value="F">{t('gender_female', 'Female')}</SelectItem>
+                                        <SelectItem value="O">{t('gender_other', 'Other')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="nationality">{t('nationality_label', 'Nationality')}</Label>
+                                <Input
+                                    id="nationality"
+                                    name="nationality"
+                                    placeholder="Ex: Moçambicana"
+                                    value={formData.nationality}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="civil_status">{t('civil_status_label', 'Civil Status')}</Label>
+                                <Select
+                                    name="civil_status"
+                                    value={formData.civil_status || undefined}
+                                    onValueChange={(val) => handleSelectChange('civil_status', val)}
+                                    required
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                        <SelectValue placeholder={t('select_civil_status', 'Select')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Single">{t('civil_single', 'Single')}</SelectItem>
+                                        <SelectItem value="Married">{t('civil_married', 'Married')}</SelectItem>
+                                        <SelectItem value="Divorced">{t('civil_divorced', 'Divorced')}</SelectItem>
+                                        <SelectItem value="Widowed">{t('civil_widowed', 'Widowed')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
+                                <Select
+                                    name="document_type"
+                                    value={formData.document_type || undefined}
+                                    onValueChange={(val) => handleSelectChange('document_type', val)}
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="BI">BI / ID Card</SelectItem>
+                                        <SelectItem value="Passport">Passaporte</SelectItem>
+                                        <SelectItem value="DIRE">DIRE</SelectItem>
+                                        <SelectItem value="Voter">Cartão Eleitor</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2 col-span-2">
+                                <Label htmlFor="document_number">{t('doc_number_label', 'Document Number')}</Label>
+                                <Input
+                                    id="document_number"
+                                    name="document_number"
+                                    placeholder="Ex: 1101001001001B"
+                                    value={formData.document_number}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="education_level">{t('education_level_label', 'Education Level')}</Label>
+                                <Select
+                                    name="education_level"
+                                    value={formData.education_level || undefined}
+                                    onValueChange={(val) => handleSelectChange('education_level', val)}
+                                    required
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                        <SelectValue placeholder={t('select_education', 'Select')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="Basic">{t('edu_basic', 'Basic')}</SelectItem>
+                                        <SelectItem value="Medium">{t('edu_medium', 'Medium')}</SelectItem>
+                                        <SelectItem value="Bachelor">{t('edu_bachelor', 'Bachelor')}</SelectItem>
+                                        <SelectItem value="Master">{t('edu_master', 'Master')}</SelectItem>
+                                        <SelectItem value="Doctorate">{t('edu_doctorate', 'Doctorate')}</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="occupation">{t('occupation_label', 'Occupation')}</Label>
+                                <Input
+                                    id="occupation"
+                                    name="occupation"
+                                    value={formData.occupation}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 pt-2">
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    id="has_special_needs"
+                                    name="has_special_needs"
+                                    checked={formData.has_special_needs}
+                                    onChange={(e) => setFormData({ ...formData, has_special_needs: e.target.checked })}
+                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                />
+                                <Label htmlFor="has_special_needs" className="font-normal cursor-pointer">{t('special_needs_label', 'Special Needs?')}</Label>
+                            </div>
+
+                            {formData.has_special_needs && (
+                                <div className="animate-in fade-in slide-in-from-top-2">
+                                    <Label htmlFor="special_needs_description">{t('special_needs_desc_label', 'Description')}</Label>
+                                    <Input
+                                        id="special_needs_description"
+                                        name="special_needs_description"
+                                        value={formData.special_needs_description}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 mt-1"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                );
+
+            case 2: // Courses
+                return (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="text-center mb-6">
+                            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <BookOpen className="text-primary" size={24} />
+                            </div>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('courses_selection', 'Course Selection')}</h2>
+                            <p className="text-sm text-gray-500">{t('step_2_desc', 'Choose your learning path')}</p>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="course">{t('course_label', 'Select Course')}</Label>
+                                <Select
+                                    name="course"
+                                    value={formData.course || undefined}
+                                    onValueChange={(val) => handleSelectChange('course', val)}
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                        <SelectValue placeholder={t('select_course', 'Select a Course')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="web_design">Web Design & Development</SelectItem>
+                                        <SelectItem value="accounting">Contabilidade e Gestão</SelectItem>
+                                        <SelectItem value="english">Inglês Profissional</SelectItem>
+                                        <SelectItem value="informatics">Informática Avançada</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="modality">{t('modality_label', 'Modality')}</Label>
+                                    <Select
+                                        name="modality"
+                                        value={formData.modality || undefined}
+                                        onValueChange={(val) => handleSelectChange('modality', val)}
+                                    >
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                            <SelectValue placeholder={t('select_modality', 'Select Mode')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="presencial">Presencial</SelectItem>
+                                            <SelectItem value="online">Online</SelectItem>
+                                            <SelectItem value="hybrid">Híbrido</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="shift">{t('shift_label', 'Shift')}</Label>
+                                    <Select
+                                        name="shift"
+                                        value={formData.shift || undefined}
+                                        onValueChange={(val) => handleSelectChange('shift', val)}
+                                    >
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                            <SelectValue placeholder={t('select_shift', 'Select Shift')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="morning">Manhã (08:00 - 12:00)</SelectItem>
+                                            <SelectItem value="afternoon">Tarde (13:00 - 17:00)</SelectItem>
+                                            <SelectItem value="evening">Noite (18:00 - 21:00)</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 3: // ID Card
+                return (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="text-center mb-6">
+                            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <Fingerprint className="text-primary" size={24} />
+                            </div>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('id_verification', 'Identification')}</h2>
+                            <p className="text-sm text-gray-500">{t('step_3_desc', 'Verify your identity')}</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
+                                <Select
+                                    name="document_type"
+                                    value={formData.document_type || undefined}
+                                    onValueChange={(val) => handleSelectChange('document_type', val)}
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="BI">BI / ID Card</SelectItem>
+                                        <SelectItem value="Passport">Passaporte</SelectItem>
+                                        <SelectItem value="DIRE">DIRE</SelectItem>
+                                        <SelectItem value="Voter">Cartão Eleitor</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            <div className="space-y-2 col-span-2">
+                                <Label htmlFor="document_number">{t('doc_number_label', 'Document Number')}</Label>
+                                <Input
+                                    id="document_number"
+                                    name="document_number"
+                                    placeholder="Ex: 1101001001001B"
+                                    value={formData.document_number}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 4: // Payment
+                return (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="text-center mb-6">
+                            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <CreditCard className="text-primary" size={24} />
+                            </div>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('payment_info', 'Payment Method')}</h2>
+                            <p className="text-sm text-gray-500">{t('step_4_desc', 'Secure your enrollment')}</p>
+                        </div>
+
+                        <div className="space-y-4">
+                            <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+                                <h3 className="text-sm font-medium mb-2">{t('order_summary', 'Order Summary')}</h3>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">{t('enrollment_fee', 'Enrollment Fee')}</span>
+                                    <span className="font-semibold text-primary">2.500,00 MT</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="payment_method">{t('payment_method_label', 'Payment Method')}</Label>
+                                <Select
+                                    name="payment_method"
+                                    value={formData.payment_method || undefined}
+                                    onValueChange={(val) => handleSelectChange('payment_method', val)}
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                        <SelectValue placeholder={t('select_payment', 'Select Method')} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="mpesa">M-Pesa</SelectItem>
+                                        <SelectItem value="emola">E-Mola</SelectItem>
+                                        <SelectItem value="bank_transfer">Transferência Bancária</SelectItem>
+                                        <SelectItem value="pos">POS (Presencial)</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        </div>
+                    </div>
+                );
+
+            case 5: // Account
+                return (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
+                        <div className="text-center mb-6">
+                            <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+                                <Lock className="text-primary" size={24} />
+                            </div>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('account_setup', 'Account Setup')}</h2>
+                            <p className="text-sm text-gray-500">{t('step_5_desc', 'Create your credentials')}</p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="email">{t('email_label', 'Email Address')}</Label>
+                            <Input
+                                id="email"
+                                name="email"
+                                type="email"
+                                placeholder="student@example.com"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                required
+                            />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="password">{t('password_label', 'Password')}</Label>
+                                <Input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="confirm_password">{t('confirm_password_label', 'Confirm Password')}</Label>
+                                <Input
+                                    id="confirm_password"
+                                    name="password_confirmation"
+                                    type="password"
+                                    placeholder="••••••••"
+                                    value={formData.password_confirmation}
+                                    onChange={handleChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 relative">
@@ -91,176 +576,75 @@ export default function Register() {
             </div>
 
             <div className="flex-grow flex items-center justify-center p-4">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative my-8 mt-20 md:mt-8">
-                    <div className="text-center mb-8 mt-4">
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
-                            <UserPlus size={28} className="text-primary" />
-                            {t('register_title', 'Create Account')}
-                        </h1>
-                        <p className="text-sm text-gray-500">{t('register_subtitle', 'Join Zedeck Training System')}</p>
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative my-8 mt-24 md:mt-8">
+
+                    {/* Wizard Progress Header */}
+                    <div className="mb-8">
+                        <div className="flex justify-between items-center mb-2">
+                            <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <UserPlus size={24} className="text-primary" />
+                                {t('register_title', 'Create Account')}
+                            </h1>
+                            <span className="text-xs font-semibold px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
+                                {t('step', 'Step')} {currentStep} / {totalSteps}
+                            </span>
+                        </div>
+                        {/* Progress Bar */}
+                        <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                            <div
+                                className="bg-primary h-full transition-all duration-300 ease-in-out"
+                                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                            />
+                        </div>
                     </div>
 
                     {error && (
-                        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-4 text-center">
+                        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-6 text-center">
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Account Info */}
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-2">
-                                {t('account_info', 'Account Information')}
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="name">{t('name_label', 'Full Name')}</Label>
-                                    <Input
-                                        id="name"
-                                        name="name"
-                                        placeholder="John Doe"
-                                        value={formData.name}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="email">{t('email_label', 'Email Address')}</Label>
-                                    <Input
-                                        id="email"
-                                        name="email"
-                                        type="email"
-                                        placeholder="student@example.com"
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900"
-                                        required
-                                    />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="password">{t('password_label', 'Password')}</Label>
-                                    <Input
-                                        id="password"
-                                        name="password"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        value={formData.password}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="confirm_password">{t('confirm_password_label', 'Confirm Password')}</Label>
-                                    <Input
-                                        id="confirm_password"
-                                        name="password_confirmation"
-                                        type="password"
-                                        placeholder="••••••••"
-                                        value={formData.password_confirmation}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900"
-                                        required
-                                    />
-                                </div>
-                            </div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="min-h-[300px]">
+                            {renderStep()}
                         </div>
 
-                        {/* Personal Info */}
-                        <div className="space-y-4">
-                            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-2">
-                                {t('personal_info', 'Personal Information')}
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="birth_date">{t('birth_date_label', 'Date of Birth')}</Label>
-                                    <Input
-                                        id="birth_date"
-                                        name="birth_date"
-                                        type="date"
-                                        value={formData.birth_date}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 block w-full"
-                                        required
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="gender">{t('gender_label', 'Gender')}</Label>
-                                    <Select
-                                        name="gender"
-                                        value={formData.gender || undefined}
-                                        onValueChange={(val) => handleSelectChange('gender', val)}
-                                        required
-                                    >
-                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                            <SelectValue placeholder={t('select_gender', 'Select')} />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="M">{t('gender_male', 'Male')}</SelectItem>
-                                            <SelectItem value="F">{t('gender_female', 'Female')}</SelectItem>
-                                            <SelectItem value="O">{t('gender_other', 'Other')}</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="nationality">{t('nationality_label', 'Nationality')}</Label>
-                                    <Input
-                                        id="nationality"
-                                        name="nationality"
-                                        placeholder="Ex: Moçambicana"
-                                        value={formData.nationality}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        {/* Navigation Buttons */}
+                        <div className="flex justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={prevStep}
+                                disabled={currentStep === 1 || isLoading}
+                                className={`flex items-center px-6 ${currentStep === 1 ? 'opacity-0 pointer-events-none' : ''}`}
+                            >
+                                <ChevronLeft className="mr-2 h-4 w-4" />
+                                {t('back', 'Back')}
+                            </Button>
 
-                        {/* ID Info */}
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
-                                    <Select
-                                        name="document_type"
-                                        value={formData.document_type || undefined}
-                                        onValueChange={(val) => handleSelectChange('document_type', val)}
-                                    >
-                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="BI">BI / ID Card</SelectItem>
-                                            <SelectItem value="Passport">Passaporte</SelectItem>
-                                            <SelectItem value="DIRE">DIRE</SelectItem>
-                                            <SelectItem value="Voter">Cartão Eleitor</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2 col-span-2">
-                                    <Label htmlFor="document_number">{t('doc_number_label', 'Document Number')}</Label>
-                                    <Input
-                                        id="document_number"
-                                        name="document_number"
-                                        placeholder="Ex: 1101001001001B"
-                                        value={formData.document_number}
-                                        onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                                        required
-                                    />
-                                </div>
-                            </div>
+                            {currentStep < totalSteps ? (
+                                <Button
+                                    type="button"
+                                    onClick={nextStep}
+                                    className="flex items-center px-6 bg-primary hover:bg-blue-700 text-white"
+                                >
+                                    {t('next', 'Next')}
+                                    <ChevronRight className="ml-2 h-4 w-4" />
+                                </Button>
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    className="flex items-center px-6 bg-green-600 hover:bg-green-700 text-white"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? t('creating_account', 'Creating...') : t('finish_register', 'Create Account')}
+                                    {!isLoading && <UserPlus className="ml-2 h-4 w-4" />}
+                                </Button>
+                            )}
                         </div>
-
-                        <Button type="submit" className="w-full mt-6" disabled={isLoading}>
-                            {isLoading ? t('loading') : t('register_button', 'Sign Up')}
-                        </Button>
                     </form>
 
-                    <div className="mt-6 text-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                    <div className="mt-6 text-center">
                         <p className="text-sm text-gray-500">
                             {t('have_account', "Already have an account?")}{' '}
                             <Link to="/login" className="text-primary font-bold hover:underline">
