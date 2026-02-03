@@ -5,63 +5,72 @@
 @layer base {
   :root {
     /* ZTS Brand Colors (Premium Blue) */
-    --background: 210 40% 98%;   /* #F8FAFC (Slate-50) */
-    --foreground: 222 47% 11%;   /* #0F172A (Navy Text) */
+    --background: 210 40% 98%;
+    /* #F8FAFC (Slate-50) */
+    --foreground: 222 47% 11%;
+    /* #0F172A (Navy Text) */
 
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
- 
+
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
- 
-    --primary: 225 76% 48%;      /* #1F4ED8 (ZTS Blue) */
+
+    --primary: 225 76% 48%;
+    /* #1F4ED8 (ZTS Blue) */
     --primary-foreground: 210 40% 98%;
- 
-    --secondary: 222 47% 11%;    /* #0F172A (Navy) */
+
+    --secondary: 222 47% 11%;
+    /* #0F172A (Navy) */
     --secondary-foreground: 210 40% 98%;
- 
+
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
- 
+
     --accent: 210 40% 96.1%;
     --accent-foreground: 222 47% 11%;
- 
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 225 76% 48%;         /* #1F4ED8 */
- 
+    --ring: 225 76% 48%;
+    /* #1F4ED8 */
+
     --radius: 0.5rem;
   }
- 
+
   .dark {
     /* ZTS Dark Mode (Deep Navy) */
-    --background: 224 71% 4%;    /* #020617 (Slate-950/Navy Deep) */
+    --background: 224 71% 4%;
+    /* #020617 (Slate-950/Navy Deep) */
     --foreground: 210 40% 98%;
- 
-    --card: 222 47% 11%;         /* #0F172A (Navy Surface) */
+
+    --card: 222 47% 11%;
+    /* #0F172A (Navy Surface) */
     --card-foreground: 210 40% 98%;
- 
+
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
- 
-    --primary: 225 76% 48%;      /* Keep Blue or slightly lighter? Keep for brand */
+
+    --primary: 225 76% 48%;
+    /* Keep Blue or slightly lighter? Keep for brand */
     --primary-foreground: 210 40% 98%;
- 
-    --secondary: 217 33% 17%;    /* Lighter Navy for contrast */
+
+    --secondary: 217 33% 17%;
+    /* Lighter Navy for contrast */
     --secondary-foreground: 210 40% 98%;
- 
+
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
- 
+
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
- 
+
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
- 
+
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224 76% 48%;
@@ -70,7 +79,7 @@
 
 @layer base {
   body {
-    @apply bg-background text-text-primary antialiased font-sans;
+    @apply bg-background text-foreground antialiased font-sans;
   }
 
   /* Global Input Polish */
