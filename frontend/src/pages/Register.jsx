@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from '../components/ui/checkbox'; // Ensure Checkbox is imported if available, or use input type='checkbox'
 import { formatCurrency } from '../utils/formatters';
 import LanguageToggle from '../components/LanguageToggle'; import ThemeToggle from '../components/ThemeToggle';
+import AcademicCard from '../components/AcademicCard';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -107,6 +108,40 @@ export default function Register() {
 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    // Phase 3: Student ID State
+    const [studentIdData, setStudentIdData] = useState(null);
+    const [isGeneratingId, setIsGeneratingId] = useState(false);
+
+    useEffect(() => {
+        if (currentStep === 3 && !studentIdData) {
+            const generateId = async () => {
+                setIsGeneratingId(true);
+                try {
+                    const response = await api.post('/student-id/generate', {
+                        document_number: formData.document_number,
+                        first_name: formData.first_name,
+                        last_name: formData.last_name
+                    });
+                    if (response.data.success || response.data.student_id) {
+                        setStudentIdData(response.data.student_id);
+                        // Store the generated ID in main formData for final submission
+                        setFormData(prev => ({ ...prev, student_code: response.data.student_id.student_code }));
+                    }
+                } catch (err) {
+                    console.error("ID Generation Error", err);
+                    setError(t('id_generation_error', 'Erro ao gerar ID. Verifique seus dados.'));
+                } finally {
+                    setIsGeneratingId(false);
+                }
+            };
+
+            // Only generate if we have minimum required data
+            if (formData.document_number && formData.first_name) {
+                generateId();
+            }
+        }
+    }, [currentStep, formData.document_number, formData.first_name, formData.last_name, studentIdData]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -703,47 +738,35 @@ export default function Register() {
 
             case 3: // ID Card
                 return (
-                    <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-                        <div className="text-center mb-6">
+                    <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300 flex flex-col items-center">
+                        <div className="text-center mb-2">
                             <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
-                                <Fingerprint className="text-primary" size={24} />
+                                {isGeneratingId ? (
+                                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                                ) : (
+                                    <Fingerprint className="text-primary" size={24} />
+                                )}
                             </div>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('id_verification', 'Identification')}</h2>
-                            <p className="text-sm text-gray-500">{t('step_3_desc', 'Verify your identity')}</p>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('id_verification', 'Cartão de Inscrição')}</h2>
+                            <p className="text-sm text-gray-500">{t('step_3_desc', 'Seu identificador único no sistema')}</p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
-                                <Select
-                                    name="document_type"
-                                    value={formData.document_type || undefined}
-                                    onValueChange={(val) => handleSelectChange('document_type', val)}
-                                >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="BI">BI / ID Card</SelectItem>
-                                        <SelectItem value="Passport">Passaporte</SelectItem>
-                                        <SelectItem value="DIRE">DIRE</SelectItem>
-                                        <SelectItem value="Voter">Cartão Eleitor</SelectItem>
-                                    </SelectContent>
-                                </Select>
+                        {studentIdData ? (
+                            <AcademicCard
+                                studentData={{
+                                    name: `${formData.first_name} ${formData.last_name}`,
+                                    student_code: studentIdData.student_code,
+                                    courses: formData.selected_courses,
+                                    valid_until: '15 Dias (Provisório)'
+                                }}
+                            />
+                        ) : (
+                            <div className="text-center py-10 text-gray-500">
+                                {isGeneratingId ? 'Gerando seu ID Único...' : 'Erro ao gerar ID. Tente novamente.'}
                             </div>
-                            <div className="space-y-2 col-span-2">
-                                <Label htmlFor="document_number">{t('doc_number_label', 'Document Number')}</Label>
-                                <Input
-                                    id="document_number"
-                                    name="document_number"
-                                    placeholder="Ex: 1101001001001B"
-                                    value={formData.document_number}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                                    required
-                                />
-                            </div>
-                        </div>
+                        )}
+
+                        {/* Hidden buttons handled by wizard navigation, but maybe we want specific actions here */}
                     </div>
                 );
 

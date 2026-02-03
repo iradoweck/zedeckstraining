@@ -196,7 +196,20 @@ const resources = {
             "courses_selected_count": "{{count}} de {{max}} cursos selecionados",
             "modality_presencial": "Presencial",
             "modality_online": "Online",
-            "modality_hibrido": "Híbrido"
+            "modality_hibrido": "Híbrido",
+
+            // Phase 3: Card
+            "card_student_label": "Aluno(a)",
+            "card_id_label": "ID Único",
+            "card_validity_label": "Validade",
+            "card_courses_label": "Cursos",
+            "download_card_success": "Cartão baixado com sucesso!",
+            "download_card_error": "Erro ao baixar cartão.",
+            "download_card_btn": "Baixar Cartão (PNG)",
+            "card_provisional": "PROVISÓRIO",
+            "card_system_id": "Cartão de Sistema",
+            "card_footer_text": "Este cartão é provisório e serve como comprovativo de pré-matrícula. Guarde o seu ID Único:",
+            "id_generation_error": "Erro ao gerar ID. Verifique seus dados."
         }
     },
     en: {
@@ -391,7 +404,20 @@ const resources = {
             "courses_selected_count": "{{count}} of {{max}} courses selected",
             "modality_presencial": "In-Person",
             "modality_online": "Online",
-            "modality_hibrido": "Hybrid"
+            "modality_hibrido": "Hybrid",
+
+            // Phase 3: Card
+            "card_student_label": "Student",
+            "card_id_label": "Unique ID",
+            "card_validity_label": "Valid Until",
+            "card_courses_label": "Courses",
+            "download_card_success": "Card downloaded successfully!",
+            "download_card_error": "Error downloading card.",
+            "download_card_btn": "Download Card (PNG)",
+            "card_provisional": "PROVISIONAL",
+            "card_system_id": "System ID Card",
+            "card_footer_text": "This card is provisional and serves as proof of pre-enrollment. Keep your Unique ID:",
+            "id_generation_error": "Error generating ID. Please verify your data."
         }
     }
 };

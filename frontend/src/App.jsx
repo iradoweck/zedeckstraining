@@ -6,6 +6,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import Landing from './pages/Landing'; // Assuming Landing was missing in my view or just implicit
 import Dashboard from './pages/Dashboard';
 
+import { Toaster } from 'react-hot-toast';
+
 function App() {
   return (
     <AuthProvider>
@@ -19,6 +21,7 @@ function App() {
           {/* Add more routes as needed */}
         </Routes>
       </Router>
+      <Toaster position="top-right" />
     </AuthProvider>
   );
 }

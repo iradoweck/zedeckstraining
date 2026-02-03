@@ -16,6 +16,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{course}', [CourseController::class, 'show']);
 
+    // Student ID Generation (Public for Registration)
+    Route::post('/student-id/check', [\App\Http\Controllers\StudentIdController::class, 'check']);
+    Route::post('/student-id/generate', [\App\Http\Controllers\StudentIdController::class, 'generate']);
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/auth/logout', [AuthController::class, 'logout']);
         Route::get('/auth/me', [AuthController::class, 'me']);
