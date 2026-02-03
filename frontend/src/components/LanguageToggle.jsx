@@ -9,7 +9,6 @@ export default function LanguageToggle() {
     };
 
     return (
-    return (
         <button
             onClick={() => changeLanguage(i18n.language === 'pt' ? 'en' : 'pt')}
             className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full px-3 py-1.5 transition-all shadow-sm border border-gray-200 dark:border-gray-700"
@@ -20,7 +19,5 @@ export default function LanguageToggle() {
                 {i18n.language === 'pt' ? 'PT' : 'EN'}
             </span>
         </button>
-    );
-}
     );
 }
