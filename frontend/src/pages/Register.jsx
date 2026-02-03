@@ -8,8 +8,10 @@ import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Register() {
+    usePageTitle();
     const { t } = useTranslation();
     const { user } = useAuth(); // To check if logged in
     const navigate = useNavigate();
@@ -65,6 +67,13 @@ export default function Register() {
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 relative">
             {/* Header Controls */}
+            <div className="absolute top-6 left-6 z-20">
+                <Link to="/" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium group">
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    <span>{t('back_home', 'Back to Home')}</span>
+                </Link>
+            </div>
+
             <div className="absolute top-4 right-4 flex gap-2 z-10">
                 <LanguageToggle />
                 <ThemeToggle />
@@ -72,10 +81,6 @@ export default function Register() {
 
             <div className="flex-grow flex items-center justify-center p-4">
                 <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100 dark:border-gray-700 relative">
-                    <Link to="/" className="absolute top-4 left-4 text-gray-400 hover:text-primary transition-colors" title={t('back_home')}>
-                        <ArrowLeft size={20} />
-                    </Link>
-
                     <div className="text-center mb-8 mt-4">
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
                             <UserPlus size={28} className="text-primary" />
@@ -103,7 +108,7 @@ export default function Register() {
                         <Input
                             name="email"
                             type="email"
-                            placeholder="student@example.com"
+                            placeholder="seu@email.com"
                             value={formData.email}
                             onChange={handleChange}
                             label={t('email_label')}

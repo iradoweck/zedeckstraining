@@ -8,8 +8,10 @@ import { Card } from '../components/ui/card';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Login() {
+    usePageTitle();
     const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -34,16 +36,19 @@ export default function Login() {
 
     return (
         <div className="flex h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 relative">
+            <div className="absolute top-6 left-6 z-20">
+                <Link to="/" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium group">
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    <span>{t('back_home', 'Back to Home')}</span>
+                </Link>
+            </div>
+
             <div className="absolute top-4 right-4 flex gap-2">
                 <LanguageToggle />
                 <ThemeToggle />
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100 dark:border-gray-700 relative">
-                <Link to="/" className="absolute top-4 left-4 text-gray-400 hover:text-primary transition-colors" title={t('back_home')}>
-                    <ArrowLeft size={20} />
-                </Link>
-
                 <div className="text-center mb-8 mt-4">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t('login_title')}</h1>
                     <p className="text-sm text-gray-500">{t('login_subtitle', 'Enter your credentials to access the platform')}</p>
@@ -58,7 +63,7 @@ export default function Login() {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <Input
                         type="email"
-                        placeholder="admin@zedecks.com"
+                        placeholder="seu@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         label={t('email_label')}
