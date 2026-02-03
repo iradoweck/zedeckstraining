@@ -6,11 +6,52 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Checkbox } from '../components/ui/checkbox'; // Ensure Checkbox is imported if available, or use input type='checkbox'
 import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
+
+// --- Constants ---
+const COUNTRIES = [
+    { code: 'MZ', name: 'Moçambique', flag: '🇲🇿' },
+    { code: 'AO', name: 'Angola', flag: '🇦🇴' },
+    { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
+    { code: 'CV', name: 'Cabo Verde', flag: '🇨🇻' },
+    { code: 'GW', name: 'Guiné-Bissau', flag: '🇬🇼' },
+    { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
+    { code: 'ST', name: 'São Tomé e Príncipe', flag: '🇸🇹' },
+    { code: 'ZA', name: 'África do Sul', flag: '🇿🇦' },
+    { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
+    { code: 'CN', name: 'China', flag: '🇨🇳' },
+    { code: 'IN', name: 'Índia', flag: '🇮🇳' },
+    { code: 'FR', name: 'França', flag: '🇫🇷' },
+    { code: 'DE', name: 'Alemanha', flag: '🇩🇪' },
+];
+
+const PHONE_CODES = [
+    { code: '+258', country: 'MZ', flag: '🇲🇿' },
+    { code: '+244', country: 'AO', flag: '🇦🇴' },
+    { code: '+55', country: 'BR', flag: '🇧🇷' },
+    { code: '+238', country: 'CV', flag: '🇨🇻' },
+    { code: '+245', country: 'GW', flag: '🇬🇼' },
+    { code: '+351', country: 'PT', flag: '🇵🇹' },
+    { code: '+239', country: 'ST', flag: '🇸🇹' },
+    { code: '+27', country: 'ZA', flag: '🇿🇦' },
+    { code: '+1', country: 'US', flag: '🇺🇸' },
+];
+
+const MOZ_PROVINCES = [
+    "Maputo Cidade", "Maputo Província", "Gaza", "Inhambane", "Sofala", "Manica", "Tete", "Zambézia", "Nampula", "Cabo Delgado", "Niassa"
+];
+
+// --- Helpers ---
+const toTitleCase = (str) => {
+    return str.toLowerCase().replace(/(?:^|\s)\w/g, function (match) {
+        return match.toUpperCase();
+    });
+};
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Register() {
@@ -32,28 +73,31 @@ export default function Register() {
 
     const [formData, setFormData] = useState({
         // Phase 1: Personal (Extended)
-        name: '',
+        first_name: '',
+        last_name: '',
         father_name: '',
         mother_name: '',
         birth_date: '',
-        birth_place: '',
+        birth_place_type: 'Other', // 'MZ', 'BR', 'US', 'Other'
+        birth_place: '', // State or Custom Text
         gender: '',
-        nationality: '',
+        nationality: 'Moçambique',
+        phone_code: '+258',
+        phone_number: '',
         civil_status: '',
         occupation: '',
         education_level: '',
         has_special_needs: false,
         special_needs_description: '',
-        // Documents (Moved to Phase 1)
+
+        // Documents
         document_type: 'BI',
+        document_name: '', // For 'Other'
         document_number: '',
 
         // Phase 2: Courses
         course: '',
         modality: '',
-
-        // Phase 3: Identity (Renamed/Placeholder if emptied)
-        // ...
 
         // Phase 4: Payment
         payment_method: '',
@@ -68,7 +112,36 @@ export default function Register() {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value, type, checked } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
+        }));
+    };
+
+    const handleNameChange = (e) => {
+        const { name, value } = e.target;
+        // Auto-capitalize initials
+        const formatted = toTitleCase(value);
+        setFormData(prev => ({ ...prev, [name]: formatted }));
+    };
+
+    const handleDateChange = (e) => {
+        const val = e.target.value;
+        const birthDate = new Date(val);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+
+        if (age < 12) {
+            setError(t('age_restriction_error', 'Must be at least 12 years old'));
+        } else {
+            setError('');
+        }
+        setFormData(prev => ({ ...prev, birth_date: val }));
     };
 
     const handleSelectChange = (name, value) => {
@@ -102,9 +175,16 @@ export default function Register() {
             return;
         }
 
+        if (formData.password !== formData.password_confirmation) {
+            setError(t('passwords_mismatch', 'Passwords do not match'));
+            setIsLoading(false);
+            return;
+        }
+
         try {
             await api.post('/auth/register', {
                 ...formData,
+                name: `${formData.first_name} ${formData.last_name}`.trim(), // Combine names
                 role: 'student'
             });
             navigate('/login');
@@ -132,31 +212,33 @@ export default function Register() {
                             <p className="text-sm text-gray-500">{t('step_1_desc', 'Tell us about yourself')}</p>
                         </div>
 
+                        {/* Name & Surname */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">{t('name_label', 'Full Name')}</Label>
+                                <Label htmlFor="first_name">{t('first_name_label', 'First Name')} <span className="text-red-500">*</span></Label>
                                 <Input
-                                    id="name"
-                                    name="name"
-                                    value={formData.name}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    id="first_name"
+                                    name="first_name"
+                                    value={formData.first_name}
+                                    onChange={handleNameChange} // Auto-Capitalize
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="birth_place">{t('birth_place_label', 'Place of Birth')}</Label>
+                                <Label htmlFor="last_name">{t('last_name_label', 'Last Name')} <span className="text-red-500">*</span></Label>
                                 <Input
-                                    id="birth_place"
-                                    name="birth_place"
-                                    value={formData.birth_place}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    id="last_name"
+                                    name="last_name"
+                                    value={formData.last_name}
+                                    onChange={handleNameChange} // Auto-Capitalize
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                     required
                                 />
                             </div>
                         </div>
 
+                        {/* Parents (Optional/Standard) */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="father_name">{t('father_name_label', 'Father Name')}</Label>
@@ -164,8 +246,8 @@ export default function Register() {
                                     id="father_name"
                                     name="father_name"
                                     value={formData.father_name}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    onChange={handleNameChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -174,34 +256,35 @@ export default function Register() {
                                     id="mother_name"
                                     name="mother_name"
                                     value={formData.mother_name}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    onChange={handleNameChange}
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                 />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {/* Date, Gender, Phone */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="birth_date">{t('birth_date_label', 'Date of Birth')}</Label>
+                                <Label htmlFor="birth_date">{t('birth_date_label', 'Date of Birth')} <span className="text-red-500">*</span></Label>
                                 <Input
                                     id="birth_date"
                                     name="birth_date"
                                     type="date"
                                     value={formData.birth_date}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 block w-full"
+                                    onChange={handleDateChange} // Validates >12
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="gender">{t('gender_label', 'Gender')}</Label>
+                                <Label htmlFor="gender">{t('gender_label', 'Gender')} <span className="text-red-500">*</span></Label>
                                 <Select
                                     name="gender"
                                     value={formData.gender || undefined}
                                     onValueChange={(val) => handleSelectChange('gender', val)}
                                     required
                                 >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
                                         <SelectValue placeholder={t('select_gender', 'Select')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -211,30 +294,100 @@ export default function Register() {
                                     </SelectContent>
                                 </Select>
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="phone">{t('phone_label', 'Phone')} <span className="text-red-500">*</span></Label>
+                                <div className="flex gap-2">
+                                    <Select
+                                        value={formData.phone_code}
+                                        onValueChange={(val) => handleSelectChange('phone_code', val)}
+                                    >
+                                        <SelectTrigger className="w-[100px] bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {PHONE_CODES.map(c => (
+                                                <SelectItem key={c.country} value={c.code}>
+                                                    <span className="mr-2">{c.flag}</span> {c.code}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <Input
+                                        name="phone_number"
+                                        placeholder="840000000"
+                                        value={formData.phone_number}
+                                        onChange={handleChange}
+                                        className="flex-1 bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                                        required
+                                    />
+                                </div>
+                            </div>
                         </div>
 
+                        {/* Nationality & Birth Place */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="nationality">{t('nationality_label', 'Nationality')}</Label>
-                                <Input
-                                    id="nationality"
+                                <Select
                                     name="nationality"
-                                    placeholder="Ex: Moçambicana"
                                     value={formData.nationality}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                                    required
-                                />
+                                    onValueChange={(val) => {
+                                        // Auto-set birth place type if needed
+                                        const type = val === 'Moçambique' ? 'MZ' : val === 'Brasil' ? 'BR' : val === 'Estados Unidos' ? 'US' : 'Other';
+                                        setFormData(prev => ({ ...prev, nationality: val, birth_place_type: type, birth_place: '' }));
+                                    }}
+                                >
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {COUNTRIES.map(c => (
+                                            <SelectItem key={c.code} value={c.name}>
+                                                <span className="mr-2">{c.flag}</span> {c.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="birth_place">{t('birth_place_label', 'Place of Birth')}</Label>
+                                {formData.birth_place_type === 'MZ' ? (
+                                    <Select
+                                        value={formData.birth_place}
+                                        onValueChange={(val) => handleSelectChange('birth_place', val)}
+                                    >
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                                            <SelectValue placeholder="Selecione Província" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {MOZ_PROVINCES.map(p => (
+                                                <SelectItem key={p} value={p}>{p}</SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                ) : (
+                                    <Input
+                                        id="birth_place"
+                                        name="birth_place"
+                                        value={formData.birth_place}
+                                        onChange={handleChange}
+                                        placeholder={formData.nationality === 'Moçambique' ? 'Província' : 'Cidade/Estado'}
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                                    />
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Civil Status & Document */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="civil_status">{t('civil_status_label', 'Civil Status')}</Label>
                                 <Select
                                     name="civil_status"
                                     value={formData.civil_status || undefined}
                                     onValueChange={(val) => handleSelectChange('civil_status', val)}
-                                    required
                                 >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
                                         <SelectValue placeholder={t('select_civil_status', 'Select')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -245,51 +398,69 @@ export default function Register() {
                                     </SelectContent>
                                 </Select>
                             </div>
-                        </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {/* Document Type + Number (Grid inside) */}
                             <div className="space-y-2">
                                 <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
-                                <Select
-                                    name="document_type"
-                                    value={formData.document_type || undefined}
-                                    onValueChange={(val) => handleSelectChange('document_type', val)}
-                                >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="BI">BI / ID Card</SelectItem>
-                                        <SelectItem value="Passport">Passaporte</SelectItem>
-                                        <SelectItem value="DIRE">DIRE</SelectItem>
-                                        <SelectItem value="Voter">Cartão Eleitor</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2 col-span-2">
-                                <Label htmlFor="document_number">{t('doc_number_label', 'Document Number')}</Label>
-                                <Input
-                                    id="document_number"
-                                    name="document_number"
-                                    placeholder="Ex: 1101001001001B"
-                                    value={formData.document_number}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                                    required
-                                />
+                                <div className={`grid ${formData.document_type === 'Other' ? 'grid-cols-2' : 'grid-cols-1'} gap-2`}>
+                                    <Select
+                                        name="document_type"
+                                        value={formData.document_type || undefined}
+                                        onValueChange={(val) => handleSelectChange('document_type', val)}
+                                    >
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="BI">BI / ID Card</SelectItem>
+                                            <SelectItem value="Passport">{t('doc_passport', 'Passaporte')}</SelectItem>
+                                            <SelectItem value="DrivingLicense">{t('doc_driving_license', 'Letter of Driving')}</SelectItem>
+                                            <SelectItem value="DIRE">DIRE</SelectItem>
+                                            <SelectItem value="Other">{t('doc_other', 'Outro')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+
+                                    {formData.document_type === 'Other' ? (
+                                        <>
+                                            <Input
+                                                name="document_name"
+                                                placeholder={t('doc_name_label', 'Doc Name')}
+                                                value={formData.document_name}
+                                                onChange={handleChange}
+                                                className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                                            />
+                                            <Input
+                                                name="document_number"
+                                                placeholder={t('doc_number_label', 'Number')}
+                                                value={formData.document_number}
+                                                onChange={handleChange}
+                                                className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 col-span-2"
+                                            />
+                                        </>
+                                    ) : (
+                                        <Input
+                                            name="document_number"
+                                            placeholder={t('doc_number_label', 'Document Number')}
+                                            value={formData.document_number}
+                                            onChange={handleChange}
+                                            className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
+                                        />
+                                    )}
+                                </div>
                             </div>
                         </div>
 
+                        {/* Education & Occupation */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="education_level">{t('education_level_label', 'Education Level')}</Label>
+                                <Label htmlFor="education_level">{t('education_level_label', 'Education Level')} <span className="text-red-500">*</span></Label>
                                 <Select
                                     name="education_level"
                                     value={formData.education_level || undefined}
                                     onValueChange={(val) => handleSelectChange('education_level', val)}
                                     required
                                 >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
+                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700">
                                         <SelectValue placeholder={t('select_education', 'Select')} />
                                     </SelectTrigger>
                                     <SelectContent>
@@ -308,33 +479,39 @@ export default function Register() {
                                     name="occupation"
                                     value={formData.occupation}
                                     onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-4 pt-2">
+                        {/* Special Needs */}
+                        <div className="space-y-4 pt-2 border-t border-gray-100 dark:border-gray-700 mt-4">
                             <div className="flex items-center space-x-2">
                                 <input
                                     type="checkbox"
                                     id="has_special_needs"
                                     name="has_special_needs"
                                     checked={formData.has_special_needs}
-                                    onChange={(e) => setFormData({ ...formData, has_special_needs: e.target.checked })}
-                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                    onChange={(e) => setFormData(prev => ({ ...prev, has_special_needs: e.target.checked }))}
+                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                                 />
-                                <Label htmlFor="has_special_needs" className="font-normal cursor-pointer">{t('special_needs_label', 'Special Needs?')}</Label>
+                                <Label htmlFor="has_special_needs" className="font-normal cursor-pointer select-none">
+                                    {t('special_needs_label', 'Possui alguma necessidade educativa especial?')}
+                                </Label>
                             </div>
 
                             {formData.has_special_needs && (
-                                <div className="animate-in fade-in slide-in-from-top-2">
-                                    <Label htmlFor="special_needs_description">{t('special_needs_desc_label', 'Description')}</Label>
+                                <div className="animate-in fade-in slide-in-from-top-2 ml-6">
+                                    <Label htmlFor="special_needs_description" className="text-xs text-gray-500 mb-1 block">
+                                        {t('special_needs_desc_label', 'Descreva a necessidade (Opcional)')}
+                                    </Label>
                                     <Input
                                         id="special_needs_description"
                                         name="special_needs_description"
                                         value={formData.special_needs_description}
                                         onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 mt-1"
+                                        placeholder="Ex: Dificuldade de locomoção, audição, etc."
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700"
                                     />
                                 </div>
                             )}
@@ -605,10 +782,10 @@ export default function Register() {
                                 <div key={s.step} className="relative z-10 flex flex-col items-center group">
                                     <div
                                         className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isActive
-                                                ? 'bg-primary border-primary text-white scale-110 shadow-lg shadow-primary/30'
-                                                : isCompleted
-                                                    ? 'bg-primary border-primary text-white'
-                                                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500'
+                                            ? 'bg-primary border-primary text-white scale-110 shadow-lg shadow-primary/30'
+                                            : isCompleted
+                                                ? 'bg-primary border-primary text-white'
+                                                : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500'
                                             }`}
                                     >
                                         <Icon size={isActive ? 20 : 18} />
@@ -616,10 +793,10 @@ export default function Register() {
 
                                     {/* Label */}
                                     <span className={`absolute -bottom-6 md:-bottom-8 text-[10px] md:text-sm font-medium whitespace-nowrap transition-colors duration-300 ${isActive
-                                            ? 'text-primary'
-                                            : isCompleted
-                                                ? 'text-gray-700 dark:text-gray-300'
-                                                : 'text-gray-400'
+                                        ? 'text-primary'
+                                        : isCompleted
+                                            ? 'text-gray-700 dark:text-gray-300'
+                                            : 'text-gray-400'
                                         }`}>
                                         {s.label}
                                     </span>

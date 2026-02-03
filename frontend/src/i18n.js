@@ -139,7 +139,18 @@ const resources = {
             "courses_short": "Cursos",
             "id_short": "B.I",
             "payment_short": "Pagar",
-            "account_short": "Conta"
+            "account_short": "Conta",
+
+            // Phase 1 Improvements
+            "first_name_label": "Nome Próprio",
+            "last_name_label": "Apelido",
+            "phone_label": "Telefone",
+            "select_country_code": "Código",
+            "gender_other": "Outro",
+            "doc_driving_license": "Carta de Condução",
+            "doc_other": "Outro Documento",
+            "doc_name_label": "Nome do Documento",
+            "age_restriction_error": "Tens de ter pelo menos 12 anos para te registar."
         }
     },
     en: {
@@ -277,7 +288,18 @@ const resources = {
             "courses_short": "Courses",
             "id_short": "ID",
             "payment_short": "Pay",
-            "account_short": "Account"
+            "account_short": "Account",
+
+            // Phase 1 Improvements
+            "first_name_label": "First Name",
+            "last_name_label": "Last Name",
+            "phone_label": "Phone Number",
+            "select_country_code": "Code",
+            "gender_other": "Other",
+            "doc_driving_license": "Driving License",
+            "doc_other": "Other Document",
+            "doc_name_label": "Document Name",
+            "age_restriction_error": "You must be at least 12 years old to register."
         }
     }
 };
