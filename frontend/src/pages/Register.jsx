@@ -183,14 +183,19 @@ export default function Register() {
                                         type="date"
                                         value={formData.birth_date}
                                         onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900 block"
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 block w-full"
                                         required
                                     />
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="gender">{t('gender_label', 'Gender')}</Label>
-                                    <Select name="gender" onValueChange={(val) => handleSelectChange('gender', val)} required>
-                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900">
+                                    <Select
+                                        name="gender"
+                                        value={formData.gender || undefined}
+                                        onValueChange={(val) => handleSelectChange('gender', val)}
+                                        required
+                                    >
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                                             <SelectValue placeholder={t('select_gender', 'Select')} />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -208,7 +213,7 @@ export default function Register() {
                                         placeholder="Ex: Moçambicana"
                                         value={formData.nationality}
                                         onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900"
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
                                     />
                                 </div>
                             </div>
@@ -219,8 +224,12 @@ export default function Register() {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
-                                    <Select name="document_type" value={formData.document_type} onValueChange={(val) => handleSelectChange('document_type', val)}>
-                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900">
+                                    <Select
+                                        name="document_type"
+                                        value={formData.document_type || undefined}
+                                        onValueChange={(val) => handleSelectChange('document_type', val)}
+                                    >
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -239,7 +248,7 @@ export default function Register() {
                                         placeholder="Ex: 1101001001001B"
                                         value={formData.document_number}
                                         onChange={handleChange}
-                                        className="bg-gray-50 dark:bg-gray-900"
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
                                         required
                                     />
                                 </div>
