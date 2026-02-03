@@ -6,9 +6,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
 import ThemeToggle from '../ThemeToggle';
+import { usePageTitle } from '../../hooks/usePageTitle';
 
 export default function PublicLayout({ children }) {
     const { t } = useTranslation();
+    usePageTitle();
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);

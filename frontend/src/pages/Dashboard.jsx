@@ -4,10 +4,12 @@ import StudentDashboard from '../components/student/StudentDashboard';
 import TrainerDashboard from '../components/trainer/TrainerDashboard';
 import { useTranslation } from 'react-i18next';
 import ThemeToggle from '../components/ThemeToggle';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Dashboard() {
     const { user, logout } = useAuth();
     const { t } = useTranslation();
+    usePageTitle();
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">

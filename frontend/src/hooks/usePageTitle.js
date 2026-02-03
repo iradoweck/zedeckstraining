@@ -16,11 +16,19 @@ export function usePageTitle() {
         let title = baseTitlePublic;
 
         if (user) {
-            if (user.role === 'student' || user.role === 'trainer') {
+            console.log('usePageTitle: user found', user);
+            console.log('usePageTitle: role is', user.role);
+
+            // Case-insensitive check and trimming just in case
+            const role = String(user.role).toLowerCase().trim();
+
+            if (role === 'student' || role === 'trainer') {
                 title = baseTitleAcademic;
-            } else if (user.role === 'admin') {
-                title = baseTitlePublic; // Admin uses the standard system title or specific if needed
+            } else if (role === 'admin') {
+                title = baseTitlePublic;
             }
+        } else {
+            console.log('usePageTitle: no user found');
         }
 
         // Optional: Add specific page suffixes if needed
