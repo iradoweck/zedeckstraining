@@ -3,12 +3,13 @@ import { LogOut } from 'lucide-react';
 import StudentDashboard from '../components/student/StudentDashboard';
 import TrainerDashboard from '../components/trainer/TrainerDashboard';
 import { useTranslation } from 'react-i18next';
-import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Dashboard() {
     const { user, logout } = useAuth();
     const { t } = useTranslation();
+    usePageTitle();
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -19,7 +20,6 @@ export default function Dashboard() {
                 </h1>
                 <div className="flex items-center gap-4">
                     <div className="hidden md:flex gap-2">
-                        <LanguageToggle />
                         <ThemeToggle />
                     </div>
 
@@ -49,7 +49,6 @@ export default function Dashboard() {
 
                     {/* Mobile Toggles */}
                     <div className="flex md:hidden gap-2">
-                        <LanguageToggle />
                         <ThemeToggle />
                     </div>
                 </div>
@@ -63,6 +62,16 @@ export default function Dashboard() {
                     </div>
                 )}
             </main>
+
+            {/* Fixed Footer */}
+            <footer className="fixed bottom-0 w-full bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-2 px-6 flex items-center justify-center text-xs text-gray-400 dark:text-gray-600 z-40">
+                <p>
+                    &copy; 2025-{new Date().getFullYear()} Zedeck's Training | Todos os direitos reservados | Powered by <a href="https://zedecks.com" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline">ZEDECK'S IT</a>
+                </p>
+                <div className="absolute right-6 opacity-70">
+                    v1.2.1
+                </div>
+            </footer>
         </div>
     );
 }

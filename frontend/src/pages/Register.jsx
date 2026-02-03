@@ -1,126 +1,168 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import PublicLayout from '../components/layout/PublicLayout';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
+import { UserPlus, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
-import { Card } from '../components/ui/card';
+import LanguageToggle from '../components/LanguageToggle';
+import ThemeToggle from '../components/ThemeToggle';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
-import { useAuth } from '../context/AuthContext';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function Register() {
+    usePageTitle();
+    const { t } = useTranslation();
+    const { user } = useAuth(); // To check if logged in
     const navigate = useNavigate();
-    const { login } = useAuth(); // We might use this to auto-login after register
+
+    // Redirect if already logged in
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
+
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
         password_confirmation: ''
     });
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrors({});
+        setError('');
         setIsLoading(true);
 
-        try {
-            const response = await api.post('/auth/register', formData);
-            // Auto login logic: usually register returns token, or we redirect to login
-            // Based on AuthController: return response()->json(['access_token' => $token, ...], 201);
+        if (formData.password !== formData.password_confirmation) {
+            setError(t('passwords_mismatch', 'Passwords do not match'));
+            setIsLoading(false);
+            return;
+        }
 
-            if (response.data.access_token) {
-                localStorage.setItem('token', response.data.access_token);
-                // We need to update context state, but context might only have 'login' method that takes credentials
-                // Or we can just reload or redirect.
-                // Ideally AuthContext has a method to setUser from token/response.
-                // For now, let's redirect to login for simplicity or assume specific flow.
-                // actually best UX is auto-login.
-                navigate('/dashboard');
-                window.location.reload(); // Quick way to hydration auth state if not exposed
-            } else {
-                navigate('/login');
-            }
-        } catch (error) {
-            if (error.response?.status === 422) {
-                const apiErrors = error.response.data.errors;
-                // Flatten Laravel errors array to string
-                const formattedErrors = {};
-                Object.keys(apiErrors).forEach(key => {
-                    formattedErrors[key] = apiErrors[key][0];
-                });
-                setErrors(formattedErrors);
-            } else {
-                setErrors({ general: 'Registration failed. Please try again.' });
-            }
+        try {
+            await api.post('/auth/register', {
+                ...formData,
+                role: 'student' // Force student role
+            });
+            // Auto login or redirect to login? Let's redirect to login for now with strict message
+            navigate('/login');
+        } catch (err) {
+            setError(err.response?.data?.message || t('registration_failed', 'Registration failed'));
         } finally {
             setIsLoading(false);
         }
     };
 
+    const currentYear = new Date().getFullYear();
+    const version = "v1.2.1"; // Hardcoded or from package.json env
+
     return (
-        <PublicLayout>
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-                <Card className="max-w-md w-full p-8">
-                    <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold font-heading text-gray-900 dark:text-white">Create Account</h2>
-                        <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            Join Zedeck's Training today
-                        </p>
+        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 relative">
+            {/* Header Controls */}
+            <div className="absolute top-6 left-6 z-20">
+                <Link to="/" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium group">
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    <span>{t('back_home', 'Back to Home')}</span>
+                </Link>
+            </div>
+
+            <div className="absolute top-4 right-4 flex gap-2 z-10">
+                <LanguageToggle />
+                <ThemeToggle />
+            </div>
+
+            <div className="flex-grow flex items-center justify-center p-4">
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100 dark:border-gray-700 relative">
+                    <div className="text-center mb-8 mt-4">
+                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
+                            <UserPlus size={28} className="text-primary" />
+                            {t('register_title', 'Create Account')}
+                        </h1>
+                        <p className="text-sm text-gray-500">{t('register_subtitle', 'Join Zedeck Training System')}</p>
                     </div>
 
-                    {errors.general && (
-                        <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-6 text-sm">
-                            {errors.general}
+                    {error && (
+                        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-4 text-center">
+                            {error}
                         </div>
                     )}
 
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <Input
-                            label="Full Name"
-                            type="text"
-                            required
+                            name="name"
+                            placeholder="John Doe"
                             value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            error={errors.name}
+                            onChange={handleChange}
+                            label={t('name_label', 'Full Name')}
+                            className="bg-gray-50 dark:bg-gray-900"
+                            required
                         />
                         <Input
-                            label="Email Address"
+                            name="email"
                             type="email"
-                            required
+                            placeholder="seu@email.com"
                             value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                            error={errors.email}
+                            onChange={handleChange}
+                            label={t('email_label')}
+                            className="bg-gray-50 dark:bg-gray-900"
+                            required
                         />
                         <Input
-                            label="Password"
+                            name="password"
                             type="password"
-                            required
+                            placeholder="••••••••"
                             value={formData.password}
-                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                            error={errors.password}
+                            onChange={handleChange}
+                            label={t('password_label')}
+                            className="bg-gray-50 dark:bg-gray-900"
+                            required
                         />
                         <Input
-                            label="Confirm Password"
+                            name="password_confirmation"
                             type="password"
-                            required
+                            placeholder="••••••••"
                             value={formData.password_confirmation}
-                            onChange={(e) => setFormData({ ...formData, password_confirmation: e.target.value })}
+                            onChange={handleChange}
+                            label={t('confirm_password_label', 'Confirm Password')}
+                            className="bg-gray-50 dark:bg-gray-900"
+                            required
                         />
 
                         <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading ? 'Creating Account...' : 'Sign Up'}
+                            {isLoading ? t('loading') : t('register_button', 'Sign Up')}
                         </Button>
                     </form>
 
-                    <div className="mt-6 text-center text-sm">
-                        <span className="text-gray-600 dark:text-gray-400">Already have an account? </span>
-                        <Link to="/login" className="font-medium text-primary hover:text-primary/80">
-                            Sign in
-                        </Link>
+                    <div className="mt-6 text-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <p className="text-sm text-gray-500">
+                            {t('have_account', "Already have an account?")}{' '}
+                            <Link to="/login" className="text-primary font-bold hover:underline">
+                                {t('login_link', 'Log in')}
+                            </Link>
+                        </p>
                     </div>
-                </Card>
+                </div>
             </div>
-        </PublicLayout>
+
+            {/* Footer */}
+            <footer className="w-full py-4 text-center text-xs text-gray-400 dark:text-gray-600 relative">
+                <p>
+                    &copy; 2025-{currentYear} Zedeck's Training | {t('rights_reserved', 'Todos os direitos reservados')} | Powered by <a href="https://zedecks.com" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline">ZEDECK'S IT</a>
+                </p>
+
+                {/* Version in Corner */}
+                <div className="absolute bottom-4 right-4 text-[10px] opacity-70">
+                    {version}
+                </div>
+            </footer>
+        </div>
     );
 }
