@@ -229,7 +229,7 @@ export default function LoginMap({ onLogin, isLoading, error }) {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="w-full max-w-4xl overflow-hidden rounded-2xl flex bg-white dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700"
+                className="w-full max-w-4xl overflow-hidden rounded-2xl flex bg-white dark:bg-gray-800 shadow-xl border border-gray-100 dark:border-gray-700 mt-16 md:mt-0"
             >
                 {/* Left side - Map */}
                 <div className="hidden md:block w-1/2 h-[600px] relative overflow-hidden border-r border-gray-100 dark:border-gray-700">
@@ -311,7 +311,7 @@ export default function LoginMap({ onLogin, isLoading, error }) {
                                     />
                                     <path fill="#EA4335" d="M1 1h22v22H1z" fillOpacity="0" />
                                 </svg>
-                                <span>{t('login_google', 'Login with Google')} (Em breve)</span>
+                                <span>{t('login_google', 'Login with Google')} ({t('coming_soon', 'Em breve')})</span>
                             </button>
                         </div>
 

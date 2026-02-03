@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ArrowLeft } from 'lucide-react';
 import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -30,6 +31,14 @@ export default function Login() {
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950 p-4 relative">
+            {/* Back Button */}
+            <div className="absolute top-6 left-6 z-50">
+                <Link to="/" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium group">
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    <span>{t('back_home', 'Back to Home')}</span>
+                </Link>
+            </div>
+
             <div className="absolute top-4 right-4 flex gap-2 z-50">
                 <LanguageToggle />
                 <ThemeToggle />

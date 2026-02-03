@@ -91,7 +91,7 @@ export default function Register() {
             </div>
 
             <div className="flex-grow flex items-center justify-center p-4">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative my-8">
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative my-8 mt-20 md:mt-8">
                     <div className="text-center mb-8 mt-4">
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
                             <UserPlus size={28} className="text-primary" />
