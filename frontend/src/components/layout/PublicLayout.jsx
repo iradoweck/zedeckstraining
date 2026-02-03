@@ -101,7 +101,7 @@ export default function PublicLayout({ children }) {
             </main>
 
             {/* Footer */}
-            <footer className="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 py-12">
+            <footer className="border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 pt-12 pb-6">
                 <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div>
                         <div className="flex items-center gap-2 mb-4">
@@ -140,7 +140,7 @@ export default function PublicLayout({ children }) {
                     </div>
                 </div>
 
-                <div className="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400">
+                <div className="max-w-7xl mx-auto px-6 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-gray-400">
                     <p>
                         &copy; 2025-{new Date().getFullYear()} Zedeck's Training | Todos os direitos reservados | Powered by <a href="https://zedecks.com" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline">ZEDECK'S IT</a>
                     </p>
