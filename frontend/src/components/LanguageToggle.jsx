@@ -15,14 +15,14 @@ export default function LanguageToggle() {
                 className={`p-1.5 rounded-md transition-all ${i18n.language === 'pt' ? 'bg-white dark:bg-gray-700 shadow-sm opacity-100' : 'opacity-50 hover:opacity-100'}`}
                 title="Português (Mozambique)"
             >
-                <span className="text-xl">🇲🇿</span>
+                <span className="fi fi-mz text-xl rounded-sm"></span>
             </button>
             <button
                 onClick={() => changeLanguage('en')}
                 className={`p-1.5 rounded-md transition-all ${i18n.language === 'en' ? 'bg-white dark:bg-gray-700 shadow-sm opacity-100' : 'opacity-50 hover:opacity-100'}`}
                 title="English (UK)"
             >
-                <span className="text-xl">🇬🇧</span>
+                <span className="fi fi-gb text-xl rounded-sm"></span>
             </button>
         </div>
     );

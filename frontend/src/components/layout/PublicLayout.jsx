@@ -3,8 +3,10 @@ import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/button';
 import { LogOut, User as UserIcon, Menu, X, BookOpen } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function PublicLayout({ children }) {
+    const { t } = useTranslation();
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,10 +32,10 @@ export default function PublicLayout({ children }) {
 
                         {/* Desktop Navigation */}
                         <div className="hidden md:flex items-center gap-8">
-                            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">Home</Link>
-                            <Link to="/courses" className="text-sm font-medium hover:text-primary transition-colors">Courses</Link>
-                            <Link to="/about" className="text-sm font-medium hover:text-primary transition-colors">About</Link>
-                            <Link to="/contact" className="text-sm font-medium hover:text-primary transition-colors">Contact</Link>
+                            <Link to="/" className="text-sm font-medium hover:text-primary transition-colors">{t('nav_home', 'Home')}</Link>
+                            <Link to="/courses" className="text-sm font-medium hover:text-primary transition-colors">{t('nav_courses', 'Courses')}</Link>
+                            <Link to="/about" className="text-sm font-medium hover:text-primary transition-colors">{t('nav_about', 'About')}</Link>
+                            <Link to="/contact" className="text-sm font-medium hover:text-primary transition-colors">{t('nav_contact', 'Contact')}</Link>
                         </div>
 
                         {/* Auth / Menu */}
@@ -41,18 +43,18 @@ export default function PublicLayout({ children }) {
                             {user ? (
                                 <div className="flex items-center gap-4">
                                     <Link to="/dashboard" className="text-sm font-medium hover:text-primary">
-                                        Dashboard
+                                        {t('nav_dashboard', 'Dashboard')}
                                     </Link>
                                     <div className="w-px h-6 bg-gray-200 dark:bg-gray-700"></div>
-                                    <button onClick={handleLogout} className="text-gray-500 hover:text-red-600 transition-colors" title="Logout">
+                                    <button onClick={handleLogout} className="text-gray-500 hover:text-red-600 transition-colors" title={t('logout')}>
                                         <LogOut size={20} />
                                     </button>
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-3">
-                                    <Link to="/login" className="text-sm font-medium hover:text-primary">Login</Link>
+                                    <Link to="/login" className="text-sm font-medium hover:text-primary">{t('nav_login', 'Login')}</Link>
                                     <Link to="/register">
-                                        <Button className="w-auto px-5 py-2 text-sm">Get Started</Button>
+                                        <Button className="w-auto px-5 py-2 text-sm">{t('nav_get_started', 'Get Started')}</Button>
                                     </Link>
                                 </div>
                             )}
@@ -73,21 +75,21 @@ export default function PublicLayout({ children }) {
                 {/* Mobile Menu */}
                 {isMenuOpen && (
                     <div className="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 space-y-4 animate-in slide-in-from-top-2">
-                        <Link to="/" className="block text-base font-medium hover:text-primary">Home</Link>
-                        <Link to="/courses" className="block text-base font-medium hover:text-primary">Courses</Link>
-                        <Link to="/about" className="block text-base font-medium hover:text-primary">About</Link>
-                        <Link to="/contact" className="block text-base font-medium hover:text-primary">Contact</Link>
+                        <Link to="/" className="block text-base font-medium hover:text-primary">{t('nav_home', 'Home')}</Link>
+                        <Link to="/courses" className="block text-base font-medium hover:text-primary">{t('nav_courses', 'Courses')}</Link>
+                        <Link to="/about" className="block text-base font-medium hover:text-primary">{t('nav_about', 'About')}</Link>
+                        <Link to="/contact" className="block text-base font-medium hover:text-primary">{t('nav_contact', 'Contact')}</Link>
                         <hr className="border-gray-100 dark:border-gray-800" />
                         {user ? (
                             <>
-                                <Link to="/dashboard" className="block text-base font-medium hover:text-primary">Dashboard</Link>
-                                <button onClick={handleLogout} className="text-left w-full text-base font-medium text-red-600">Logout</button>
+                                <Link to="/dashboard" className="block text-base font-medium hover:text-primary">{t('nav_dashboard', 'Dashboard')}</Link>
+                                <button onClick={handleLogout} className="text-left w-full text-base font-medium text-red-600">{t('logout')}</button>
                             </>
                         ) : (
                             <div className="flex flex-col gap-3">
-                                <Link to="/login" className="block text-center w-full py-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">Login</Link>
+                                <Link to="/login" className="block text-center w-full py-2 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">{t('nav_login', 'Login')}</Link>
                                 <Link to="/register" className="block">
-                                    <Button className="w-full">Get Started</Button>
+                                    <Button className="w-full">{t('nav_get_started', 'Get Started')}</Button>
                                 </Link>
                             </div>
                         )}
