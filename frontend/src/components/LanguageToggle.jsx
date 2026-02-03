@@ -9,21 +9,18 @@ export default function LanguageToggle() {
     };
 
     return (
-        <div className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-            <button
-                onClick={() => changeLanguage('pt')}
-                className={`p-1.5 rounded-md transition-all ${i18n.language === 'pt' ? 'bg-white dark:bg-gray-700 shadow-sm opacity-100' : 'opacity-50 hover:opacity-100'}`}
-                title="Português (Mozambique)"
-            >
-                <span className="fi fi-mz text-xl rounded-sm"></span>
-            </button>
-            <button
-                onClick={() => changeLanguage('en')}
-                className={`p-1.5 rounded-md transition-all ${i18n.language === 'en' ? 'bg-white dark:bg-gray-700 shadow-sm opacity-100' : 'opacity-50 hover:opacity-100'}`}
-                title="English (UK)"
-            >
-                <span className="fi fi-gb text-xl rounded-sm"></span>
-            </button>
-        </div>
+    return (
+        <button
+            onClick={() => changeLanguage(i18n.language === 'pt' ? 'en' : 'pt')}
+            className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full px-3 py-1.5 transition-all shadow-sm border border-gray-200 dark:border-gray-700"
+            title={i18n.language === 'pt' ? "Switch to English" : "Mudar para Português"}
+        >
+            <span className={`fi fi-${i18n.language === 'pt' ? 'mz' : 'gb'} text-lg rounded-full w-5 h-5 flex-shrink-0 object-cover`}></span>
+            <span className="text-xs font-bold text-gray-700 dark:text-gray-300">
+                {i18n.language === 'pt' ? 'PT' : 'EN'}
+            </span>
+        </button>
+    );
+}
     );
 }
