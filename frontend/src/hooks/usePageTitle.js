@@ -16,9 +16,6 @@ export function usePageTitle() {
         let title = baseTitlePublic;
 
         if (user) {
-            console.log('usePageTitle: user found', user);
-            console.log('usePageTitle: role is', user.role);
-
             // Case-insensitive check and trimming just in case
             const role = String(user.role).toLowerCase().trim();
 
@@ -27,8 +24,6 @@ export function usePageTitle() {
             } else if (role === 'admin') {
                 title = baseTitlePublic;
             }
-        } else {
-            console.log('usePageTitle: no user found');
         }
 
         // Optional: Add specific page suffixes if needed
