@@ -132,7 +132,14 @@ const resources = {
             "edu_master": "Mestrado",
             "edu_doctorate": "Doutoramento",
             "special_needs_label": "Possui alguma necessidade educativa especial?",
-            "special_needs_desc_label": "Descreva a necessidade (Opcional)"
+            "special_needs_desc_label": "Descreva a necessidade (Opcional)",
+
+            // Stepper Short Labels
+            "personal_short": "Dados",
+            "courses_short": "Cursos",
+            "id_short": "B.I",
+            "payment_short": "Pagar",
+            "account_short": "Conta"
         }
     },
     en: {
@@ -263,7 +270,14 @@ const resources = {
             "edu_master": "Master's Degree",
             "edu_doctorate": "Doctorate",
             "special_needs_label": "Do you have any special educational needs?",
-            "special_needs_desc_label": "Describe the need (Optional)"
+            "special_needs_desc_label": "Describe the need (Optional)",
+
+            // Stepper Short Labels
+            "personal_short": "Info",
+            "courses_short": "Courses",
+            "id_short": "ID",
+            "payment_short": "Pay",
+            "account_short": "Account"
         }
     }
 };

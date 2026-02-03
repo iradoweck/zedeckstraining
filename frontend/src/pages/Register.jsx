@@ -578,23 +578,54 @@ export default function Register() {
             {/* Main Card */}
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative z-10">
 
-                {/* Wizard Progress Header */}
-                <div className="mb-8">
-                    <div className="flex justify-between items-center mb-2">
-                        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                            <UserPlus size={24} className="text-primary" />
-                            {t('register_title', 'Create Account')}
-                        </h1>
-                        <span className="text-xs font-semibold px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
-                            {t('step', 'Step')} {currentStep} / {totalSteps}
-                        </span>
-                    </div>
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                {/* Wizard Progress Stepper */}
+                <div className="mb-10">
+                    <div className="flex items-center justify-between relative">
+                        {/* Connecting Line Background */}
+                        <div className="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 dark:bg-gray-700 -z-0 rounded-full" />
+
+                        {/* Active Progress Line */}
                         <div
-                            className="bg-primary h-full transition-all duration-300 ease-in-out"
-                            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                            className="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-primary transition-all duration-500 ease-in-out -z-0 rounded-full"
+                            style={{ width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%` }}
                         />
+
+                        {[
+                            { step: 1, icon: User, label: t('personal_short', 'Info') },
+                            { step: 2, icon: BookOpen, label: t('courses_short', 'Courses') },
+                            { step: 3, icon: Fingerprint, label: t('id_short', 'ID') },
+                            { step: 4, icon: CreditCard, label: t('payment_short', 'Pay') },
+                            { step: 5, icon: Lock, label: t('account_short', 'Account') }
+                        ].map((s, idx) => {
+                            const isCompleted = currentStep > s.step;
+                            const isActive = currentStep === s.step;
+                            const Icon = s.icon;
+
+                            return (
+                                <div key={s.step} className="relative z-10 flex flex-col items-center group">
+                                    <div
+                                        className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${isActive
+                                                ? 'bg-primary border-primary text-white scale-110 shadow-lg shadow-primary/30'
+                                                : isCompleted
+                                                    ? 'bg-primary border-primary text-white'
+                                                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500'
+                                            }`}
+                                    >
+                                        <Icon size={isActive ? 20 : 18} />
+                                    </div>
+
+                                    {/* Label */}
+                                    <span className={`absolute -bottom-6 md:-bottom-8 text-[10px] md:text-sm font-medium whitespace-nowrap transition-colors duration-300 ${isActive
+                                            ? 'text-primary'
+                                            : isCompleted
+                                                ? 'text-gray-700 dark:text-gray-300'
+                                                : 'text-gray-400'
+                                        }`}>
+                                        {s.label}
+                                    </span>
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
 
