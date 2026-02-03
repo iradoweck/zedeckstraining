@@ -561,110 +561,104 @@ export default function Register() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 relative">
+        <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950 p-4 relative">
             {/* Header Controls */}
-            <div className="absolute top-6 left-6 z-20">
+            <div className="absolute top-6 left-6 z-50">
                 <Link to="/" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium group">
                     <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
                     <span>{t('back_home', 'Back to Home')}</span>
                 </Link>
             </div>
 
-            <div className="absolute top-4 right-4 flex gap-2 z-10">
+            <div className="absolute top-4 right-4 flex gap-2 z-50">
                 <LanguageToggle />
                 <ThemeToggle />
             </div>
 
-            <div className="flex-grow flex items-center justify-center p-4">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative my-8 mt-24 md:mt-8">
+            {/* Main Card */}
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative z-10">
 
-                    {/* Wizard Progress Header */}
-                    <div className="mb-8">
-                        <div className="flex justify-between items-center mb-2">
-                            <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                                <UserPlus size={24} className="text-primary" />
-                                {t('register_title', 'Create Account')}
-                            </h1>
-                            <span className="text-xs font-semibold px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
-                                {t('step', 'Step')} {currentStep} / {totalSteps}
-                            </span>
-                        </div>
-                        {/* Progress Bar */}
-                        <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
-                            <div
-                                className="bg-primary h-full transition-all duration-300 ease-in-out"
-                                style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-                            />
-                        </div>
+                {/* Wizard Progress Header */}
+                <div className="mb-8">
+                    <div className="flex justify-between items-center mb-2">
+                        <h1 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <UserPlus size={24} className="text-primary" />
+                            {t('register_title', 'Create Account')}
+                        </h1>
+                        <span className="text-xs font-semibold px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded">
+                            {t('step', 'Step')} {currentStep} / {totalSteps}
+                        </span>
+                    </div>
+                    {/* Progress Bar */}
+                    <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+                        <div
+                            className="bg-primary h-full transition-all duration-300 ease-in-out"
+                            style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+                        />
+                    </div>
+                </div>
+
+                {error && (
+                    <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-6 text-center">
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                    <div className="min-h-[300px]">
+                        {renderStep()}
                     </div>
 
-                    {error && (
-                        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm mb-6 text-center">
-                            {error}
-                        </div>
-                    )}
+                    {/* Navigation Buttons */}
+                    <div className="flex justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={prevStep}
+                            disabled={currentStep === 1 || isLoading}
+                            className={`flex items-center px-6 ${currentStep === 1 ? 'opacity-0 pointer-events-none' : ''}`}
+                        >
+                            <ChevronLeft className="mr-2 h-4 w-4" />
+                            {t('back', 'Back')}
+                        </Button>
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="min-h-[300px]">
-                            {renderStep()}
-                        </div>
-
-                        {/* Navigation Buttons */}
-                        <div className="flex justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
+                        {currentStep < totalSteps ? (
                             <Button
                                 type="button"
-                                variant="outline"
-                                onClick={prevStep}
-                                disabled={currentStep === 1 || isLoading}
-                                className={`flex items-center px-6 ${currentStep === 1 ? 'opacity-0 pointer-events-none' : ''}`}
+                                onClick={nextStep}
+                                className="flex items-center px-6 bg-primary hover:bg-blue-700 text-white"
                             >
-                                <ChevronLeft className="mr-2 h-4 w-4" />
-                                {t('back', 'Back')}
+                                {t('next', 'Next')}
+                                <ChevronRight className="ml-2 h-4 w-4" />
                             </Button>
-
-                            {currentStep < totalSteps ? (
-                                <Button
-                                    type="button"
-                                    onClick={nextStep}
-                                    className="flex items-center px-6 bg-primary hover:bg-blue-700 text-white"
-                                >
-                                    {t('next', 'Next')}
-                                    <ChevronRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            ) : (
-                                <Button
-                                    type="submit"
-                                    className="flex items-center px-6 bg-green-600 hover:bg-green-700 text-white"
-                                    disabled={isLoading}
-                                >
-                                    {isLoading ? t('creating_account', 'Creating...') : t('finish_register', 'Create Account')}
-                                    {!isLoading && <UserPlus className="ml-2 h-4 w-4" />}
-                                </Button>
-                            )}
-                        </div>
-                    </form>
-
-                    <div className="mt-6 text-center">
-                        <p className="text-sm text-gray-500">
-                            {t('have_account', "Already have an account?")}{' '}
-                            <Link to="/login" className="text-primary font-bold hover:underline">
-                                {t('login_link', 'Log in')}
-                            </Link>
-                        </p>
+                        ) : (
+                            <Button
+                                type="submit"
+                                className="flex items-center px-6 bg-green-600 hover:bg-green-700 text-white"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? t('creating_account', 'Creating...') : t('finish_register', 'Create Account')}
+                                {!isLoading && <UserPlus className="ml-2 h-4 w-4" />}
+                            </Button>
+                        )}
                     </div>
+                </form>
+
+                <div className="mt-6 text-center">
+                    <p className="text-sm text-gray-500">
+                        {t('have_account', "Already have an account?")}{' '}
+                        <Link to="/login" className="text-primary font-bold hover:underline">
+                            {t('login_link', 'Log in')}
+                        </Link>
+                    </p>
                 </div>
             </div>
 
             {/* Footer */}
-            <footer className="w-full py-4 text-center text-xs text-gray-400 dark:text-gray-600 relative">
+            <footer className="absolute bottom-4 w-full text-center text-[10px] text-gray-400 dark:text-gray-600 opacity-60">
                 <p>
-                    &copy; 2025-{currentYear} Zedeck's Training | {t('rights_reserved', 'Todos os direitos reservados')} | Powered by <a href="https://zedecks.com" target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline">ZEDECK'S IT</a>
+                    &copy; 2025-{currentYear} Zedeck's Training | {t('rights_reserved', 'Todos os direitos reservados')} | v{version}
                 </p>
-
-                {/* Version in Corner */}
-                <div className="absolute bottom-4 right-4 text-[10px] opacity-70">
-                    {version}
-                </div>
             </footer>
         </div>
     );
