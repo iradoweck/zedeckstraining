@@ -635,7 +635,7 @@ export default function Register() {
                                                                             }
                                                                         `}
                                                                     >
-                                                                        {m}
+                                                                        {t(`modality_${m.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}`, m)}
                                                                     </button>
                                                                 )
                                                             })}

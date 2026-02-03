@@ -193,7 +193,10 @@ const resources = {
             "uniform_required": "Uniforme Obrigatório",
             "uniform_exempt": "Isento de Uniforme (Online)",
             "select_schedule_placeholder": "Selecione o Horário",
-            "courses_selected_count": "{{count}} de {{max}} cursos selecionados"
+            "courses_selected_count": "{{count}} de {{max}} cursos selecionados",
+            "modality_presencial": "Presencial",
+            "modality_online": "Online",
+            "modality_hibrido": "Híbrido"
         }
     },
     en: {
@@ -385,7 +388,10 @@ const resources = {
             "uniform_required": "Uniform Required",
             "uniform_exempt": "Uniform Exempt (Online)",
             "select_schedule_placeholder": "Select Schedule",
-            "courses_selected_count": "{{count}} of {{max}} courses selected"
+            "courses_selected_count": "{{count}} of {{max}} courses selected",
+            "modality_presencial": "In-Person",
+            "modality_online": "Online",
+            "modality_hibrido": "Hybrid"
         }
     }
 };
