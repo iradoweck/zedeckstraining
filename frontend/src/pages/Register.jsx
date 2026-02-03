@@ -7,8 +7,8 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Checkbox } from '../components/ui/checkbox'; // Ensure Checkbox is imported if available, or use input type='checkbox'
-import LanguageToggle from '../components/LanguageToggle';
-import ThemeToggle from '../components/ThemeToggle';
+import { formatCurrency } from '../utils/formatters';
+import LanguageToggle from '../components/LanguageToggle'; import ThemeToggle from '../components/ThemeToggle';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -601,7 +601,7 @@ export default function Register() {
                                                         )}
                                                     </div>
                                                     <p className="mt-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                                        {new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(course.price)}
+                                                        {formatCurrency(course.price)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -615,7 +615,7 @@ export default function Register() {
 
                                                     {/* Modality Selector (Pills) */}
                                                     <div className="space-y-2">
-                                                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Modalidade</Label>
+                                                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('modality_label', 'Modalidade')}</Label>
                                                         <div className="flex flex-wrap gap-2">
                                                             {availableModalities.map(m => {
                                                                 const isActive = selectedData.modality === m;
@@ -644,7 +644,7 @@ export default function Register() {
 
                                                     {/* Shift Selector */}
                                                     <div className="space-y-2">
-                                                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Turno / Horário</Label>
+                                                        <Label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{t('shift_label', 'Turno / Horário')}</Label>
                                                         <Select
                                                             value={selectedData.schedule}
                                                             onValueChange={(val) => {
@@ -653,7 +653,7 @@ export default function Register() {
                                                             }}
                                                         >
                                                             <SelectTrigger className="w-full bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-sm h-10">
-                                                                <SelectValue placeholder="Selecione o Horário" />
+                                                                <SelectValue placeholder={t('select_schedule_placeholder', 'Selecione o Horário')} />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 {course.schedules?.map((s, idx) => (
@@ -676,11 +676,11 @@ export default function Register() {
                                                         <div className="flex-1">
                                                             {showUniform ? (
                                                                 <div className="flex justify-between items-center">
-                                                                    <span className="font-medium">Uniforme Obrigatório</span>
-                                                                    <span className="font-bold">{new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(uniformCost)}</span>
+                                                                    <span className="font-medium">{t('uniform_required', 'Uniforme Obrigatório')}</span>
+                                                                    <span className="font-bold">{formatCurrency(uniformCost)}</span>
                                                                 </div>
                                                             ) : (
-                                                                <span className="font-medium">Isento de Uniforme (Online)</span>
+                                                                <span className="font-medium">{t('uniform_exempt', 'Isento de Uniforme (Online)')}</span>
                                                             )}
                                                         </div>
                                                     </div>
@@ -695,7 +695,7 @@ export default function Register() {
 
                         <div className="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
                             <p className="text-sm text-gray-500">
-                                {formData.selected_courses.length} de 2 cursos selecionados
+                                {t('courses_selected_count', { count: formData.selected_courses.length, max: 2, defaultValue: `${formData.selected_courses.length} de 2 cursos selecionados` })}
                             </p>
                         </div>
                     </div>

@@ -186,7 +186,14 @@ const resources = {
             "country_kr": "Coreia do Sul",
             "country_ca": "Canadá",
             "country_au": "Austrália",
-            "country_tr": "Turquia"
+            "country_tr": "Turquia",
+
+            // Phase 2
+            "uniform_label": "Uniforme",
+            "uniform_required": "Uniforme Obrigatório",
+            "uniform_exempt": "Isento de Uniforme (Online)",
+            "select_schedule_placeholder": "Selecione o Horário",
+            "courses_selected_count": "{{count}} de {{max}} cursos selecionados"
         }
     },
     en: {
@@ -371,7 +378,14 @@ const resources = {
             "country_kr": "South Korea",
             "country_ca": "Canada",
             "country_au": "Australia",
-            "country_tr": "Turkey"
+            "country_tr": "Turkey",
+
+            // Phase 2
+            "uniform_label": "Uniform",
+            "uniform_required": "Uniform Required",
+            "uniform_exempt": "Uniform Exempt (Online)",
+            "select_schedule_placeholder": "Select Schedule",
+            "courses_selected_count": "{{count}} of {{max}} courses selected"
         }
     }
 };
