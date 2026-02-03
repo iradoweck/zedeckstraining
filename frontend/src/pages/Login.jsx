@@ -14,17 +14,21 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // Added local loading state
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        setIsLoading(true); // Start loading
         try {
             await login(email, password);
             navigate('/dashboard');
         } catch (err) {
             setError(t('invalid_credentials', 'Invalid credentials'));
+        } finally {
+            setIsLoading(false); // Stop loading
         }
     };
 
