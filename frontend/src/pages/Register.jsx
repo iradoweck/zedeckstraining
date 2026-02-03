@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
 import { useTranslation } from 'react-i18next';
@@ -27,13 +29,22 @@ export default function Register() {
         name: '',
         email: '',
         password: '',
-        password_confirmation: ''
+        password_confirmation: '',
+        gender: '',
+        birth_date: '',
+        nationality: '',
+        document_type: 'BI',
+        document_number: '',
     });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSelectChange = (name, value) => {
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = async (e) => {
@@ -62,7 +73,7 @@ export default function Register() {
     };
 
     const currentYear = new Date().getFullYear();
-    const version = "v1.2.1"; // Hardcoded or from package.json env
+    const version = "v1.2.2";
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 relative">
@@ -80,7 +91,7 @@ export default function Register() {
             </div>
 
             <div className="flex-grow flex items-center justify-center p-4">
-                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md border border-gray-100 dark:border-gray-700 relative">
+                <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-2xl border border-gray-100 dark:border-gray-700 relative my-8">
                     <div className="text-center mb-8 mt-4">
                         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center gap-2">
                             <UserPlus size={28} className="text-primary" />
@@ -95,48 +106,147 @@ export default function Register() {
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <Input
-                            name="name"
-                            placeholder="John Doe"
-                            value={formData.name}
-                            onChange={handleChange}
-                            label={t('name_label', 'Full Name')}
-                            className="bg-gray-50 dark:bg-gray-900"
-                            required
-                        />
-                        <Input
-                            name="email"
-                            type="email"
-                            placeholder="seu@email.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            label={t('email_label')}
-                            className="bg-gray-50 dark:bg-gray-900"
-                            required
-                        />
-                        <Input
-                            name="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={formData.password}
-                            onChange={handleChange}
-                            label={t('password_label')}
-                            className="bg-gray-50 dark:bg-gray-900"
-                            required
-                        />
-                        <Input
-                            name="password_confirmation"
-                            type="password"
-                            placeholder="••••••••"
-                            value={formData.password_confirmation}
-                            onChange={handleChange}
-                            label={t('confirm_password_label', 'Confirm Password')}
-                            className="bg-gray-50 dark:bg-gray-900"
-                            required
-                        />
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Account Info */}
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-2">
+                                {t('account_info', 'Account Information')}
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="name">{t('name_label', 'Full Name')}</Label>
+                                    <Input
+                                        id="name"
+                                        name="name"
+                                        placeholder="John Doe"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">{t('email_label', 'Email Address')}</Label>
+                                    <Input
+                                        id="email"
+                                        name="email"
+                                        type="email"
+                                        placeholder="student@example.com"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="password">{t('password_label', 'Password')}</Label>
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="confirm_password">{t('confirm_password_label', 'Confirm Password')}</Label>
+                                    <Input
+                                        id="confirm_password"
+                                        name="password_confirmation"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={formData.password_confirmation}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </div>
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        {/* Personal Info */}
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-2">
+                                {t('personal_info', 'Personal Information')}
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="birth_date">{t('birth_date_label', 'Date of Birth')}</Label>
+                                    <Input
+                                        id="birth_date"
+                                        name="birth_date"
+                                        type="date"
+                                        value={formData.birth_date}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900 block"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="gender">{t('gender_label', 'Gender')}</Label>
+                                    <Select name="gender" onValueChange={(val) => handleSelectChange('gender', val)} required>
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900">
+                                            <SelectValue placeholder={t('select_gender', 'Select')} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="M">{t('gender_male', 'Male')}</SelectItem>
+                                            <SelectItem value="F">{t('gender_female', 'Female')}</SelectItem>
+                                            <SelectItem value="O">{t('gender_other', 'Other')}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="nationality">{t('nationality_label', 'Nationality')}</Label>
+                                    <Input
+                                        id="nationality"
+                                        name="nationality"
+                                        placeholder="Ex: Moçambicana"
+                                        value={formData.nationality}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ID Info */}
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="document_type">{t('doc_type_label', 'Doc Type')}</Label>
+                                    <Select name="document_type" value={formData.document_type} onValueChange={(val) => handleSelectChange('document_type', val)}>
+                                        <SelectTrigger className="bg-gray-50 dark:bg-gray-900">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="BI">BI / ID Card</SelectItem>
+                                            <SelectItem value="Passport">Passaporte</SelectItem>
+                                            <SelectItem value="DIRE">DIRE</SelectItem>
+                                            <SelectItem value="Voter">Cartão Eleitor</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                                <div className="space-y-2 col-span-2">
+                                    <Label htmlFor="document_number">{t('doc_number_label', 'Document Number')}</Label>
+                                    <Input
+                                        id="document_number"
+                                        name="document_number"
+                                        placeholder="Ex: 1101001001001B"
+                                        value={formData.document_number}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900"
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <Button type="submit" className="w-full mt-6" disabled={isLoading}>
                             {isLoading ? t('loading') : t('register_button', 'Sign Up')}
                         </Button>
                     </form>
