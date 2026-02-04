@@ -13,51 +13,51 @@ const PaymentMethodSelector = ({ onSelectMethod, selectedMethod }) => {
                 id: 'mpesa',
                 name: 'M-Pesa',
                 logo: '/assets/mpesa-logo.png',
-                description: 'Pagar via M-Pesa'
+                description: t('pay_via_mpesa')
             },
             {
                 id: 'emola',
                 name: 'E-Mola',
                 logo: '/assets/emola-logo.png',
-                description: 'Pagar via E-Mola'
+                description: t('pay_via_emola')
             },
             {
                 id: 'stripe',
-                name: 'Cartão / Stripe',
+                name: t('card_stripe'),
                 logo: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg',
-                description: 'Visa, Mastercard, Amex'
+                description: t('pay_via_card')
             }
         ],
         manual: [
             {
                 id: 'mpesa_manual',
-                name: 'M-Pesa (Manual)',
+                name: 'M-Pesa',
                 logo: '/assets/mpesa-logo.png',
-                description: 'Enviar Comprovativo'
+                description: t('send_proof')
             },
             {
                 id: 'emola_manual',
-                name: 'E-Mola (Manual)',
+                name: 'E-Mola',
                 logo: '/assets/emola-logo.png',
-                description: 'Enviar Comprovativo'
+                description: t('send_proof')
             },
             {
                 id: 'bank',
-                name: 'Transferência Bancária',
+                name: t('bank_transfer'),
                 icon: Building2,
-                description: 'Millennium BIM'
+                description: t('pay_at_bank')
             },
             {
                 id: 'pos',
-                name: 'POS (Presencial)',
+                name: t('pos_presential'),
                 icon: CreditCard,
-                description: 'Pagar na Secretaria'
+                description: t('pay_at_pos')
             },
             {
                 id: 'cash',
-                name: 'Numerário',
+                name: t('cash'),
                 icon: Wallet,
-                description: 'Pagar na Secretaria'
+                description: t('pay_cash')
             }
         ]
     };
@@ -68,8 +68,8 @@ const PaymentMethodSelector = ({ onSelectMethod, selectedMethod }) => {
 
             <Tabs defaultValue="automatic" className="w-full">
                 <TabsList className="grid w-full grid-cols-2 mb-4">
-                    <TabsTrigger value="automatic">Automático</TabsTrigger>
-                    <TabsTrigger value="manual">Manual / Presencial</TabsTrigger>
+                    <TabsTrigger value="automatic">{t('payment_automatic')}</TabsTrigger>
+                    <TabsTrigger value="manual">{t('payment_manual')}</TabsTrigger>
                 </TabsList>
 
                 {/* API Methods */}
@@ -83,7 +83,7 @@ const PaymentMethodSelector = ({ onSelectMethod, selectedMethod }) => {
                                     : 'border-transparent bg-gray-50 hover:bg-white hover:shadow-sm'}`}
                             onClick={() => onSelectMethod(method.id)}
                         >
-                            <div className={`h-12 w-12 flex items-center justify-center p-1 rounded-full ${method.logo ? 'bg-white shadow-sm border border-gray-100' : (method.color || 'bg-blue-600')}`}>
+                            <div className={`h-12 w-12 flex items-center justify-center rounded-full overflow-hidden ${method.logo ? 'bg-white shadow-sm border border-gray-100' : (method.color || 'bg-blue-600')}`}>
                                 {method.logo ? (
                                     <img src={method.logo} alt={method.name} className="h-full w-full object-contain" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.classList.add('bg-gray-200') }} />
                                 ) : (
@@ -106,7 +106,7 @@ const PaymentMethodSelector = ({ onSelectMethod, selectedMethod }) => {
                                     : 'border-transparent bg-gray-50 hover:bg-white hover:shadow-sm'}`}
                             onClick={() => onSelectMethod(method.id)}
                         >
-                            <div className={`p-2 rounded-full flex items-center justify-center ${method.logo ? 'bg-white h-10 w-10 shadow-sm border border-gray-100' : 'bg-gray-600 text-white'}`}>
+                            <div className={`rounded-full flex items-center justify-center overflow-hidden ${method.logo ? 'bg-white h-10 w-10 shadow-sm border border-gray-100' : 'p-2 bg-gray-600 text-white'}`}>
                                 {method.logo ? (
                                     <img src={method.logo} alt={method.name} className="h-full w-full object-contain" />
                                 ) : (
