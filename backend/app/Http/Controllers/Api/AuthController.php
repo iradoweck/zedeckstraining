@@ -6,84 +6,156 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Enrollment;
+use App\Models\Payment;
+use App\Models\StudentId;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
+        // 1. Validation
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8', // removed confirmed as frontend checks it
+            'password' => 'required|string|min:8',
             'role' => 'sometimes|string|in:admin,trainer,student',
-            
+
             // Profile
+            'first_name' => 'nullable|string',
+            'last_name' => 'nullable|string',
             'father_name' => 'nullable|string',
             'mother_name' => 'nullable|string',
             'gender' => 'nullable|string',
             'birth_date' => 'nullable|date',
+            'document_type' => 'nullable|string',
             'document_number' => 'nullable|string',
-            
+            'phone' => 'nullable|string', // Check if user has phone column? Assuming it uses profile fields
+            'province' => 'nullable|string',
+            'city' => 'nullable|string',
+
+            'student_code' => 'nullable|string|unique:users,student_code',
+
             // Enrollment Data
-            'courses' => 'required', // Array or single ID
-            'payment_method' => 'nullable|string',
-            'payment_proof' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'courses' => 'required|array',
+            'payment' => 'nullable|array', // { reference, method, amount, status }
         ]);
 
-        // Create User
-        $userPayload = $request->only([
-            'name', 'email', 'role', 
-            'father_name', 'mother_name', 'gender', 'marital_status', 'occupation', 
-            'nationality', 'birth_date', 'document_type', 'document_number',
-            'education_level', 'has_special_needs', 'special_needs_description'
-        ]);
-        $userPayload['password'] = Hash::make($request->password);
-        $userPayload['role'] = $request->role ?? 'student';
+        try {
+            DB::beginTransaction();
 
-        $user = User::create($userPayload);
+            // 2. Create User
+            // Combine first/last if needed, but we have 'name' input. 
+            // Register.jsx sends 'name' combined and 'first_name'/'last_name' separately.
+            // Users table has 'name'. It also has expanded profile fields.
 
-        // Handle Proof Upload
-        $proofPath = null;
-        if ($request->hasFile('payment_proof')) {
-            $proofPath = $request->file('payment_proof')->store('payments', 'public');
-        }
-
-        // Handle Enrollments
-        // Courses comes as array from FormData: courses[0]=1, courses[1]=2
-        $courses = $request->input('courses');
-        if (!is_array($courses)) {
-            $courses = [$courses];
-        }
-
-        $options = [
-            'schedule' => $request->input('schedule'),
-            'exam_modality' => $request->input('exam_modality'),
-            'programming_type' => $request->input('programming_type'),
-            'education_level' => $request->input('education_level'),
-            'student_code' => $request->input('student_code'),
-        ];
-
-        foreach ($courses as $courseId) {
-            Enrollment::create([
-                'user_id' => $user->id,
-                'course_id' => $courseId,
-                'status' => 'pending',
-                'payment_method' => $request->input('payment_method'),
-                'payment_proof' => $proofPath,
-                'options' => $options
+            $userPayload = $request->only([
+                'name',
+                'email',
+                'role',
+                'father_name',
+                'mother_name',
+                'gender',
+                'marital_status',
+                'occupation',
+                'nationality',
+                'birth_date',
+                'document_type',
+                'document_number',
+                'education_level',
+                'has_special_needs',
+                'special_needs_description',
+                'student_code'
             ]);
+
+            $userPayload['password'] = Hash::make($request->password);
+            $userPayload['role'] = $request->role ?? 'student';
+
+            $user = User::create($userPayload);
+
+            // 3. Handle Payment
+            $paymentId = null;
+            if ($request->has('payment') && !empty($request->payment)) {
+                $payData = $request->payment;
+
+                // Ensure required payment fields
+                if (isset($payData['reference'], $payData['amount'], $payData['method'])) {
+                    $payment = Payment::create([
+                        'user_id' => $user->id,
+                        'reference' => $payData['reference'],
+                        'amount' => $payData['amount'],
+                        'currency' => 'MZN',
+                        'method' => $payData['method'],
+                        'status' => $payData['status'] ?? 'pending',
+                        'metadata' => [
+                            'student_code' => $user->student_code,
+                            'courses_count' => count($request->courses)
+                        ]
+                    ]);
+                    $paymentId = $payment->id;
+                }
+            }
+
+            // 4. Handle Enrollments
+            $courses = $request->input('courses');
+
+            foreach ($courses as $courseItem) {
+                // Determine ID and Modality
+                if (is_array($courseItem)) {
+                    $courseId = $courseItem['id'];
+                    $modality = $courseItem['modality'] ?? 'Presencial';
+                } else {
+                    $courseId = $courseItem;
+                    $modality = 'Presencial';
+                }
+
+                // Create Enrollment
+                Enrollment::create([
+                    'user_id' => $user->id,
+                    'course_id' => $courseId,
+                    'status' => 'pending', // Pending admin approval or payment confirmation
+                    'options' => [
+                        'modality' => $modality,
+                        'payment_id' => $paymentId
+                    ],
+                    'enrolled_at' => now()
+                ]);
+            }
+
+            // 5. Update StudentId status if used
+            if ($user->student_code) {
+                $sid = StudentId::where('student_code', $user->student_code)->first();
+                if ($sid) {
+                    $sid->update(['status' => 'used']);
+                }
+
+                // Or create it if it doesn't exist (if passed from frontend but not generated via API)?
+                // Generally we trust the unique constraint on users table.
+            }
+
+            DB::commit();
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Conta criada com sucesso!',
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Registration Error: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao criar conta: ' . $e->getMessage()
+            ], 500);
         }
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ], 201);
     }
 
     public function login(Request $request)

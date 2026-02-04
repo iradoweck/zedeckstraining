@@ -9,9 +9,9 @@ const PaymentMethodSelector = ({ onSelectMethod, selectedMethod }) => {
 
     const methods = {
         api: [
-            { id: 'mpesa_api', name: 'M-Pesa', icon: Smartphone, color: 'bg-red-500' },
-            { id: 'emola_api', name: 'E-Mola', icon: Smartphone, color: 'bg-orange-500' },
-            { id: 'stripe', name: 'Cartão (Stripe)', icon: CreditCard, color: 'bg-indigo-600' }
+            { id: 'mpesa_api', name: 'M-Pesa', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/M-PESA_LOGO-01.svg/1200px-M-PESA_LOGO-01.svg.png', color: 'bg-red-500' },
+            { id: 'emola_api', name: 'E-Mola', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/22/Emola_logo.png', color: 'bg-orange-500' }, // Placeholder
+            { id: 'stripe', name: 'Stripe', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg', color: 'bg-indigo-600' }
         ],
         manual: [
             { id: 'mpesa_manual', name: 'M-Pesa (Manual)', icon: Smartphone, color: 'bg-red-600' },
@@ -43,8 +43,12 @@ const PaymentMethodSelector = ({ onSelectMethod, selectedMethod }) => {
                                     : 'border-transparent bg-gray-50 hover:bg-white hover:shadow-sm'}`}
                             onClick={() => onSelectMethod(method.id)}
                         >
-                            <div className={`p-2 rounded-full text-white ${method.color}`}>
-                                <method.icon size={20} />
+                            <div className={`h-12 w-12 flex items-center justify-center p-1 rounded-full ${method.logo ? 'bg-white' : method.color}`}>
+                                {method.logo ? (
+                                    <img src={method.logo} alt={method.name} className="h-full w-full object-contain" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.classList.add(method.color) }} />
+                                ) : (
+                                    <Smartphone size={24} className="text-white" />
+                                )}
                             </div>
                             <span className="text-xs font-bold text-gray-700">{method.name}</span>
                         </Card>

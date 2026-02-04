@@ -3,13 +3,14 @@
 namespace App\Services;
 
 use App\Models\Course;
+use App\Models\SystemSetting;
 use Illuminate\Support\Collection;
 
 class PaymentCalculatorService
 {
     // Configuration Constants (Should technically be in DB settings, but hardcoded for Phase 4 speed)
-    const UNIFORM_PRICE = 600; // Example price, check DB or logic
-    const ENROLLMENT_FEE = 2500;
+    const UNIFORM_PRICE = 600;
+    const ENROLLMENT_FEE = 2500; // If 0, frontend shows 'Grátis'
 
     /**
      * Calcula o detalhamento total do pagamento para o registo do estudante.
@@ -21,7 +22,11 @@ class PaymentCalculatorService
     public function calculate(array $selectedCourses, bool $isFullPayment = false)
     {
         $courses = Course::whereIn('id', array_column($selectedCourses, 'id'))->get();
-        
+
+        // Fetch Dynamic Settings
+        $uniformPrice = (float) SystemSetting::getValue('uniform_price', 600);
+        $enrollmentFee = (float) SystemSetting::getValue('enrollment_fee', 2500);
+
         // 1. Lógica de Uniforme
         $hasElectricity = $courses->contains(function ($c) {
             // Verifica se o título contém 'Electricidade' ou similar.
@@ -36,7 +41,7 @@ class PaymentCalculatorService
 
         if ($hasElectricity && !$isElecAndOther) {
             // Electricity Only
-            $uniformQty = 1; 
+            $uniformQty = 1;
         } elseif ($isElecAndOther) {
             // Electricity + Others
             $uniformQty = 2;
@@ -60,10 +65,10 @@ class PaymentCalculatorService
             // Encontra modalidade/horário selecionado
             $selected = collect($selectedCourses)->firstWhere('id', $course->id);
             $modality = $selected['modality'] ?? 'Presencial';
-            
+
             // Duração do curso (se não definido, assume 3 meses)
-            $duration = $course->duration_months ?? 3; 
-            
+            $duration = $course->duration_months ?? 3;
+
             // Assume que 'price' na BD é a Mensalidade
             $monthlyPrice = $course->price;
 
@@ -76,7 +81,7 @@ class PaymentCalculatorService
                 $tuition = $monthlyPrice * 1;
                 $description = "{$course->title} (1ª Mensalidade)";
             }
-            
+
             $items[] = [
                 'id' => $course->id,
                 'description' => $description,
@@ -94,10 +99,10 @@ class PaymentCalculatorService
             'description' => 'Taxa de Inscrição (Matrícula)',
             'type' => 'fee',
             'qty' => 1,
-            'unit_price' => self::ENROLLMENT_FEE,
-            'total' => self::ENROLLMENT_FEE
+            'unit_price' => $enrollmentFee,
+            'total' => $enrollmentFee
         ];
-        $subtotal += self::ENROLLMENT_FEE;
+        $subtotal += $enrollmentFee;
 
         // Uniformes
         if ($uniformQty > 0) {
@@ -105,17 +110,17 @@ class PaymentCalculatorService
             // Lógica: Se modalidade for 100% online, talvez isentar. 
             // Mas seguindo a regra estrita do usuário:
             $allOnline = collect($selectedCourses)->every(fn($c) => ($c['modality'] ?? '') === 'Online');
-            
+
             if (!$allOnline) {
                 $items[] = [
                     'id' => 'uniform',
                     'description' => $uniformQty > 1 ? 'Uniformes (Kit Eletricidade + Padrão)' : 'Uniforme Padrão',
                     'type' => 'uniform',
                     'qty' => $uniformQty,
-                    'unit_price' => self::UNIFORM_PRICE,
-                    'total' => $uniformQty * self::UNIFORM_PRICE
+                    'unit_price' => $uniformPrice,
+                    'total' => $uniformQty * $uniformPrice
                 ];
-                $subtotal += ($uniformQty * self::UNIFORM_PRICE);
+                $subtotal += ($uniformQty * $uniformPrice);
             }
         }
 

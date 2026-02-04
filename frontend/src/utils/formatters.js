@@ -11,6 +11,6 @@ export const formatCurrency = (value) => {
     // Add space as thousands separator
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
-    // Join with comma
-    return `${parts.join(',')} MZN`;
+    // Join with comma and append MZN
+    return `${parts.join(',')}MZN`;
 };

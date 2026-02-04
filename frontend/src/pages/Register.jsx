@@ -959,14 +959,17 @@ export default function Register() {
                         </Button>
 
                         {currentStep < totalSteps ? (
-                            <Button
-                                type="button"
-                                onClick={nextStep}
-                                className="flex items-center px-6 bg-primary hover:bg-blue-700 text-white"
-                            >
-                                {t('next', 'Next')}
-                                <ChevronRight className="ml-2 h-4 w-4" />
-                            </Button>
+                            // Hide Next button on Payment Step (4) because user must confirm payment via specific button
+                            currentStep === 4 ? null : (
+                                <Button
+                                    type="button"
+                                    onClick={nextStep}
+                                    className="flex items-center px-6 bg-primary hover:bg-blue-700 text-white"
+                                >
+                                    {t('next', 'Next')}
+                                    <ChevronRight className="ml-2 h-4 w-4" />
+                                </Button>
+                            )
                         ) : (
                             <Button
                                 type="submit"

@@ -36,6 +36,7 @@ class User extends Authenticatable
         'education_level',
         'has_special_needs',
         'special_needs_description',
+        'student_code'
     ];
 
     /**
