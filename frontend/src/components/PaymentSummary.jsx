@@ -150,18 +150,31 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
 
                         {/* PDF Download Button */}
                         <div className="bg-gray-50 px-4 py-3 border-t">
-                            <PDFDownloadLink
-                                document={<InvoicePDF studentData={studentData} paymentData={paymentData} />}
-                                fileName={`Fatura-${displayReference}.pdf`}
-                                className="w-full block"
-                            >
-                                {({ loading }) => (
-                                    <Button variant="outline" className="w-full gap-2 border-gray-300 text-gray-700" disabled={loading}>
-                                        <Download size={16} />
-                                        {loading ? t('generating_invoice', 'Gerando Fatura...') : t('download_invoice', 'Baixar Guia de Pagamento')}
-                                    </Button>
-                                )}
-                            </PDFDownloadLink>
+                            {/* PDF Download Button - Only enable if we have data */}
+                            {paymentData ? (
+                                <PDFDownloadLink
+                                    document={<InvoicePDF studentData={studentData} paymentData={paymentData} />}
+                                    fileName={`Fatura-${displayReference || 'Recibo'}.pdf`}
+                                    className="w-full block"
+                                >
+                                    {({ loading: pdfLoading }) => (
+                                        <Button
+                                            variant="outline"
+                                            className="w-full gap-2 border-gray-300 text-gray-700"
+                                            disabled={pdfLoading}
+                                            type="button" // Prevent form submission
+                                        >
+                                            <Download size={16} />
+                                            {pdfLoading ? "Gerando Fatura..." : t('download_invoice', 'Baixar Comprovativo')}
+                                        </Button>
+                                    )}
+                                </PDFDownloadLink>
+                            ) : (
+                                <Button variant="outline" disabled className="w-full gap-2 border-gray-300">
+                                    <Download size={16} />
+                                    {t('loading_data', 'Carregando...')}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
