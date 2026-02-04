@@ -10,6 +10,7 @@ import { Checkbox } from '../components/ui/checkbox'; // Ensure Checkbox is impo
 import { formatCurrency } from '../utils/formatters';
 import LanguageToggle from '../components/LanguageToggle'; import ThemeToggle from '../components/ThemeToggle';
 import AcademicCard from '../components/AcademicCard';
+import PaymentSummary from '../components/PaymentSummary';
 import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
@@ -777,38 +778,31 @@ export default function Register() {
                             <div className="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
                                 <CreditCard className="text-primary" size={24} />
                             </div>
-                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('payment_info', 'Payment Method')}</h2>
-                            <p className="text-sm text-gray-500">{t('step_4_desc', 'Secure your enrollment')}</p>
+                            <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">{t('payment_info', 'Pagamento & Inscrição')}</h2>
+                            <p className="text-sm text-gray-500">{t('step_4_desc', 'Confirme os detalhes e garanta sua vaga')}</p>
                         </div>
 
-                        <div className="space-y-4">
-                            <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
-                                <h3 className="text-sm font-medium mb-2">{t('order_summary', 'Order Summary')}</h3>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-gray-500">{t('enrollment_fee', 'Enrollment Fee')}</span>
-                                    <span className="font-semibold text-primary">2.500,00 MT</span>
-                                </div>
+                        {studentIdData ? (
+                            <PaymentSummary
+                                studentData={{
+                                    name: `${formData.first_name} ${formData.last_name}`,
+                                    student_code: studentIdData.student_code,
+                                    doc_number: formData.doc_number || formData.other_doc_number
+                                }}
+                                courses={formData.selected_courses}
+                                onComplete={(paymentResult) => {
+                                    // Store payment result in form data (or state) to be sent in final step
+                                    setFormData(prev => ({ ...prev, payment: paymentResult }));
+                                    handleNext(); // Move to next step automatically or let user click next?
+                                    // Actually PaymentSummary has a button "Confirmar Pagamento".
+                                    // So we can move next here.
+                                }}
+                            />
+                        ) : (
+                            <div className="text-red-500 text-center">
+                                Erro: ID do estudante não encontrado. Volte ao passo anterior.
                             </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="payment_method">{t('payment_method_label', 'Payment Method')}</Label>
-                                <Select
-                                    name="payment_method"
-                                    value={formData.payment_method || undefined}
-                                    onValueChange={(val) => handleSelectChange('payment_method', val)}
-                                >
-                                    <SelectTrigger className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
-                                        <SelectValue placeholder={t('select_payment', 'Select Method')} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="mpesa">M-Pesa</SelectItem>
-                                        <SelectItem value="emola">E-Mola</SelectItem>
-                                        <SelectItem value="bank_transfer">Transferência Bancária</SelectItem>
-                                        <SelectItem value="pos">POS (Presencial)</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
+                        )}
                     </div>
                 );
 
