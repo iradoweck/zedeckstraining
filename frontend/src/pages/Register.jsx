@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 import { UserPlus, ArrowLeft, ChevronRight, ChevronLeft, CreditCard, BookOpen, User, Fingerprint, Lock, Code, Globe, Calculator, Palette, Zap, Shirt } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -199,30 +200,79 @@ export default function Register() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+
+        if (formData.password !== formData.password_confirmation) {
+            setError(t('passwords_mismatch', 'As senhas não coincidem'));
+            return;
+        }
+
         setIsLoading(true);
-
-        if (formData.password !== formData.password_confirmation) {
-            setError(t('passwords_mismatch', 'Passwords do not match'));
-            setIsLoading(false);
-            return;
-        }
-
-        if (formData.password !== formData.password_confirmation) {
-            setError(t('passwords_mismatch', 'Passwords do not match'));
-            setIsLoading(false);
-            return;
-        }
+        setError('');
 
         try {
-            await api.post('/auth/register', {
-                ...formData,
-                name: `${formData.first_name} ${formData.last_name}`.trim(), // Combine names
-                role: 'student'
-            });
-            navigate('/login');
+            const payload = {
+                name: `${formData.first_name} ${formData.last_name}`,
+                email: formData.email,
+                password: formData.password,
+                role: 'student',
+
+                // Personal Info
+                first_name: formData.first_name,
+                last_name: formData.last_name,
+                father_name: formData.father_name, // Assuming these are added to formData
+                mother_name: formData.mother_name, // Assuming these are added to formData
+                birth_date: formData.birth_date,
+                gender: formData.gender,
+                nationality: formData.nationality,
+                document_type: formData.document_type === 'Other' ? 'Other' : formData.document_type, // or handle specifics
+                document_number: formData.document_type === 'Other' ? formData.other_doc_number : formData.document_number, // Corrected to document_number
+
+                // Address / Location (Adjusted based on existing formData structure)
+                province: formData.birth_place_type === 'MZ' ? formData.birth_place : null, // If MZ, birth_place is province
+                city: formData.birth_place_type === 'Other' ? formData.birth_place : null, // If Other, birth_place is city/text
+
+                // Other Profile
+                phone: `${formData.phone_code} ${formData.phone_number}`, // Combined phone
+                marital_status: formData.civil_status,
+                occupation: formData.occupation,
+                education_level: formData.education_level,
+                has_special_needs: formData.has_special_needs, // Corrected from special_needs === 'Yes'
+                special_needs_description: formData.special_needs_description, // Corrected from special_needs_desc
+
+                // Student Code (generated in step 3)
+                student_code: studentIdData?.student_code,
+
+                // Courses
+                courses: formData.selected_courses.map(c => ({
+                    id: c.id,
+                    modality: c.modality,
+                    schedule: c.schedule // Sending Schedule/Turno
+                })),
+
+                // Payment (from Step 4)
+                payment_method: formData.payment_method // Corrected from payment
+            };
+
+            console.log("Register Payload:", payload);
+
+            const response = await api.post('/register', payload);
+
+            if (response.data.success || response.data.access_token) {
+                // Login logic if auto-login
+                localStorage.setItem('token', response.data.access_token);
+                toast.success(t('account_created_success', 'Conta criada com sucesso!'));
+                navigate('/dashboard'); // or /login
+            }
+
         } catch (err) {
-            setError(err.response?.data?.message || t('registration_failed', 'Registration failed'));
+            console.error("Registration Error:", err);
+            // Handle validation errors from backend
+            if (err.response && err.response.data && err.response.data.errors) {
+                const msgs = Object.values(err.response.data.errors).flat().join(' ');
+                setError(msgs);
+            } else {
+                setError(t('registration_failed', 'Falha no registro. Tente novamente.'));
+            }
         } finally {
             setIsLoading(false);
         }

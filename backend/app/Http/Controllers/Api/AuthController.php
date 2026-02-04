@@ -104,13 +104,15 @@ class AuthController extends Controller
             $courses = $request->input('courses');
 
             foreach ($courses as $courseItem) {
-                // Determine ID and Modality
+                // Determine ID, Modality, and Schedule
                 if (is_array($courseItem)) {
                     $courseId = $courseItem['id'];
                     $modality = $courseItem['modality'] ?? 'Presencial';
+                    $schedule = $courseItem['schedule'] ?? null;
                 } else {
                     $courseId = $courseItem;
                     $modality = 'Presencial';
+                    $schedule = null;
                 }
 
                 // Create Enrollment
@@ -120,6 +122,7 @@ class AuthController extends Controller
                     'status' => 'pending', // Pending admin approval or payment confirmation
                     'options' => [
                         'modality' => $modality,
+                        'schedule' => $schedule,
                         'payment_id' => $paymentId
                     ],
                     'enrolled_at' => now()
