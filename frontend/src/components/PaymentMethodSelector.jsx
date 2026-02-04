@@ -1,7 +1,7 @@
 import React from 'react';
 import { CreditCard, Banknote, Smartphone, Building, RefreshCw } from 'lucide-react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs.jsx";
+import { Card } from "./ui/card.jsx";
 import { useTranslation } from 'react-i18next';
 
 const PaymentMethodSelector = ({ onSelectMethod, selectedMethod }) => {

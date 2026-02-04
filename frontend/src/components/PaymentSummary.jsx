@@ -4,7 +4,7 @@ import InvoicePDF from './InvoicePDF';
 import PaymentMethodSelector from './PaymentMethodSelector';
 import { Button } from './ui/button';
 import { Loader2, Download, AlertCircle } from 'lucide-react';
-import axios from '../api/axios';
+import api from '../services/api';
 import { toast } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
@@ -21,7 +21,7 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
         const fetchCalculation = async () => {
             setLoading(true);
             try {
-                const response = await axios.post('/payments/calculate', {
+                const response = await api.post('/payments/calculate', {
                     courses: courses.map(c => ({ id: c.id, modality: c.modality })),
                     payment_plan: paymentPlan
                 });
@@ -31,18 +31,18 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                 }
             } catch (error) {
                 console.error("Payment Calc Error:", error);
-                toast.error("Erro ao calcular total. Tente novamente.");
+                toast.error(t('calculation_error', "Erro ao calcular total. Tente novamente."));
             } finally {
                 setLoading(false);
             }
         };
 
         fetchCalculation();
-    }, [courses, paymentPlan]);
+    }, [courses, paymentPlan, t]);
 
     const handleProcessPayment = () => {
         if (!selectedMethod) {
-            toast.error("Selecione um método de pagamento.");
+            toast.error(t('select_payment_method', "Selecione um método de pagamento."));
             return;
         }
 
@@ -64,12 +64,12 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
         return (
             <div className="flex flex-col items-center justify-center p-12 text-gray-500">
                 <Loader2 className="animate-spin mb-2" size={32} />
-                <p>Calculando custos...</p>
+                <p>{t('calculating_costs', 'Calculando custos...')}</p>
             </div>
         );
     }
 
-    if (!paymentData) return <div className="text-red-500">Erro ao carregar dados.</div>;
+    if (!paymentData) return <div className="text-red-500">{t('error_loading_data', 'Erro ao carregar dados.')}</div>;
 
     const { breakdown, reference } = paymentData;
 
@@ -79,11 +79,11 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
             {/* Header / Reference */}
             <div className="bg-blue-50 border border-blue-100 p-4 rounded-lg flex justify-between items-center">
                 <div>
-                    <h4 className="text-xs font-bold text-blue-800 uppercase tracking-widest">Referência de Pagamento</h4>
+                    <h4 className="text-xs font-bold text-blue-800 uppercase tracking-widest">{t('payment_reference', 'Referência de Pagamento')}</h4>
                     <div className="text-2xl font-mono font-bold text-blue-900">{reference}</div>
                 </div>
                 <div className="text-right">
-                    <div className="text-xs text-blue-600">ID do Estudante</div>
+                    <div className="text-xs text-blue-600">{t('student_id', 'ID do Estudante')}</div>
                     <div className="font-mono font-bold text-blue-800">{studentData.student_code}</div>
                 </div>
             </div>
@@ -95,7 +95,7 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                     {/* Items List */}
                     <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
                         <div className="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
-                            <h3 className="font-semibold text-gray-700">Resumo da Fatura</h3>
+                            <h3 className="font-semibold text-gray-700">{t('invoice_summary', 'Resumo da Fatura')}</h3>
 
                             {/* Plan Toggle */}
                             <div className="flex bg-gray-200 rounded-lg p-0.5 text-xs">
@@ -103,13 +103,13 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                                     onClick={() => setPaymentPlan('monthly')}
                                     className={`px-3 py-1.5 rounded-md transition-all ${paymentPlan === 'monthly' ? 'bg-white shadow text-black' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
-                                    Padrão (1ª Mens.)
+                                    {t('standard_plan', 'Padrão (1ª Mens.)')}
                                 </button>
                                 <button
                                     onClick={() => setPaymentPlan('full')}
                                     className={`px-3 py-1.5 rounded-md transition-all ${paymentPlan === 'full' ? 'bg-white shadow text-black' : 'text-gray-500 hover:text-gray-700'}`}
                                 >
-                                    Curso Completo
+                                    {t('full_course_plan', 'Curso Completo')}
                                 </button>
                             </div>
                         </div>
@@ -128,7 +128,7 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                             ))}
 
                             <div className="border-t pt-3 flex justify-between items-center mt-4">
-                                <span className="text-lg font-bold text-gray-900">Total a Pagar</span>
+                                <span className="text-lg font-bold text-gray-900">{t('total_to_pay', 'Total a Pagar')}</span>
                                 <span className="text-lg font-bold text-primary">
                                     {new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(breakdown.total)}
                                 </span>
@@ -145,7 +145,7 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                                 {({ loading }) => (
                                     <Button variant="outline" className="w-full gap-2 border-gray-300 text-gray-700" disabled={loading}>
                                         <Download size={16} />
-                                        {loading ? 'Gerando Fatura...' : 'Baixar Guia de Pagamento (PDF)'}
+                                        {loading ? t('generating_invoice', 'Gerando Fatura...') : t('download_invoice', 'Baixar Guia de Pagamento (PDF)')}
                                     </Button>
                                 )}
                             </PDFDownloadLink>
@@ -169,14 +169,14 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                             {processing ? (
                                 <>
                                     <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                    Processando...
+                                    {t('processing', 'Processando...')}
                                 </>
                             ) : (
-                                "Confirmar Pagamento / Inscrição"
+                                t('confirm_payment', "Confirmar Pagamento / Inscrição")
                             )}
                         </Button>
                         <p className="text-xs text-center mt-3 text-gray-500">
-                            Ao confirmar, você aceita os termos e condições financeiros do ZTS.
+                            {t('terms_acceptance', 'Ao confirmar, você aceita os termos e condições financeiros do ZTS.')}
                         </p>
                     </div>
                 </div>

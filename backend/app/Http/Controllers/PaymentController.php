@@ -25,11 +25,11 @@ class PaymentController extends Controller
             'courses' => 'required|array',
             'courses.*.id' => 'required|exists:courses,id',
             'courses.*.modality' => 'nullable|string',
-            'payment_plan' => 'required|in:full,enrollment_only' // future use
+            'payment_plan' => 'required|in:full,monthly'
         ]);
 
         $breakdown = $this->calculator->calculate(
-            $request->courses, 
+            $request->courses,
             $request->payment_plan === 'full'
         );
 

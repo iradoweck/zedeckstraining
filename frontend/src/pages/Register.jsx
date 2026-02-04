@@ -16,7 +16,7 @@ import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
 
 import { MOZ_PROVINCES, COUNTRIES, BR_STATES, US_STATES } from '../components/constants';
-import { useQuery } from '@tanstack/react-query';
+
 
 // --- Helpers ---
 const toTitleCase = (str) => {
@@ -33,7 +33,7 @@ const COURSE_ICONS = {
     'zap': Zap
 };
 
-import { motion, AnimatePresence } from 'framer-motion';
+
 
 export default function Register() {
     usePageTitle();
@@ -142,7 +142,7 @@ export default function Register() {
                 generateId();
             }
         }
-    }, [currentStep, formData.document_number, formData.first_name, formData.last_name, studentIdData]);
+    }, [currentStep, formData.document_number, formData.first_name, formData.last_name, studentIdData, t]);
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -793,7 +793,7 @@ export default function Register() {
                                 onComplete={(paymentResult) => {
                                     // Store payment result in form data (or state) to be sent in final step
                                     setFormData(prev => ({ ...prev, payment: paymentResult }));
-                                    handleNext(); // Move to next step automatically or let user click next?
+                                    nextStep({ preventDefault: () => { } }); // Move to next step automatically
                                     // Actually PaymentSummary has a button "Confirmar Pagamento".
                                     // So we can move next here.
                                 }}
@@ -901,7 +901,7 @@ export default function Register() {
                             { step: 3, icon: Fingerprint, label: t('id_short', 'ID') },
                             { step: 4, icon: CreditCard, label: t('payment_short', 'Pay') },
                             { step: 5, icon: Lock, label: t('account_short', 'Account') }
-                        ].map((s, idx) => {
+                        ].map((s) => {
                             const isCompleted = currentStep > s.step;
                             const isActive = currentStep === s.step;
                             const Icon = s.icon;
