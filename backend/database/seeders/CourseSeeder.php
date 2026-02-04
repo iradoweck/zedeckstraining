@@ -23,7 +23,7 @@ class CourseSeeder extends Seeder
                 'role' => 'trainer'
             ]);
         }
-        
+
         // Define common schedules
         $commonSchedules = [
             "Manhã (08:00 - 10:00)",
@@ -46,6 +46,7 @@ class CourseSeeder extends Seeder
                     'icon' => 'code',
                     'uniform_required' => true,
                     'uniform_cost' => 1500,
+                    'duration' => 6,
                     'modalities' => ['Presencial', 'Online', 'Híbrido'],
                     'stacks' => [
                         'Web Development (Fullstack)',
@@ -67,6 +68,7 @@ class CourseSeeder extends Seeder
                     'icon' => 'globe',
                     'uniform_required' => true,
                     'uniform_cost' => 1200,
+                    'duration' => 4,
                     'modalities' => ['Presencial', 'Online'],
                     'exams' => [
                         'Cambridge',
@@ -87,6 +89,7 @@ class CourseSeeder extends Seeder
                     'icon' => 'calculator',
                     'uniform_required' => true,
                     'uniform_cost' => 1500,
+                    'duration' => 4,
                     'modalities' => ['Presencial', 'Híbrido']
                 ]
             ],
@@ -102,10 +105,11 @@ class CourseSeeder extends Seeder
                     'icon' => 'palette',
                     'uniform_required' => true,
                     'uniform_cost' => 1200,
+                    'duration' => 4,
                     'modalities' => ['Presencial', 'Online']
                 ]
             ],
-             [
+            [
                 'title' => 'Electricidade Instaladora',
                 'slug' => 'electricidade',
                 'description' => 'Instalações elétricas residenciais e industriais.',
@@ -117,6 +121,7 @@ class CourseSeeder extends Seeder
                     'icon' => 'zap',
                     'uniform_required' => true,
                     'uniform_cost' => 1800,
+                    'duration' => 6,
                     'modalities' => ['Presencial']
                 ]
             ],

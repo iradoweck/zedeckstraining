@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { PDFDownloadLink } from '@react-pdf/renderer';
-import InvoicePDF from './InvoicePDF';
 import PaymentMethodSelector from './PaymentMethodSelector';
 import { Button } from './ui/button';
-import { Loader2, Download, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { formatCurrency } from '../utils/formatters';
 import api from '../services/api';
 import { toast } from 'react-hot-toast';
@@ -148,34 +146,7 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                             </div>
                         </div>
 
-                        {/* PDF Download Button */}
-                        <div className="bg-gray-50 px-4 py-3 border-t">
-                            {/* PDF Download Button - Only enable if we have data */}
-                            {paymentData ? (
-                                <PDFDownloadLink
-                                    document={<InvoicePDF studentData={studentData} paymentData={paymentData} />}
-                                    fileName={`Fatura-${displayReference || 'Recibo'}.pdf`}
-                                    className="w-full block"
-                                >
-                                    {({ loading: pdfLoading }) => (
-                                        <Button
-                                            variant="outline"
-                                            className="w-full gap-2 border-gray-300 text-gray-700"
-                                            disabled={pdfLoading}
-                                            type="button" // Prevent form submission
-                                        >
-                                            <Download size={16} />
-                                            {pdfLoading ? "Gerando Fatura..." : t('download_invoice', 'Baixar Comprovativo')}
-                                        </Button>
-                                    )}
-                                </PDFDownloadLink>
-                            ) : (
-                                <Button variant="outline" disabled className="w-full gap-2 border-gray-300">
-                                    <Download size={16} />
-                                    {t('loading_data', 'Carregando...')}
-                                </Button>
-                            )}
-                        </div>
+
                     </div>
                 </div>
 

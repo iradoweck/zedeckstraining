@@ -22,111 +22,75 @@ class PaymentCalculatorService
     public function calculate(array $selectedCourses, bool $isFullPayment = false)
     {
         $courses = Course::whereIn('id', array_column($selectedCourses, 'id'))->get();
-
-        // Fetch Dynamic Settings
-        $uniformPrice = (float) SystemSetting::getValue('uniform_price', 600);
         $enrollmentFee = (float) SystemSetting::getValue('enrollment_fee', 2500);
-
-        // 1. Lógica de Uniforme
-        $hasElectricity = $courses->contains(function ($c) {
-            // Verifica se o título contém 'Electricidade' ou similar.
-            return stripos($c->title, 'Electricidade') !== false || stripos($c->title, 'Eletricidade') !== false;
-        });
-
-        $totalCourses = $courses->count();
-        $isOnlyOther = !$hasElectricity;
-        $isElecAndOther = $hasElectricity && $totalCourses > 1;
-
-        $uniformQty = 0;
-
-        if ($hasElectricity && !$isElecAndOther) {
-            // Electricity Only
-            $uniformQty = 1;
-        } elseif ($isElecAndOther) {
-            // Electricity + Others
-            $uniformQty = 2;
-        } else {
-            // Others Only
-            $uniformQty = 1;
-        }
-
-        // Adjust for Online Modality? 
-        // User rule didn't specify online exemption for the *Uniform Rule* specifically in the last prompt, 
-        // but traditionally online students might be exempt. 
-        // For now, sticking STRICTLY to the User's explicit rule:
-        // "se for electricidade = um; ... + outros = dois; ... outros = um".
-        // Use the explicit rule.
 
         $items = [];
         $subtotal = 0;
 
-        // 2. Lógica de Mensalidade do Curso
         foreach ($courses as $course) {
-            // Encontra modalidade/horário selecionado
-            $selected = collect($selectedCourses)->firstWhere('id', $course->id);
-            $modality = $selected['modality'] ?? 'Presencial';
-
-            // Duração do curso (se não definido, assume 3 meses)
-            $duration = $course->duration_months ?? 3;
-
-            // Assume que 'price' na BD é a Mensalidade
-            $monthlyPrice = $course->price;
+            // --- 1. TUITION ---
+            $monthlyPrice = (float) $course->price;
+            $duration = $course->options['duration'] ?? 6; // Default to 6 if missing
+            $courseTotal = 0;
 
             if ($isFullPayment) {
-                // Pagamento Completo (Mensalidade * Duração)
-                $tuition = $monthlyPrice * $duration;
+                // Full Course: Monthly x Duration
+                $courseTotal = $monthlyPrice * $duration;
                 $description = "{$course->title} (Curso Completo - {$duration} Meses)";
             } else {
-                // Pagamento Padrão (Apenas 1ª Mensalidade)
-                $tuition = $monthlyPrice * 1;
+                // Standard: 1st Month only
+                $courseTotal = $monthlyPrice;
                 $description = "{$course->title} (1ª Mensalidade)";
             }
 
             $items[] = [
-                'id' => $course->id,
+                'id' => "course_{$course->id}",
+                'name' => 'Curso',
                 'description' => $description,
-                'type' => 'course',
                 'qty' => 1,
-                'unit_price' => $tuition,
-                'total' => $tuition
+                'unit_price' => $courseTotal,
+                'total' => $courseTotal
             ];
-            $subtotal += $tuition;
+            $subtotal += $courseTotal;
+
+            // --- 2. UNIFORM ---
+            // "Os Cursos ... vem com: Valor de Uniforme"
+            // Rule: Electricity = 2, Others = 1.
+            $uniformCost = (float) ($course->options['uniform_cost'] ?? 0);
+
+            if ($uniformCost > 0) {
+                $isElectricity = (stripos($course->title, 'Electricidade') !== false || stripos($course->title, 'Eletricidade') !== false);
+                $uniformQty = $isElectricity ? 2 : 1;
+
+                $items[] = [
+                    'id' => "uniform_{$course->id}",
+                    'name' => 'Uniforme',
+                    'description' => "Uniforme - {$course->title}",
+                    'qty' => $uniformQty,
+                    'unit_price' => $uniformCost,
+                    'total' => $uniformCost * $uniformQty
+                ];
+                $subtotal += ($uniformCost * $uniformQty);
+            }
         }
 
-        // Taxa de Inscrição Global
-        $items[] = [
-            'id' => 'enrollment',
-            'description' => 'Taxa de Inscrição (Matrícula)',
-            'type' => 'fee',
-            'qty' => 1,
-            'unit_price' => $enrollmentFee,
-            'total' => $enrollmentFee
-        ];
-        $subtotal += $enrollmentFee;
-
-        // Uniformes
-        if ($uniformQty > 0) {
-            // Verificar se todos os cursos são Online? (Isenção)
-            // Lógica: Se modalidade for 100% online, talvez isentar. 
-            // Mas seguindo a regra estrita do usuário:
-            $allOnline = collect($selectedCourses)->every(fn($c) => ($c['modality'] ?? '') === 'Online');
-
-            if (!$allOnline) {
-                $items[] = [
-                    'id' => 'uniform',
-                    'description' => $uniformQty > 1 ? 'Uniformes (Kit Eletricidade + Padrão)' : 'Uniforme Padrão',
-                    'type' => 'uniform',
-                    'qty' => $uniformQty,
-                    'unit_price' => $uniformPrice,
-                    'total' => $uniformQty * $uniformPrice
-                ];
-                $subtotal += ($uniformQty * $uniformPrice);
-            }
+        // --- 3. ENROLLMENT FEE ---
+        // Global fee, applied once per registration (even if multiple courses? Usually yes)
+        // If user wants per course, move inside loop. Assuming global per student registration here.
+        if ($enrollmentFee > 0) {
+            $items[] = [
+                'id' => 'enrollment',
+                'name' => 'Inscrição',
+                'description' => 'Taxa de Inscrição (Matrícula)',
+                'qty' => 1,
+                'unit_price' => $enrollmentFee,
+                'total' => $enrollmentFee
+            ];
+            $subtotal += $enrollmentFee;
         }
 
         return [
             'items' => $items,
-            'uniform_qty' => $uniformQty,
             'total' => $subtotal,
             'currency' => 'MZN'
         ];
