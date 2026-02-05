@@ -235,8 +235,20 @@ const resources = {
             "processing": "Processando...",
             "confirm_payment": "Confirmar Pagamento / Inscrição",
             "terms_acceptance": "Ao confirmar, você aceita os termos e condições financeiros do ZTS.",
+
+            // Password Meter
+            "password_strength": "Força da Senha",
+            "password_policy": "Mínimo 6 caracteres, letras, números e símbolos (@!$%^&*)",
+
             "loading_data": "Carregando...",
-            "id_generation_error": "Erro ao gerar ID. Verifique seus dados."
+            "id_generation_error": "Erro ao gerar ID. Verifique seus dados.",
+
+            // Phase 6: Success
+            "registration_success_title": "Inscrição Concluída!",
+            "registration_success_desc": "Sua conta foi criada com sucesso. Agora você pode acessar o portal do estudante.",
+            "go_to_login": "Ir para Login",
+            "success_step_title": "Sucesso",
+            "account_created_login_required": "Conta criada com sucesso! Por favor, faça login."
         }
     },
     en: {
@@ -470,8 +482,20 @@ const resources = {
             "processing": "Processing...",
             "confirm_payment": "Confirm Payment / Enrollment",
             "terms_acceptance": "By confirming, you accept ZTS financial terms and conditions.",
+
+            // Password Meter
+            "password_strength": "Password Strength",
+            "password_policy": "Minimum 6 chars, letters, numbers and symbols (@!$%^&*)",
+
             "loading_data": "Loading...",
-            "id_generation_error": "Error generating ID. Please verify your data."
+            "id_generation_error": "Error generating ID. Please verify your data.",
+
+            // Phase 6: Success
+            "registration_success_title": "Registration Completed!",
+            "registration_success_desc": "Your account has been successfully created. You can now access the student portal.",
+            "go_to_login": "Go to Login",
+            "success_step_title": "Success",
+            "account_created_login_required": "Account created successfully! Please login."
         }
     }
 };

@@ -117,6 +117,7 @@ export default function Register() {
 
     // Phase 3: Student ID State
     const [studentIdData, setStudentIdData] = useState(null);
+    const [isSuccess, setIsSuccess] = useState(false);
     const [isGeneratingId, setIsGeneratingId] = useState(false);
 
     useEffect(() => {
@@ -366,9 +367,9 @@ export default function Register() {
             const response = await api.post('/auth/register', payload);
 
             if (response.data.success || response.data.access_token) {
-                // Redirect to login page as requested - No auto-login
+                // Show Success Screen instead of redirecting
                 toast.success(t('account_created_login_required', 'Conta criada com sucesso! Por favor, faça login.'));
-                navigate('/login');
+                setIsSuccess(true);
             }
 
         } catch (err) {
@@ -393,8 +394,9 @@ export default function Register() {
     const version = "v1.2.2";
 
     // Step Rendering Logic
-    const renderStep = () => {
-        switch (currentStep) {
+    const renderStep = (stepOverride) => {
+        const step = stepOverride || currentStep;
+        switch (step) {
             case 1: // Personal Info
                 return (
                     <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
@@ -1057,6 +1059,31 @@ export default function Register() {
 
                     </div>
                 );
+            case 6: // Success Screen
+                return (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 text-center py-8">
+                        <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6">
+                            <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
+                        </div>
+
+                        <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                            {t('registration_success_title', 'Inscrição Concluída!')}
+                        </h2>
+
+                        <p className="text-gray-600 dark:text-gray-300 max-w-md mx-auto text-lg leading-relaxed">
+                            {t('registration_success_desc', 'Sua conta foi criada com sucesso. Agora você pode acessar o portal do estudante.')}
+                        </p>
+
+                        <div className="pt-8">
+                            <Link to="/login">
+                                <Button className="w-full sm:w-auto px-8 py-6 text-lg bg-primary hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20 transition-all hover:scale-105">
+                                    {t('go_to_login', 'Ir para Login')}
+                                    <ChevronRight className="ml-2 w-5 h-5" />
+                                </Button>
+                            </Link>
+                        </div>
+                    </div>
+                );
             default:
                 return null;
         }
@@ -1139,45 +1166,47 @@ export default function Register() {
 
                 <form onSubmit={handleSubmit}>
                     <div className="min-h-[300px]">
-                        {renderStep()}
+                        {isSuccess ? renderStep(6) : renderStep()}
                     </div>
 
-                    {/* Navigation Buttons */}
-                    <div className="flex justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={prevStep}
-                            disabled={currentStep === 1 || isLoading}
-                            className={`flex items-center px-6 ${currentStep === 1 ? 'opacity-0 pointer-events-none' : ''}`}
-                        >
-                            <ChevronLeft className="mr-2 h-4 w-4" />
-                            {t('back', 'Back')}
-                        </Button>
-
-                        {currentStep < totalSteps ? (
-                            // Hide Next button on Payment Step (4) because user must confirm payment via specific button
-                            currentStep === 4 ? null : (
-                                <Button
-                                    type="button"
-                                    onClick={nextStep}
-                                    className="flex items-center px-6 bg-primary hover:bg-blue-700 text-white"
-                                >
-                                    {t('next', 'Next')}
-                                    <ChevronRight className="ml-2 h-4 w-4" />
-                                </Button>
-                            )
-                        ) : (
+                    {/* Navigation Buttons - Hide on Success Screen */}
+                    {!isSuccess && (
+                        <div className="flex justify-between mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
                             <Button
-                                type="submit"
-                                className="flex items-center px-6 bg-green-600 hover:bg-green-700 text-white"
-                                disabled={isLoading}
+                                type="button"
+                                variant="outline"
+                                onClick={prevStep}
+                                disabled={currentStep === 1 || isLoading}
+                                className={`flex items-center px-6 ${currentStep === 1 ? 'opacity-0 pointer-events-none' : ''}`}
                             >
-                                {isLoading ? t('creating_account', 'Creating...') : t('finish_register', 'Create Account')}
-                                {!isLoading && <UserPlus className="ml-2 h-4 w-4" />}
+                                <ChevronLeft className="mr-2 h-4 w-4" />
+                                {t('back', 'Back')}
                             </Button>
-                        )}
-                    </div>
+
+                            {currentStep < totalSteps ? (
+                                // Hide Next button on Payment Step (4) because user must confirm payment via specific button
+                                currentStep === 4 ? null : (
+                                    <Button
+                                        type="button"
+                                        onClick={nextStep}
+                                        className="flex items-center px-6 bg-primary hover:bg-blue-700 text-white"
+                                    >
+                                        {t('next', 'Next')}
+                                        <ChevronRight className="ml-2 h-4 w-4" />
+                                    </Button>
+                                )
+                            ) : (
+                                <Button
+                                    type="submit"
+                                    className="flex items-center px-6 bg-green-600 hover:bg-green-700 text-white"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? t('creating_account', 'Creating...') : t('finish_register', 'Create Account')}
+                                    {!isLoading && <UserPlus className="ml-2 h-4 w-4" />}
+                                </Button>
+                            )}
+                        </div>
+                    )}
                 </form>
 
                 <div className="mt-6 text-center">
