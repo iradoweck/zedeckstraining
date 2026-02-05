@@ -250,7 +250,7 @@ export default function Register() {
                 })),
 
                 // Payment (from Step 4)
-                payment_method: formData.payment_method // Corrected from payment
+                payment: formData.payment
             };
 
             console.log("Register Payload:", payload);

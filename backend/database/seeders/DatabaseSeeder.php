@@ -27,6 +27,6 @@ class DatabaseSeeder extends Seeder
         );
 
         // Optional: Seed courses if needed
-        // $this->call(CourseSeeder::class);
+        $this->call(CourseSeeder::class);
     }
 }
