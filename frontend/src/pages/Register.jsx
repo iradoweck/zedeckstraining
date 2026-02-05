@@ -1050,7 +1050,7 @@ export default function Register() {
                             </div>
                         </div>
 
-                        <PasswordStrengthMeter />
+
 
                     </div>
                 );

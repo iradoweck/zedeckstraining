@@ -12,21 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('father_name')->nullable();
-            $table->string('mother_name')->nullable();
-            $table->string('gender')->nullable();
-            $table->string('marital_status')->nullable();
-            $table->string('occupation')->nullable();
-            $table->string('nationality')->nullable();
-            $table->string('province')->nullable();
-            $table->string('city')->nullable();
-            $table->string('phone')->nullable();
-            $table->date('birth_date')->nullable();
-            $table->string('document_type')->nullable();
-            $table->string('document_number')->nullable();
-            $table->string('education_level')->nullable();
-            $table->boolean('has_special_needs')->default(false);
-            $table->text('special_needs_description')->nullable();
+            if (!Schema::hasColumn('users', 'father_name')) $table->string('father_name')->nullable();
+            if (!Schema::hasColumn('users', 'mother_name')) $table->string('mother_name')->nullable();
+            if (!Schema::hasColumn('users', 'gender')) $table->string('gender')->nullable();
+            if (!Schema::hasColumn('users', 'marital_status')) $table->string('marital_status')->nullable();
+            if (!Schema::hasColumn('users', 'occupation')) $table->string('occupation')->nullable();
+            if (!Schema::hasColumn('users', 'nationality')) $table->string('nationality')->nullable();
+            if (!Schema::hasColumn('users', 'province')) $table->string('province')->nullable();
+            if (!Schema::hasColumn('users', 'city')) $table->string('city')->nullable();
+
+            // Checks for phone as it might exist from other migrations
+            if (!Schema::hasColumn('users', 'phone')) $table->string('phone')->nullable();
+
+            if (!Schema::hasColumn('users', 'birth_date')) $table->date('birth_date')->nullable();
+            if (!Schema::hasColumn('users', 'document_type')) $table->string('document_type')->nullable();
+            if (!Schema::hasColumn('users', 'document_number')) $table->string('document_number')->nullable();
+            if (!Schema::hasColumn('users', 'education_level')) $table->string('education_level')->nullable();
+            if (!Schema::hasColumn('users', 'has_special_needs')) $table->boolean('has_special_needs')->default(false);
+            if (!Schema::hasColumn('users', 'special_needs_description')) $table->text('special_needs_description')->nullable();
         });
     }
 
