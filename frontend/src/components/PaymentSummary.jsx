@@ -32,10 +32,7 @@ const PaymentSummary = ({ studentData, courses, onComplete }) => {
                     setPaymentData(response.data);
                     // Only set reference once to keep it immutable for this session
                     if (!persistentRef && response.data.reference) {
-                        setPersistentRef("ZT-PAY-2026-A7MD"); // Hardcoded for demo/testing stability as requested or use response.
-                        // User said "ZT-PAY-2026-A7MD - se gerou nao pode ser mutavel".
-                        // Ideally backend generates unique. I will use the first one I get.
-                        // setPersistentRef(response.data.reference);
+                        setPersistentRef(response.data.reference);
                     }
                 }
             } catch (error) {
