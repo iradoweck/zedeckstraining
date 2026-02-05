@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { UserPlus, ArrowLeft, ChevronRight, ChevronLeft, CreditCard, BookOpen, User, Fingerprint, Lock, Code, Globe, Calculator, Palette, Zap, Shirt } from 'lucide-react';
+import { UserPlus, ArrowLeft, ChevronRight, ChevronLeft, CreditCard, BookOpen, User, Fingerprint, Lock, Code, Globe, Calculator, Palette, Zap, Shirt, Eye, EyeOff, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -110,6 +110,10 @@ export default function Register() {
 
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+
+    // Password Visibility State
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     // Phase 3: Student ID State
     const [studentIdData, setStudentIdData] = useState(null);
@@ -985,31 +989,61 @@ export default function Register() {
                             />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
+                            <div className="space-y-2 relative">
                                 <Label htmlFor="password">{t('password_label', 'Password')}</Label>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                                    required
-                                />
+                                <div className="relative">
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? "text" : "password"}
+                                        placeholder="••••••••"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 pr-10"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors focus:outline-none"
+                                    >
+                                        {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="confirm_password">{t('confirm_password_label', 'Confirm Password')}</Label>
-                                <Input
-                                    id="confirm_password"
-                                    name="password_confirmation"
-                                    type="password"
-                                    placeholder="••••••••"
-                                    value={formData.password_confirmation}
-                                    onChange={handleChange}
-                                    className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-                                    required
-                                />
+                            <div className="space-y-2 relative">
+                                <div className="flex justify-between items-center">
+                                    <Label htmlFor="confirm_password">{t('confirm_password_label', 'Confirm Password')}</Label>
+                                    {formData.password_confirmation && (
+                                        <span className={`text-xs flex items-center gap-1 ${formData.password === formData.password_confirmation ? 'text-green-600' : 'text-red-500'}`}>
+                                            {formData.password === formData.password_confirmation ? (
+                                                <><CheckCircle size={12} /> {t('password_match', 'Coincidem')}</>
+                                            ) : (
+                                                <><XCircle size={12} /> {t('password_mismatch_short', 'Não coincidem')}</>
+                                            )}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative">
+                                    <Input
+                                        id="confirm_password"
+                                        name="password_confirmation"
+                                        type={showConfirmPassword ? "text" : "password"}
+                                        placeholder="••••••••"
+                                        value={formData.password_confirmation}
+                                        onChange={handleChange}
+                                        className={`bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100 pr-10 ${formData.password_confirmation && formData.password !== formData.password_confirmation ? 'border-red-300 focus-visible:ring-red-500' : ''
+                                            }`}
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-primary transition-colors focus:outline-none"
+                                    >
+                                        {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 

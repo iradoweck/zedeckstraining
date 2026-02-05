@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('marital_status')->nullable();
             $table->string('occupation')->nullable();
             $table->string('nationality')->nullable();
+            $table->string('province')->nullable();
+            $table->string('city')->nullable();
+            $table->string('phone')->nullable();
             $table->date('birth_date')->nullable();
             $table->string('document_type')->nullable();
             $table->string('document_number')->nullable();
