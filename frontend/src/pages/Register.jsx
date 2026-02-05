@@ -363,24 +363,27 @@ export default function Register() {
 
             console.log("Register Payload:", payload);
 
-            const response = await api.post('/register', payload);
+            const response = await api.post('/auth/register', payload);
 
             if (response.data.success || response.data.access_token) {
-                // Login logic if auto-login
-                localStorage.setItem('token', response.data.access_token);
-                toast.success(t('account_created_success', 'Conta criada com sucesso!'));
-                navigate('/dashboard'); // or /login
+                // Redirect to login page as requested - No auto-login
+                toast.success(t('account_created_login_required', 'Conta criada com sucesso! Por favor, faça login.'));
+                navigate('/login');
             }
 
         } catch (err) {
             console.error("Registration Error:", err);
             // Handle validation errors from backend
-            if (err.response && err.response.data && err.response.data.errors) {
-                const msgs = Object.values(err.response.data.errors).flat().join(' ');
-                setError(msgs);
-            } else {
-                setError(t('registration_failed', 'Falha no registro. Tente novamente.'));
+            let errorMsg = '';
+            if (err.response && err.response.data) {
+                if (err.response.data.errors) {
+                    errorMsg = Object.values(err.response.data.errors).flat().join(' ');
+                } else if (err.response.data.message) {
+                    errorMsg = err.response.data.message;
+                }
             }
+
+            setError(errorMsg || t('registration_failed', 'Falha no registro. Verifica os dados e tenta novamente.'));
         } finally {
             setIsLoading(false);
         }

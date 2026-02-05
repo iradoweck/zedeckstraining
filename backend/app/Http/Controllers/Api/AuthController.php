@@ -140,9 +140,9 @@ class AuthController extends Controller
                 // Generally we trust the unique constraint on users table.
             }
 
-            DB::commit();
-
             $token = $user->createToken('auth_token')->plainTextToken;
+
+            DB::commit();
 
             return response()->json([
                 'success' => true,

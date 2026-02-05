@@ -13,7 +13,7 @@ return new class extends Migration
             $table->string('student_code')->unique()->index(); // ZT-2026-XXXX
             $table->string('document_number')->index(); // Link to physical person
             $table->integer('year');
-            $table->enum('status', ['active', 'banned', 'expired'])->default('active');
+            $table->enum('status', ['active', 'banned', 'expired', 'used'])->default('active');
             $table->json('metadata')->nullable(); // Snapshot data (name, etc)
             $table->timestamps();
         });
