@@ -182,11 +182,67 @@ export default function Register() {
         setFormData({ ...formData, [name]: value });
     };
 
+    // --- Validation Logic ---
+    const validateStep1 = () => {
+        const required = ['first_name', 'last_name', 'birth_date', 'gender', 'nationality', 'document_number', 'phone_number'];
+        const missing = required.filter(field => !formData[field]);
+
+        if (missing.length > 0) {
+            setError(t('fill_required_fields', 'Preencha todos os campos obrigatórios'));
+            toast.error(t('missing_fields_error', 'Faltam campos obrigatórios'));
+            console.log("Missing:", missing);
+            return false;
+        }
+
+        // Age check again just in case
+        const birthDate = new Date(formData.birth_date);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        if (age < 14) {
+            setError(t('age_restriction_error', 'Idade mínima é 14 anos'));
+            return false;
+        }
+        return true;
+    };
+
+    const validateStep2 = () => {
+        if (formData.selected_courses.length === 0) {
+            setError(t('select_at_least_one_course', 'Selecione pelo menos 1 curso'));
+            return false;
+        }
+        // Check Modality and Schedule for each course
+        for (const course of formData.selected_courses) {
+            if (!course.modality) {
+                setError(t('missing_modality', `Selecione a modalidade para: ${course.title}`));
+                return false;
+            }
+            if (!course.schedule) {
+                setError(t('missing_schedule', `Selecione o horário para: ${course.title}`));
+                return false;
+            }
+        }
+        return true;
+    };
+
+    const validateStep4 = () => {
+        if (!formData.payment) {
+            setError(t('payment_required', 'Selecione e confirme um método de pagamento'));
+            return false;
+        }
+        return true;
+    };
+
     const nextStep = (e) => {
         e.preventDefault();
         setError('');
-        // Simple validation per step could go here
-        if (currentStep < totalSteps) {
+
+        let isValid = true;
+
+        if (currentStep === 1) isValid = validateStep1();
+        else if (currentStep === 2) isValid = validateStep2();
+        else if (currentStep === 4) isValid = validateStep4();
+
+        if (isValid && currentStep < totalSteps) {
             setCurrentStep(curr => curr + 1);
         }
     };
@@ -198,11 +254,59 @@ export default function Register() {
         }
     };
 
+    // Password Strength Logic
+    const getPasswordStrength = (pass) => {
+        let score = 0;
+        if (!pass) return 0;
+        if (pass.length >= 6) score += 25;
+        if (pass.length >= 10) score += 10;
+        if (/[A-Z]/.test(pass)) score += 15;
+        if (/[0-9]/.test(pass)) score += 20;
+        if (/[^A-Za-z0-9]/.test(pass)) score += 30; // Symbol
+        return Math.min(100, score);
+    };
+
+    const passwordStrength = getPasswordStrength(formData.password);
+
+    const PasswordStrengthMeter = () => (
+        <div className="mt-2 space-y-1">
+            <div className="flex justify-between text-xs text-gray-500">
+                <span>{t('password_strength', 'Força da Senha')}</span>
+                <span className={`${passwordStrength >= 50 ? 'text-green-600' : 'text-red-500'}`}>
+                    {passwordStrength}%
+                </span>
+            </div>
+            <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                <div
+                    className={`h-full transition-all duration-300 ${passwordStrength < 30 ? 'bg-red-500' :
+                        passwordStrength < 70 ? 'bg-yellow-500' :
+                            'bg-green-500'
+                        }`}
+                    style={{ width: `${passwordStrength}%` }}
+                />
+            </div>
+            <p className="text-[10px] text-gray-400">
+                {t('password_policy', 'Mínimo 6 caracteres, letras, números e símbolos (@!$%^&*)')}
+            </p>
+        </div>
+    );
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (formData.password !== formData.password_confirmation) {
             setError(t('passwords_mismatch', 'As senhas não coincidem'));
+            return;
+        }
+
+        const pass = formData.password;
+        if (pass.length < 6 || pass.length > 12) {
+            setError(t('password_length_error', 'A senha deve ter entre 6 e 12 caracteres'));
+            return;
+        }
+
+        if (passwordStrength < 50) {
+            setError(t('password_weak_error', 'A senha é muito fraca. Tente misturar letras, números e símbolos.'));
             return;
         }
 
@@ -908,6 +1012,9 @@ export default function Register() {
                                 />
                             </div>
                         </div>
+
+                        <PasswordStrengthMeter />
+
                     </div>
                 );
             default:
