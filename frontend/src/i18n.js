@@ -134,12 +134,12 @@ const resources = {
             "special_needs_label": "Possui alguma necessidade educativa especial?",
             "special_needs_desc_label": "Descreva a necessidade (Opcional)",
 
-            // Stepper Short Labels
-            "personal_short": "Dados",
-            "courses_short": "Cursos",
-            "id_short": "B.I",
-            "payment_short": "Pagar",
-            "account_short": "Conta",
+            // Stepper Short Labels (User Requested)
+            "personal_short": "Dados Pessoais",
+            "courses_short": "Escolha de Curso",
+            "id_short": "Cartão ID",
+            "payment_short": "Pagamento",
+            "account_short": "Conta & Finalização",
 
             // Phase 1 Improvements
             "first_name_label": "Nome Próprio",

@@ -152,9 +152,24 @@ export default function Register() {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        let finalValue = type === 'checkbox' ? checked : value;
+
+        // Validation / Formatting Logic
+        if (name === 'phone_number') {
+            // Only numbers allowed
+            finalValue = finalValue.replace(/\D/g, '');
+        }
+
+        if (name === 'document_number' || name === 'other_doc_number') {
+            // Uppercase and (optionally) alphanumeric only if strict,
+            // but user said "if it has letters they must be uppercase".
+            // We'll enforce Uppercase.
+            finalValue = finalValue.toUpperCase();
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: type === 'checkbox' ? checked : value
+            [name]: finalValue
         }));
     };
 
