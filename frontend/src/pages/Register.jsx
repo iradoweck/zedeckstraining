@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 import { usePageTitle } from '../hooks/usePageTitle';
 
-import { MOZ_PROVINCES, COUNTRIES, BR_STATES, US_STATES } from '../components/constants';
+import { MOZ_PROVINCES, COUNTRIES, BR_STATES, US_STATES, APP_VERSION } from '../components/constants';
 
 
 // --- Helpers ---
@@ -406,7 +406,6 @@ export default function Register() {
     };
 
     const currentYear = new Date().getFullYear();
-    const version = "v1.2.2";
 
     // Step Rendering Logic
     const renderStep = (stepOverride) => {
@@ -1237,7 +1236,7 @@ export default function Register() {
             {/* Footer */}
             <footer className="absolute bottom-4 w-full text-center text-[10px] text-gray-400 dark:text-gray-600 opacity-60">
                 <p>
-                    &copy; 2025-{currentYear} Zedeck's Training | {t('rights_reserved', 'Todos os direitos reservados')} | v{version}
+                    &copy; 2025-{currentYear} Zedeck's Training | {t('rights_reserved', 'Todos os direitos reservados')} | {APP_VERSION}
                 </p>
             </footer>
         </div>

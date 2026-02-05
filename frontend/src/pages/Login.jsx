@@ -7,6 +7,7 @@ import LanguageToggle from '../components/LanguageToggle';
 import ThemeToggle from '../components/ThemeToggle';
 import { usePageTitle } from '../hooks/usePageTitle';
 import LoginMap from '../components/ui/LoginMap';
+import { APP_VERSION } from '../components/constants';
 
 export default function Login() {
     usePageTitle();
@@ -23,6 +24,7 @@ export default function Login() {
             await login(email, password);
             navigate('/dashboard');
         } catch (err) {
+            console.error("Login error:", err);
             setError(t('invalid_credentials', 'Invalid credentials'));
         } finally {
             setIsLoading(false);
@@ -53,7 +55,7 @@ export default function Login() {
             {/* Simple Footer */}
             <footer className="absolute bottom-4 w-full text-center text-[10px] text-gray-400 dark:text-gray-600 opacity-60">
                 <p>
-                    &copy; 2025-{new Date().getFullYear()} Zedeck's Training | v1.2.2
+                    &copy; 2025-{new Date().getFullYear()} Zedeck's Training | {APP_VERSION}
                 </p>
             </footer>
         </div>
