@@ -53,7 +53,6 @@ export default function Dashboard() {
                     </div>
                 </div>
 
-                {user?.role === 'student' && <StudentDashboard user={user} />}
                 {user?.role === 'trainer' && <TrainerDashboard user={user} />}
                 {user?.role === 'admin' && (
                     <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow text-center">
@@ -61,6 +60,7 @@ export default function Dashboard() {
                         <p className="text-gray-500 dark:text-gray-400">Coming soon...</p>
                     </div>
                 )}
+                {user?.role === 'student' && <StudentDashboard user={user} />}
             </main>
 
             {/* Fixed Footer */}
