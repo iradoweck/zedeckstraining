@@ -1,5 +1,33 @@
 # Notas de Lançamento
 
+## v1.2.3 - Base da Dashboard do Estudante (2026-02-06)
+**Foco:** Infraestrutura Base, Navegação e Segurança.
+
+### 🚀 Novidades
+- **Nova Estrutura de Pastas:** Dashboard organizada em `src/app/dashboard/estudante`.
+- **Navegação Reformulada:**
+  - Sidebar com links específicos para o estudante (Visão Geral, Financeiro, etc.).
+  - Indicação clara da versão v1.2.3 no rodapé do menu.
+- **Página Overview:**
+  - Cards de resumo financeiro e aulas ativas.
+  - Alertas prioritários.
+- **UX Aprimorada & Feedback Imersivo:**
+  - **Notificações Globais:** Sistema de *Toasts* (Notificações) integrado ao `main.jsx` para feedback visual em toda a aplicação.
+  - **Login:** Mensagem de sucesso ("Login realizado Com sucesso" / "Login successful") com fundo **Verde Esmeralda**.
+  - **Logout:** Mensagem de despedida ("Saiu com Sucesso, Até breve!" / "Logged out successfully...") com fundo **Dark Mode**.
+  - **Internacionalização (i18n):** Todo o ciclo de entrada e saída traduzido (PT/EN).
+  - Tratamento de erro 404 para rotas inexistentes.
+
+### 🛠️ Técnico
+- Implementação de `StudentLayout` com proteção RBAC.
+- Refatoração do `Router.jsx` para suportar rotas aninhadas.
+- **Correção de Arquitetura:** Movido `<Toaster />` para `main.jsx` corrigindo visibilidade de notificações pós-redirect.
+- Persistência de estado de UI usando flags temporárias em `localStorage`.
+
+---
+
+# Notas de Lançamento (Anteriores)
+
 ## v1.2.3 - Dashboard Financeiro & Mock Data
 **Data**: 06/02/2026
 

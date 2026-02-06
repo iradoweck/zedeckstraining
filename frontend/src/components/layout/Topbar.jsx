@@ -53,10 +53,10 @@ const Topbar = ({ onMenuClick, user, toggleTheme, isDark }) => {
                     variant="ghost"
                     size="sm"
                     onClick={toggleLanguage}
-                    className="hidden sm:flex items-center gap-2 text-gray-600 dark:text-gray-300 font-medium"
+                    className="flex items-center gap-2 text-gray-600 dark:text-gray-300 font-medium"
                 >
                     <Globe className="w-4 h-4" />
-                    <span>{i18n.language === 'pt' ? 'PT' : 'EN'}</span>
+                    <span className="hidden xs:inline">{i18n.language === 'pt' ? 'PT' : 'EN'}</span>
                 </Button>
 
                 {/* User Profile */}

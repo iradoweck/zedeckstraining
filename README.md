@@ -6,17 +6,19 @@ Este é o sistema oficial de gestão acadêmica e treinamentos da Zedeck's.
 
 ## 🚀 Sobre o Projeto
 O sistema é uma plataforma completa (LMS) que gerencia:
-- Cursos e Módulos
-- Inscrições de Alunos
-- Diários de Classe e Presença
-- Notas e Certificados
-- Gestão Financeira (Pagamentos)
+- **Painel do Estudante (v1.2.3)**:
+  - Visão Geral Acadêmica e Financeira.
+  - Acesso a Salas de Aula Virtuais.
+  - Alertas inteligentes de pagamentos e aulas.
+- Inscrições de Alunos e Matrículas.
+- Diários de Classe e Presença (Formadores).
+- Gestão Financeira (Pagamentos, Faturas, Recibos).
 
 ## 🛠 Tecnologia
 - **Backend**: Laravel 11 (API REST)
-- **Frontend**: React (Vite)
+- **Frontend**: React (Vite) + Tailwind CSS + Shadcn UI
 - **Banco de Dados**: MySQL (utf8mb4)
-- **Autenticação**: Laravel Sanctum
+- **Autenticação**: Laravel Sanctum (RBAC)
 
 ## 📂 Estrutura de Pastas
 - `/backend`: Código fonte da API e regras de negócio.
