@@ -27,6 +27,33 @@ A versão **v1.2.1** é uma atualização focada em **Refinamento de UI/UX** e *
 ---
 
 
+## v1.2.3 - Dashboard Financeiro & Mock Data
+**Data**: 06/02/2026
+
+A versão **v1.2.3** introduz o **Painel do Estudante (Dashboard)** recriado com foco em métricas e status financeiro. Para permitir o desenvolvimento ágil da interface, utilizamos simuladores de dados (Mock Data) para o módulo financeiro.
+
+### ✨ Novidades
+- **Dashboard em Grid**: Nova organização visual com cards de estatísticas (Aulas, Frequência, Tarefas).
+- **Módulo Financeiro (Frontend)**:
+    - Card de destaque com **Saldo em Dívida** e **Total Pago**.
+    - Botão visual "Pagar Agora".
+    - Dados simulados para validar a experiência de usuário antes da integração backend.
+- **Seção de Documentos**: Acesso rápido ao ID de Estudante e Declarações (Placeholder).
+
+### 🛠️ Técnico
+- **Mock Service**: Criado `mockFinancials.js` para simular latência de rede e respostas da API financeira.
+- **Componentização**: Novo componente `FinancialCard.jsx` e `StudentDashboard.jsx` refatorado.
+- **Backend**: Rotas `/financials` preparadas (comentadas) no `api.php`.
+
+### 📦 Arquivos Modificados
+- `src/pages/Dashboard.jsx`
+- `src/components/student/StudentDashboard.jsx` (Novo)
+- `src/components/dashboard/FinancialCard.jsx` (Novo)
+- `src/services/mockFinancials.js` (Novo)
+- `src/i18n.js` (Novas chaves financeiras)
+
+---
+
 ## v1.2.2 - Estabilidade & Polimento Final
 **Data**: 05/02/2026
 

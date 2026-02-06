@@ -1,6 +1,6 @@
 # Zedeck's Training System
 
-![Version](https://img.shields.io/badge/version-v1.2.2-green)
+![Version](https://img.shields.io/badge/version-v1.2.3-green)
 
 Este é o sistema oficial de gestão acadêmica e treinamentos da Zedeck's.
 
