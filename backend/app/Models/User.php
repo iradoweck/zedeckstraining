@@ -29,13 +29,18 @@ class User extends Authenticatable
         'gender',
         'marital_status',
         'occupation',
+        'occupation',
         'nationality',
+        'province',
+        'city',
+        'phone',
         'birth_date',
         'document_type',
         'document_number',
         'education_level',
         'has_special_needs',
         'special_needs_description',
+        'student_code'
     ];
 
     /**

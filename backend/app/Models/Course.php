@@ -8,7 +8,8 @@ class Course extends Model
 {
     protected $fillable = [
         'title', 'slug', 'description', 'price', 
-        'cover_image', 'trainer_id', 'is_published'
+        'cover_image', 'trainer_id', 'is_published',
+        'schedules', 'options'
     ];
 
     protected $casts = [

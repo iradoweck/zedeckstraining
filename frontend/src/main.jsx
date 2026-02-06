@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/layout/ErrorBoundary';
 import router from './Router';
 import './index.css';
+import 'flag-icons/css/flag-icons.min.css';
 import './i18n'; // Start i18n
 
 const queryClient = new QueryClient();

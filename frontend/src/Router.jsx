@@ -16,6 +16,8 @@ import NotFound from './pages/NotFound';
 import ErrorPage from './pages/ErrorPage';
 import ProtectedRoute from './components/layout/ProtectedRoute';
 import RegistrationWizard from './pages/RegistrationWizard';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 const router = createBrowserRouter([
     {
@@ -30,7 +32,7 @@ const router = createBrowserRouter([
             },
             {
                 path: 'register',
-                element: <RegistrationWizard />
+                element: <Register />
             },
             {
                 path: 'courses',
@@ -53,6 +55,18 @@ const router = createBrowserRouter([
             {
                 path: 'login',
                 element: <Login />
+            },
+            {
+                path: 'forgot-password',
+                element: <ForgotPassword />
+            },
+            {
+                path: 'reset-password',
+                element: <ResetPassword />
+            },
+            {
+                path: 'password-reset/:token',
+                element: <ResetPassword />
             },
 
             // Protected Routes

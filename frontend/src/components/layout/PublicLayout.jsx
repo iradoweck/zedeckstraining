@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageToggle from '../LanguageToggle';
 import ThemeToggle from '../ThemeToggle';
 import { usePageTitle } from '../../hooks/usePageTitle';
+import { APP_VERSION } from '../constants';
 
 export default function PublicLayout({ children }) {
     const { t } = useTranslation();
