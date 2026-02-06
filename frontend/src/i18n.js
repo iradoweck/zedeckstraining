@@ -62,7 +62,6 @@ const resources = {
             // v1.2.2 Additions
             "coming_soon": "Em breve",
             "login_google": "Entrar com Google",
-            "passwords_mismatch": "As senhas não coincidem",
             "registration_failed": "Falha no registro",
             "register_title": "Criar Conta",
             "register_subtitle": "Junte-se ao Zedeck Training System",
@@ -84,7 +83,6 @@ const resources = {
             "forgot_password_title": "Redefinir Senha",
             "forgot_password_subtitle": "Insira seu email para receber instruções",
             "recaptcha_error": "Verificação falhou. Tente novamente.",
-            "forgot_password_sent": "Se existir uma conta para este email, você receberá instruções.",
             "sending": "Enviando...",
             "send_reset_link": "Enviar Link",
             "back_login": "Voltar ao Login",
@@ -248,7 +246,33 @@ const resources = {
             "registration_success_desc": "Sua conta foi criada com sucesso. Agora você pode acessar o portal do estudante.",
             "go_to_login": "Ir para Login",
             "success_step_title": "Sucesso",
-            "account_created_login_required": "Conta criada com sucesso! Por favor, faça login."
+            "account_created_login_required": "Conta criada com sucesso! Por favor, faça login.",
+
+            // v1.2.2 Password Recovery
+            "recover_account": "Recuperar Conta",
+            "recover_subtitle": "Insira seu Email ou ID de Estudante para receber instruções",
+            "email_or_id": "Email ou ID de Estudante",
+            "email_or_id_placeholder": "ex: usuario@email.com ou ZT-2026-1234",
+            "send_link": "Enviar Link de Recuperação",
+            "email_sent": "Verifique seu email",
+            "forgot_password_sent": "Se uma conta existir para essas credenciais, você receberá instruções de redefinição de senha.",
+            "security_first": "Segurança Primeiro",
+            "forgot_password_desc_title": "Redefinir Senha",
+
+            // Reset Password
+            "reset_password_head": "Definir Nova Senha",
+            "secure_access": "Proteja o acesso à sua conta",
+            "choose_password": "Escolha uma Senha",
+            "choose_password_sub": "Insira e confirme sua nova senha abaixo",
+            "new_password": "Nova Senha",
+            "confirm_password": "Confirmar Senha",
+            "reset_password_btn": "Redefinir Senha",
+            "reset_success": "Senha redefinida com sucesso! Redirecionando para o login...",
+            "reset_error": "Falha ao redefinir senha. O link pode ter expirado.",
+            "invalid_link": "Link de redefinição inválido ou expirado.",
+            "passwords_mismatch": "As senhas não coincidem.",
+            "password_too_short": "A senha deve ter pelo menos 8 caracteres.",
+            "saving": "Salvando..."
         }
     },
     en: {
@@ -309,7 +333,6 @@ const resources = {
             // v1.2.2 Additions
             "coming_soon": "Coming Soon",
             "login_google": "Login with Google",
-            "passwords_mismatch": "Passwords do not match",
             "registration_failed": "Registration failed",
             "register_title": "Create Account",
             "register_subtitle": "Join Zedeck Training System",
@@ -331,7 +354,6 @@ const resources = {
             "forgot_password_title": "Reset Password",
             "forgot_password_subtitle": "Enter your email to receive instructions",
             "recaptcha_error": "Verification failed. Please try again.",
-            "forgot_password_sent": "If an account exists for this email, you will receive instructions.",
             "sending": "Sending...",
             "send_reset_link": "Send Reset Link",
             "back_login": "Back to Login",
@@ -495,7 +517,33 @@ const resources = {
             "registration_success_desc": "Your account has been successfully created. You can now access the student portal.",
             "go_to_login": "Go to Login",
             "success_step_title": "Success",
-            "account_created_login_required": "Account created successfully! Please login."
+            "account_created_login_required": "Account created successfully! Please login.",
+
+            // v1.2.2 Password Recovery
+            "recover_account": "Recover Account",
+            "recover_subtitle": "Enter your Email or Student ID to receive instructions",
+            "email_or_id": "Email or Student ID",
+            "email_or_id_placeholder": "e.g. user@email.com or ZT-2026-1234",
+            "send_link": "Send Recovery Link",
+            "email_sent": "Check your email",
+            "forgot_password_sent": "If an account exists for these credentials, you will receive password reset instructions.",
+            "security_first": "Security First",
+            "forgot_password_desc_title": "Reset Password",
+
+            // Reset Password
+            "reset_password_head": "Set New Password",
+            "secure_access": "Secure your account access",
+            "choose_password": "Choose Password",
+            "choose_password_sub": "Enter and confirm your new password below",
+            "new_password": "New Password",
+            "confirm_password": "Confirm Password",
+            "reset_password_btn": "Reset Password",
+            "reset_success": "Password reset successfully! Redirecting to login...",
+            "reset_error": "Failed to reset password. Link may be expired.",
+            "invalid_link": "Invalid or expired reset link.",
+            "passwords_mismatch": "Passwords do not match.",
+            "password_too_short": "Password must be at least 8 characters.",
+            "saving": "Saving..."
         }
     }
 };

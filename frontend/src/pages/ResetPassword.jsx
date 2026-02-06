@@ -1,11 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, Mail, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { ArrowLeft, Lock, ArrowRight, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { usePageTitle } from '../hooks/usePageTitle';
-import ReCAPTCHA from "react-google-recaptcha";
 import api from '../services/api';
 import DotMap from '../components/ui/DotMap';
 import { clsx } from "clsx";
@@ -39,65 +38,77 @@ const Button = ({ children, className = "", ...props }) => {
     );
 };
 
-export default function ForgotPassword() {
+export default function ResetPassword() {
     usePageTitle();
     const { t } = useTranslation();
-    const [identifier, setIdentifier] = useState(''); // Email or Student ID
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
-    const recaptchaRef = useRef();
+
+    const token = searchParams.get('token');
+    const email = searchParams.get('email'); // Optional, depending on backend requirement
+
+    useEffect(() => {
+        if (!token) {
+            setError(t('invalid_link', 'Invalid or expired reset link.'));
+        }
+    }, [token, t]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage('');
         setError('');
+
+        if (password !== confirmPassword) {
+            setError(t('passwords_mismatch', 'Passwords do not match.'));
+            return;
+        }
+
+        if (password.length < 8) {
+            setError(t('password_too_short', 'Password must be at least 8 characters.'));
+            return;
+        }
+
         setIsLoading(true);
 
         try {
-            // Execute reCAPTCHA
-            const token = await recaptchaRef.current.executeAsync();
-
-            if (!token) {
-                setError(t('recaptcha_error', 'Verification failed. Please try again.'));
-                setIsLoading(false);
-                return;
-            }
-
             // Send request
-            await api.post('/auth/forgot-password', {
-                identifier,
-                recaptcha_token: token
+            await api.post('/auth/reset-password', {
+                token,
+                email, // If backend requires email for extra verification
+                password,
+                password_confirmation: confirmPassword
             });
 
-            // Always show success message for security (don't reveal user existence)
-            setMessage(t('forgot_password_sent', 'If an account exists for this credentials, you will receive password reset instructions.'));
-            setIdentifier(''); // Clear input
+            setMessage(t('reset_success', 'Password reset successfully! Redirecting to login...'));
+
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
 
         } catch (err) {
-            console.error("Recovery error:", err);
-            // Fallback for network errors, otherwise show success mask
-            if (!err.response) {
-                setError(t('network_error', 'Connection error. Please try again.'));
+            console.error("Reset error:", err);
+            if (err.response && err.response.data && err.response.data.message) {
+                setError(err.response.data.message);
             } else {
-                setMessage(t('forgot_password_sent', 'If an account exists for this credentials, you will receive password reset instructions.'));
+                setError(t('reset_error', 'Failed to reset password. Link may be expired.'));
             }
         } finally {
             setIsLoading(false);
-            recaptchaRef.current.reset();
         }
     };
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950 p-4 relative">
-            {/* Back Button */}
-            <div className="absolute top-6 left-6 z-50">
-                <Link to="/login" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium group">
-                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-                    <span>{t('back_login', 'Back to Login')}</span>
-                </Link>
-            </div>
 
             <div className="flex w-full h-full items-center justify-center">
                 <motion.div
@@ -120,7 +131,7 @@ export default function ForgotPassword() {
                                     className="mb-6"
                                 >
                                     <div className="h-12 w-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-blue-900/40">
-                                        <Mail className="text-white h-6 w-6" />
+                                        <Lock className="text-white h-6 w-6" />
                                     </div>
                                 </motion.div>
                                 <motion.h2
@@ -129,7 +140,7 @@ export default function ForgotPassword() {
                                     transition={{ delay: 0.7, duration: 0.5 }}
                                     className="text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400"
                                 >
-                                    {t('forgot_password_title', 'Reset Password')}
+                                    {t('reset_password_head', 'Set New Password')}
                                 </motion.h2>
                                 <motion.p
                                     initial={{ opacity: 0, y: -20 }}
@@ -137,7 +148,7 @@ export default function ForgotPassword() {
                                     transition={{ delay: 0.8, duration: 0.5 }}
                                     className="text-sm font-medium text-center text-gray-600 dark:text-gray-300 max-w-xs"
                                 >
-                                    {t('security_first', 'Security First')}
+                                    {t('secure_access', 'Secure your account access')}
                                 </motion.p>
                             </div>
                         </div>
@@ -150,8 +161,8 @@ export default function ForgotPassword() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gray-800 dark:text-white">{t('recover_account', 'Recover Account')}</h1>
-                            <p className="text-gray-500 dark:text-gray-400 mb-8">{t('recover_subtitle', 'Enter your Email or Student ID to receive instructions')}</p>
+                            <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gray-800 dark:text-white">{t('choose_password', 'Choose Password')}</h1>
+                            <p className="text-gray-500 dark:text-gray-400 mb-8">{t('choose_password_sub', 'Enter and confirm your new password below')}</p>
 
                             {/* Success Message */}
                             {message && (
@@ -162,7 +173,7 @@ export default function ForgotPassword() {
                                 >
                                     <CheckCircle className="text-green-600 dark:text-green-400 h-5 w-5 mt-0.5 shrink-0" />
                                     <div>
-                                        <h4 className="font-medium text-green-900 dark:text-green-300 text-sm">{t('email_sent', 'Check your email')}</h4>
+                                        <h4 className="font-medium text-green-900 dark:text-green-300 text-sm">{t('success', 'Success')}</h4>
                                         <p className="text-green-700 dark:text-green-400 text-sm mt-1">{message}</p>
                                     </div>
                                 </motion.div>
@@ -181,22 +192,39 @@ export default function ForgotPassword() {
                             )}
 
                             <form onSubmit={handleSubmit} className="space-y-6">
-                                <ReCAPTCHA
-                                    ref={recaptchaRef}
-                                    size="invisible"
-                                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "YOUR_SITE_KEY_HERE"}
-                                />
 
                                 <div>
-                                    <label htmlFor="identifier" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        {t('email_or_id', 'Email or Student ID')} <span className="text-blue-500">*</span>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        {t('new_password', 'New Password')} <span className="text-blue-500">*</span>
+                                    </label>
+                                    <div className="relative">
+                                        <Input
+                                            type={isPasswordVisible ? "text" : "password"}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            placeholder="••••••••"
+                                            required
+                                            className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 placeholder:text-gray-400 text-gray-800 dark:text-gray-100 w-full pr-10 focus:border-blue-500 focus:ring-blue-500"
+                                        />
+                                        <button
+                                            type="button"
+                                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                                            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                                        >
+                                            {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        {t('confirm_password', 'Confirm Password')} <span className="text-blue-500">*</span>
                                     </label>
                                     <Input
-                                        id="identifier"
-                                        type="text"
-                                        value={identifier}
-                                        onChange={(e) => setIdentifier(e.target.value)}
-                                        placeholder={t('email_or_id_placeholder', 'e.g. user@email.com or ZT-2026-1234')}
+                                        type={isPasswordVisible ? "text" : "password"}
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        placeholder="••••••••"
                                         required
                                         className="bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 placeholder:text-gray-400 text-gray-800 dark:text-gray-100 w-full focus:border-blue-500 focus:ring-blue-500"
                                     />
@@ -211,14 +239,14 @@ export default function ForgotPassword() {
                                 >
                                     <Button
                                         type="submit"
-                                        disabled={isLoading}
+                                        disabled={isLoading || !token}
                                         className={cn(
                                             "w-full py-2 transition-all duration-300 relative overflow-hidden",
                                             isHovered ? "shadow-lg shadow-blue-200 dark:shadow-blue-900/20" : ""
                                         )}
                                     >
                                         <span className="flex items-center justify-center">
-                                            {isLoading ? t('sending', 'Sending...') : t('send_link', 'Send Recovery Link')}
+                                            {isLoading ? t('saving', 'Saving...') : t('reset_password_btn', 'Reset Password')}
                                             {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                                         </span>
                                         {isHovered && !isLoading && (

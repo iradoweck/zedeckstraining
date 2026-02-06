@@ -27,7 +27,32 @@ A versão **v1.2.1** é uma atualização focada em **Refinamento de UI/UX** e *
 ---
 
 
-## v1.2.0 (Versão Atual) - Build de Produção e Clean Install
+## v1.2.2 - Estabilidade & Polimento Final
+**Data**: 05/02/2026
+
+A versão **v1.2.2** foca na estabilidade do fluxo de entrada do aluno. Corrigimos falhas críticas no registro, refinamos a experiência de sucesso e garantimos que a versão do sistema seja refletida automaticamente em toda a aplicação.
+
+### ✨ Novidades
+- **Tela de Sucesso Personalizada**: Substituímos o redirecionamento abrupto por uma tela de confirmação ("Inscrição Concluída") que orienta o aluno a fazer login.
+- **Validação Inteligente**:
+    - Campos de telefone bloqueiam letras automaticamente.
+    - Campos de documento transformam texto em MAIÚSCULAS em tempo real.
+- **Automação de Versão**: O rodapé de todas as páginas agora exibe a versão definida globalmente, eliminando inconsistências.
+
+### 🐛 Correções (Bug Fixes)
+- **[CRÍTICO] Registro Falho**: Corrigido erro onde o passo 5 travava silenciosamente devido a migrações pendentes no backend.
+- **Loop de Cursos**: Resolvido problema de renderização que causava múltiplas requisições ao buscar cursos.
+- **UI Glitch**: Corrigida a duplicação do medidor de senha no formulário.
+
+### 📦 Arquivos Modificados
+- `src/pages/Register.jsx` (Lógica de Steps + Validação)
+- `src/pages/Login.jsx` (Footer Dinâmico + Lint Fix)
+- `src/components/layout/PublicLayout.jsx` (Footer Dinâmico)
+- `src/i18n.js` (Novas traduções de Sucesos)
+
+---
+
+## v1.2.1 - UI/UX Polish & Internacionalização
 **Data**: 02/02/2026
 
 Esta versão foca na estabilidade do deploy em servidores compartilhados (cPanel) e corrige problemas críticos de autenticação.
