@@ -83,9 +83,29 @@ const resources = {
             "forgot_password_title": "Redefinir Senha",
             "forgot_password_subtitle": "Insira seu email para receber instruções",
             "recaptcha_error": "Verificação falhou. Tente novamente.",
+            "valid_token": "Link validado.",
+            "weak": "Fraca",
+            "medium": "Média",
+            "strong": "Forte",
+            "password_strength_title": "Força da Senha:",
+            "password_strength_hint": "A senha deve ter pelo menos 50% de força (Use letras maiúsculas, números e símbolos).",
+            "too_weak": "A senha é muito fraca. Tente adicionar números ou símbolos.",
+            "network_error": "Erro de conexão. Tente novamente.",
+            "success": "Sucesso",
+            "saving": "Salvando...",
             "sending": "Enviando...",
             "send_reset_link": "Enviar Link",
             "back_login": "Voltar ao Login",
+            "choose_password": "Escolha uma Senha",
+            "choose_password_sub": "Insira e confirme sua nova senha abaixo",
+            "reset_password_head": "Definir Nova Senha",
+            "secure_access": "Proteja o acesso à sua conta",
+            "passwords_mismatch": "As senhas não coincidem.",
+            "password_too_short": "A senha deve ter pelo menos 8 caracteres.",
+            "reset_success": "Senha redefinida com sucesso! Redirecionando...",
+            "reset_error": "Falha ao redefinir a senha. O link pode ter expirado.",
+            "new_password": "Nova Senha",
+            "confirm_password": "Confirmar Senha",
             // Wizard Keys
             "step": "Passo",
             "back": "Voltar",
@@ -259,20 +279,7 @@ const resources = {
             "security_first": "Segurança Primeiro",
             "forgot_password_desc_title": "Redefinir Senha",
 
-            // Reset Password
-            "reset_password_head": "Definir Nova Senha",
-            "secure_access": "Proteja o acesso à sua conta",
-            "choose_password": "Escolha uma Senha",
-            "choose_password_sub": "Insira e confirme sua nova senha abaixo",
-            "new_password": "Nova Senha",
-            "confirm_password": "Confirmar Senha",
-            "reset_password_btn": "Redefinir Senha",
-            "reset_success": "Senha redefinida com sucesso! Redirecionando para o login...",
-            "reset_error": "Falha ao redefinir senha. O link pode ter expirado.",
-            "invalid_link": "Link de redefinição inválido ou expirado.",
-            "passwords_mismatch": "As senhas não coincidem.",
-            "password_too_short": "A senha deve ter pelo menos 8 caracteres.",
-            "saving": "Salvando..."
+
         }
     },
     en: {
@@ -357,6 +364,16 @@ const resources = {
             "sending": "Sending...",
             "send_reset_link": "Send Reset Link",
             "back_login": "Back to Login",
+            "choose_password": "Choose Password",
+            "choose_password_sub": "Enter and confirm your new password below",
+            "reset_password_head": "Set New Password",
+            "secure_access": "Secure your account access",
+            "passwords_mismatch": "Passwords do not match.",
+            "password_too_short": "Password must be at least 8 characters.",
+            "reset_success": "Password reset successfully! Redirecting to login...",
+            "reset_error": "Failed to reset password. Link may be expired.",
+            "new_password": "New Password",
+            "confirm_password": "Confirm Password",
             // Wizard Keys
             "step": "Step",
             "back": "Back",
@@ -529,21 +546,18 @@ const resources = {
             "forgot_password_sent": "If an account exists for these credentials, you will receive password reset instructions.",
             "security_first": "Security First",
             "forgot_password_desc_title": "Reset Password",
-
-            // Reset Password
-            "reset_password_head": "Set New Password",
-            "secure_access": "Secure your account access",
-            "choose_password": "Choose Password",
-            "choose_password_sub": "Enter and confirm your new password below",
-            "new_password": "New Password",
-            "confirm_password": "Confirm Password",
-            "reset_password_btn": "Reset Password",
-            "reset_success": "Password reset successfully! Redirecting to login...",
-            "reset_error": "Failed to reset password. Link may be expired.",
-            "invalid_link": "Invalid or expired reset link.",
-            "passwords_mismatch": "Passwords do not match.",
-            "password_too_short": "Password must be at least 8 characters.",
+            "valid_token": "Link validated.",
+            "weak": "Weak",
+            "medium": "Medium",
+            "strong": "Strong",
+            "password_strength_title": "Password Strength:",
+            "password_strength_hint": "Password must be at least 50% strength (Use uppercase letters, numbers and symbols).",
+            "too_weak": "Password is too weak. Try adding numbers or symbols.",
+            "network_error": "Connection error. Please try again.",
+            "success": "Success",
             "saving": "Saving..."
+
+
         }
     }
 };

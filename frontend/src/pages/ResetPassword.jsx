@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import { ArrowLeft, Lock, ArrowRight, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
 // eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion';
@@ -38,10 +38,49 @@ const Button = ({ children, className = "", ...props }) => {
     );
 };
 
+const PasswordStrengthMeter = ({ password }) => {
+    const { t } = useTranslation();
+    const calculateStrength = (pwd) => {
+        let score = 0;
+        if (!pwd) return 0;
+        if (pwd.length > 8) score += 20;
+        if (/[A-Z]/.test(pwd)) score += 20;
+        if (/[a-z]/.test(pwd)) score += 20;
+        if (/[0-9]/.test(pwd)) score += 20;
+        if (/[^A-Za-z0-9]/.test(pwd)) score += 20;
+        return score;
+    };
+
+    const strength = calculateStrength(password);
+    const color = strength < 40 ? 'bg-red-500' : strength < 70 ? 'bg-yellow-500' : 'bg-green-500';
+    const text = strength < 40 ? t('weak', 'Fraca') : strength < 70 ? t('medium', 'Média') : t('strong', 'Forte');
+
+    return (
+        <div className="mt-2">
+            <div className="flex justify-between items-center mb-1">
+                <span className="text-xs text-gray-500 font-medium">{t('password_strength_title', 'Força da Senha:')} {text}</span>
+                <span className="text-xs text-gray-400">{strength}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-1.5 dark:bg-gray-700">
+                <div
+                    className={`h-1.5 rounded-full transition-all duration-300 ${color}`}
+                    style={{ width: `${strength}%` }}
+                ></div>
+            </div>
+            {strength < 50 && password.length > 0 && (
+                <p className="text-xs text-red-500 mt-1">
+                    {t('password_strength_hint', 'A senha deve ter pelo menos 50% de força (Use letras maiúsculas, números e símbolos).')}
+                </p>
+            )}
+        </div>
+    );
+};
+
 export default function ResetPassword() {
     usePageTitle();
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { token } = useParams();
     const [searchParams] = useSearchParams();
 
     const [password, setPassword] = useState('');
@@ -53,14 +92,28 @@ export default function ResetPassword() {
     const [isLoading, setIsLoading] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
-    const token = searchParams.get('token');
-    const email = searchParams.get('email'); // Optional, depending on backend requirement
+    const email = searchParams.get('email');
 
     useEffect(() => {
+        // Log token for debugging (remove in production)
+        console.log("Token from URL (useParams):", token);
+        console.log("Email from URL (searchParams):", email);
+
         if (!token) {
-            setError(t('invalid_link', 'Invalid or expired reset link.'));
+            setError(t('invalid_link', 'Link inválido ou expirado.'));
         }
-    }, [token, t]);
+    }, [token, email, t]);
+
+    const calculateStrength = (pwd) => {
+        let score = 0;
+        if (!pwd) return 0;
+        if (pwd.length > 8) score += 20;
+        if (/[A-Z]/.test(pwd)) score += 20;
+        if (/[a-z]/.test(pwd)) score += 20;
+        if (/[0-9]/.test(pwd)) score += 20;
+        if (/[^A-Za-z0-9]/.test(pwd)) score += 20;
+        return score;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -68,12 +121,17 @@ export default function ResetPassword() {
         setError('');
 
         if (password !== confirmPassword) {
-            setError(t('passwords_mismatch', 'Passwords do not match.'));
+            setError(t('passwords_mismatch', 'As senhas não coincidem.'));
             return;
         }
 
         if (password.length < 8) {
-            setError(t('password_too_short', 'Password must be at least 8 characters.'));
+            setError(t('password_too_short', 'A senha deve ter pelo menos 8 caracteres.'));
+            return;
+        }
+
+        if (calculateStrength(password) < 50) {
+            setError(t('too_weak', 'A senha é muito fraca. Tente adicionar números ou símbolos.'));
             return;
         }
 
@@ -83,12 +141,12 @@ export default function ResetPassword() {
             // Send request
             await api.post('/auth/reset-password', {
                 token,
-                email, // If backend requires email for extra verification
+                email,
                 password,
                 password_confirmation: confirmPassword
             });
 
-            setMessage(t('reset_success', 'Password reset successfully! Redirecting to login...'));
+            setMessage(t('reset_success', 'Senha redefinida com sucesso! Redirecionando...'));
 
             // Redirect after 2 seconds
             setTimeout(() => {
@@ -97,10 +155,17 @@ export default function ResetPassword() {
 
         } catch (err) {
             console.error("Reset error:", err);
+            // Verify specific error messages from backend (e.g., token expired)
             if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
+                // Translate common backend errors if needed
+                const msg = err.response.data.message;
+                if (msg.includes('token') || msg.includes('expire')) {
+                    setError(t('reset_error', 'Este link de redefinição expirou ou é inválido. Solicite um novo.'));
+                } else {
+                    setError(msg);
+                }
             } else {
-                setError(t('reset_error', 'Failed to reset password. Link may be expired.'));
+                setError(t('reset_error', 'Falha ao redefinir a senha. Tente novamente.'));
             }
         } finally {
             setIsLoading(false);
@@ -109,6 +174,15 @@ export default function ResetPassword() {
 
     return (
         <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-950 p-4 relative">
+            {/* Login-style footer/header is implicit by being specific page */}
+
+            {/* Back Button */}
+            <div className="absolute top-6 left-6 z-50">
+                <Link to="/login" className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary transition-colors font-medium group">
+                    <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+                    <span>{t('back_login', 'Voltar ao Login')}</span>
+                </Link>
+            </div>
 
             <div className="flex w-full h-full items-center justify-center">
                 <motion.div
@@ -140,7 +214,7 @@ export default function ResetPassword() {
                                     transition={{ delay: 0.7, duration: 0.5 }}
                                     className="text-3xl font-bold mb-2 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400"
                                 >
-                                    {t('reset_password_head', 'Set New Password')}
+                                    {t('reset_password_head', 'Definir Nova Senha')}
                                 </motion.h2>
                                 <motion.p
                                     initial={{ opacity: 0, y: -20 }}
@@ -148,7 +222,7 @@ export default function ResetPassword() {
                                     transition={{ delay: 0.8, duration: 0.5 }}
                                     className="text-sm font-medium text-center text-gray-600 dark:text-gray-300 max-w-xs"
                                 >
-                                    {t('secure_access', 'Secure your account access')}
+                                    {t('secure_access', 'Proteja o acesso à sua conta')}
                                 </motion.p>
                             </div>
                         </div>
@@ -161,8 +235,8 @@ export default function ResetPassword() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
                         >
-                            <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gray-800 dark:text-white">{t('choose_password', 'Choose Password')}</h1>
-                            <p className="text-gray-500 dark:text-gray-400 mb-8">{t('choose_password_sub', 'Enter and confirm your new password below')}</p>
+                            <h1 className="text-2xl md:text-3xl font-bold mb-2 text-gray-800 dark:text-white">{t('choose_password', 'Escolha uma Senha')}</h1>
+                            <p className="text-gray-500 dark:text-gray-400 mb-8">{t('choose_password_sub', 'Insira e confirme sua nova senha abaixo')}</p>
 
                             {/* Success Message */}
                             {message && (
@@ -173,7 +247,7 @@ export default function ResetPassword() {
                                 >
                                     <CheckCircle className="text-green-600 dark:text-green-400 h-5 w-5 mt-0.5 shrink-0" />
                                     <div>
-                                        <h4 className="font-medium text-green-900 dark:text-green-300 text-sm">{t('success', 'Success')}</h4>
+                                        <h4 className="font-medium text-green-900 dark:text-green-300 text-sm">{t('success', 'Sucesso')}</h4>
                                         <p className="text-green-700 dark:text-green-400 text-sm mt-1">{message}</p>
                                     </div>
                                 </motion.div>
@@ -195,7 +269,7 @@ export default function ResetPassword() {
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        {t('new_password', 'New Password')} <span className="text-blue-500">*</span>
+                                        {t('new_password', 'Nova Senha')} <span className="text-blue-500">*</span>
                                     </label>
                                     <div className="relative">
                                         <Input
@@ -214,11 +288,13 @@ export default function ResetPassword() {
                                             {isPasswordVisible ? <EyeOff size={18} /> : <Eye size={18} />}
                                         </button>
                                     </div>
+                                    {/* Password Strength Meter */}
+                                    <PasswordStrengthMeter password={password} />
                                 </div>
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        {t('confirm_password', 'Confirm Password')} <span className="text-blue-500">*</span>
+                                        {t('confirm_password', 'Confirmar Senha')} <span className="text-blue-500">*</span>
                                     </label>
                                     <Input
                                         type={isPasswordVisible ? "text" : "password"}
@@ -246,7 +322,7 @@ export default function ResetPassword() {
                                         )}
                                     >
                                         <span className="flex items-center justify-center">
-                                            {isLoading ? t('saving', 'Saving...') : t('reset_password_btn', 'Reset Password')}
+                                            {isLoading ? t('saving', 'Salvando...') : t('reset_password_btn', 'Redefinir Senha')}
                                             {!isLoading && <ArrowRight className="ml-2 h-4 w-4" />}
                                         </span>
                                         {isHovered && !isLoading && (

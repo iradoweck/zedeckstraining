@@ -196,4 +196,71 @@ class AuthController extends Controller
     {
         return $request->user();
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Password Recovery
+    |--------------------------------------------------------------------------
+    */
+
+    public function forgotPassword(Request $request)
+    {
+        $request->validate(['identifier' => 'required']);
+
+        // Check if identifier is email or student code
+        $fieldType = filter_var($request->identifier, FILTER_VALIDATE_EMAIL) ? 'email' : 'student_code';
+
+        $user = User::where($fieldType, $request->identifier)->first();
+
+        // Security: Always return success even if user not found to prevent enumeration
+        // But if found, we send the email.
+        if ($user && $user->email) {
+            // We use standard Laravel Password Broker
+            // Or manually create token in password_resets table
+
+            // For simplicity and standard behavior, let's use the standard Password facade logic manually
+            // to support our dual identifier logic but send to the email found.
+
+            $token = \Illuminate\Support\Facades\Password::createToken($user);
+
+            // Send Email
+            // Note: In production you should have a Notification class.
+            // For now, we use the built-in notification or a simple Mail class.
+            // Laravel User model uses CanResetPassword trait usually.
+
+            $user->sendPasswordResetNotification($token);
+        }
+
+        return response()->json(['message' => 'Link de redefinição enviado se a conta existir.']);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        Log::info("Reset Password Attempt:", ['email' => $request->email, 'token_sample' => substr($request->token, 0, 10) . '...']);
+
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:8',
+        ]);
+
+        $status = \Illuminate\Support\Facades\Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(\Illuminate\Support\Str::random(60));
+
+                $user->save();
+
+                event(new \Illuminate\Auth\Events\PasswordReset($user));
+            }
+        );
+
+        Log::info("Reset Password Result: " . $status);
+
+        return $status === \Illuminate\Support\Facades\Password::PASSWORD_RESET
+            ? response()->json(['message' => __($status)])
+            : response()->json(['message' => __($status)], 400);
+    }
 }

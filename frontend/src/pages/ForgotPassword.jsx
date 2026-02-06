@@ -11,6 +11,8 @@ import DotMap from '../components/ui/DotMap';
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { APP_VERSION } from '../components/constants';
+import LanguageToggle from '../components/LanguageToggle';
+import ThemeToggle from '../components/ThemeToggle';
 
 // Helper function to merge class names
 function cn(...inputs) {
@@ -99,6 +101,11 @@ export default function ForgotPassword() {
                 </Link>
             </div>
 
+            <div className="absolute top-4 right-4 flex gap-2 z-50">
+                <LanguageToggle />
+                <ThemeToggle />
+            </div>
+
             <div className="flex w-full h-full items-center justify-center">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
@@ -184,7 +191,7 @@ export default function ForgotPassword() {
                                 <ReCAPTCHA
                                     ref={recaptchaRef}
                                     size="invisible"
-                                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "YOUR_SITE_KEY_HERE"}
+                                    sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"}
                                 />
 
                                 <div>

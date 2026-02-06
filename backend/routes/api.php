@@ -11,7 +11,9 @@ Route::prefix('v1')->group(function () {
     // Auth Routes
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
-    
+    Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
+
     // Public Routes
     Route::get('/courses', [CourseController::class, 'index']);
     Route::get('/courses/{course}', [CourseController::class, 'show']);
@@ -35,7 +37,7 @@ Route::prefix('v1')->group(function () {
         // Attendance & Grades
         Route::post('/attendance', [App\Http\Controllers\Api\AttendanceController::class, 'store']);
         Route::get('/attendance', [App\Http\Controllers\Api\AttendanceController::class, 'index']);
-        
+
         Route::post('/grades', [App\Http\Controllers\Api\GradeController::class, 'store']);
         Route::post('/grades', [App\Http\Controllers\Api\GradeController::class, 'store']);
         Route::get('/grades', [App\Http\Controllers\Api\GradeController::class, 'index']);
@@ -44,4 +46,3 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('users', \App\Http\Controllers\Api\UserController::class);
     });
 });
-
