@@ -39,6 +39,11 @@ A versão **v1.2.2** foca na estabilidade do fluxo de entrada do aluno. Corrigim
     - Campos de documento transformam texto em MAIÚSCULAS em tempo real.
 - **Automação de Versão**: O rodapé de todas as páginas agora exibe a versão definida globalmente, eliminando inconsistências.
 
+### 🎨 Refinamento de UI & Internacionalização
+- **Auth Premium**: As telas de `Recuperar Senha` e `Redefinir Senha` foram redesenhadas para se igualar à tela de Login (Split Screen).
+- **Tradução Completa**: Adicionado suporte total (PT/EN) para mensagens de erro, sucesso e medidores de senha.
+- **UX**: Feedback visual aprimorado em botões e inputs de senha.
+
 ### 🐛 Correções (Bug Fixes)
 - **[CRÍTICO] Registro Falho**: Corrigido erro onde o passo 5 travava silenciosamente devido a migrações pendentes no backend.
 - **Loop de Cursos**: Resolvido problema de renderização que causava múltiplas requisições ao buscar cursos.
