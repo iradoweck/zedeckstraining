@@ -29,7 +29,7 @@ export const StudentStatusCard = ({ data, isLoading }) => {
                     <div className="mt-2 flex items-center space-x-2">
                         <span className={`px-2 py-0.5 rounded text-xs font-semibold ${status === 'blocked' ? 'bg-red-500/80' : 'bg-green-500/80'
                             }`}>
-                            {status === 'blocked' ? t('access_blocked', 'Acesso Restrito') : t('active_student', 'Estudante Ativo')}
+                            {status === 'blocked' ? t('status_blocked', 'Bloqueado') : t('status_active', 'Ativo')}
                         </span>
                     </div>
                 </div>
