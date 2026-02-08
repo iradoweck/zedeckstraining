@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import ThemeToggle from '../components/ThemeToggle';
 import { usePageTitle } from '../hooks/usePageTitle';
 import LoginMap from '../components/ui/LoginMap';
 import { APP_VERSION } from '../components/constants';
+import { toast } from 'react-hot-toast';
 
 export default function Login() {
     usePageTitle();
@@ -17,11 +18,29 @@ export default function Login() {
     const { login } = useAuth();
     const navigate = useNavigate();
 
+    // Check for Logout Message
+    useEffect(() => {
+        const shouldShowLogout = localStorage.getItem('show_logout_message');
+        if (shouldShowLogout) {
+            toast.success(t('logout_success', 'Saiu com Sucesso, Até breve!'), {
+                icon: '👋',
+                duration: 4000,
+                style: {
+                    borderRadius: '10px',
+                    background: '#333',
+                    color: '#fff',
+                },
+            });
+            localStorage.removeItem('show_logout_message');
+        }
+    }, [t]);
+
     const handleLogin = async (email, password) => {
         setError('');
         setIsLoading(true);
         try {
             await login(email, password);
+            localStorage.setItem('show_login_success', 'true');
             navigate('/dashboard');
         } catch (err) {
             console.error("Login error:", err);

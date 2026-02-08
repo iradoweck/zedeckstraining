@@ -44,5 +44,11 @@ Route::prefix('v1')->group(function () {
 
         // User Management (Admin)
         Route::apiResource('users', \App\Http\Controllers\Api\UserController::class);
+
+        // Feature: Financials (Planned for v1.2.4)
+        // Route::prefix('financials')->group(function () {
+        //     Route::get('/summary', [FinancialController::class, 'summary']);
+        //     Route::get('/transactions', [FinancialController::class, 'index']);
+        // });
     });
 });

@@ -1,27 +1,94 @@
-# Zedeck's Training System
+# ZTS – Zedeck’s Training System
 
-![Version](https://img.shields.io/badge/version-v1.2.2-green)
+![ZTS Version](https://img.shields.io/badge/version-v1.2.3-blue?style=for-the-badge&logo=appveyor) ![Status](https://img.shields.io/badge/status-active-success?style=for-the-badge) ![Stack](https://img.shields.io/badge/stack-TALL+React-orange?style=for-the-badge)
 
-Este é o sistema oficial de gestão acadêmica e treinamentos da Zedeck's.
+> **Plataforma Integrada de Gestão Académica e Financeira**
 
-## 🚀 Sobre o Projeto
-O sistema é uma plataforma completa (LMS) que gerencia:
-- Cursos e Módulos
-- Inscrições de Alunos
-- Diários de Classe e Presença
-- Notas e Certificados
-- Gestão Financeira (Pagamentos)
+O **Zedeck's Training System (ZTS)** é um LMS (Learning Management System) moderno e robusto, desenhado para gerir todo o ciclo de vida do estudante, desde a inscrição e pagamentos até ao acesso às aulas e certificação.
 
-## 🛠 Tecnologia
-- **Backend**: Laravel 11 (API REST)
-- **Frontend**: React (Vite)
-- **Banco de Dados**: MySQL (utf8mb4)
-- **Autenticação**: Laravel Sanctum
+---
 
-## 📂 Estrutura de Pastas
-- `/backend`: Código fonte da API e regras de negócio.
-- `/frontend`: Interface do usuário (React).
-- `/DEPLOY_CPANEL`: (Gerado automaticamente) Pacote pronto para subir no servidor.
+## 🚀 Visão Geral do Projeto
 
-## 📦 Como Deployar
-Consulte o arquivo `DEPLOY_CPANEL/INSTRUÇÕES.md` para o guia passo-a-passo de como colocar em produção.
+O sistema elimina a burocracia manual, centrando-se na **autonomia do estudante** e no **controlo institucional**.
+
+### 🌟 Pilares do Sistema
+1.  **Zero Atrito Financeiro**: Bloqueios e libertações de acesso são automáticos baseados no estado do pagamento.
+2.  **Transparência Total**: O estudante sabe sempre quanto deve, quando vence e por que razão o acesso está bloqueado.
+3.  **Documentos Oficiais**: Geração automática de Faturas, Guias e Recibos em PDF.
+4.  **Segurança e Auditoria**: Logs imutáveis de todas as transações e alterações de perfil.
+
+---
+
+## 🧩 Módulos Principais
+
+### 🎓 Painel do Estudante (Foco Atual)
+O centro de comando para o aluno.
+- **Visão Geral (Overview)**: Resumo inteligente da saúde académica e financeira.
+- **Financeiro**: Gestão de mensalidades, multas automáticas (15%) e histórico.
+- **Documentos**: Central de downloads (Cartões, Certificados, Declarações).
+- **Aulas**: Acesso a conteúdos presenciais/online condicionado ao pagamento.
+
+### 🏛️ Painel Administrativo (Backoffice)
+Focado na gestão e fiscalização.
+- Validação de pagamentos manuais.
+- Gestão de turmas e formadores.
+- Relatórios globais de inadimplência e receitas.
+
+### 👩‍🏫 Painel do Formador
+Ferramentas de sala de aula.
+- Diários de classe e presenças.
+- Lançamento de notas e avaliações.
+
+---
+
+## 🛠 Tech Stack
+
+Uma arquitetura híbrida focada em performance e segurança.
+
+| Camada | Tecnologias | Detalhes |
+| :--- | :--- | :--- |
+| **Frontend** | ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=white) ![Tailwind](https://img.shields.io/badge/-Tailwind-38B2AC?logo=tailwind-css&logoColor=white) | Vite, Shadcn UI, Lucide Icons, Axios. |
+| **Backend** | ![Laravel](https://img.shields.io/badge/-Laravel_11-FF2D20?logo=laravel&logoColor=white) | API REST, Sanctum (Auth), Eloquent ORM. |
+| **Database** | ![MySQL](https://img.shields.io/badge/-MySQL-4479A1?logo=mysql&logoColor=white) | UTF8mb4, Relational Schema. |
+| **Infra** | ![cPanel](https://img.shields.io/badge/-cPanel-FF6C2C?logo=cpanel&logoColor=white) | Deploy automatizado em hospedagem partilhada. |
+
+---
+
+## 📂 Estrutura do Repositório
+
+```bash
+/
+├── backend/          # API Laravel, Regras de Negócio, Migrations
+├── frontend/         # Interface React (SPA)
+│   ├── src/
+│   │   ├── app/      # Rotas e Páginas (Dashboard, Auth)
+│   │   ├── components/ # UI Reutilizável (Shadcn)
+│   │   └── services/ # Integração com API
+├── DEPLOY_CPANEL/    # Artifacts de build prontos para produção
+└── README.md         # Este arquivo
+```
+
+---
+
+## 🚦 Status de Desenvolvimento
+
+| Versão | Módulo | Progresso |
+| :--- | :--- | :--- |
+| **v1.2.3** | **Base Dashboard (Layout, i18n)** | ✅ Concluído |
+| **v1.2.4** | **Visão Geral (Student Overview)** | 🚧 Em Desenvolvimento |
+| **v1.2.5** | **Motor Financeiro (Lógica)** | 📅 Planeado |
+| **v1.3.0** | **Admin Dashboard** | 📅 Planeado |
+
+---
+
+## 📦 Instalação e Deploy
+
+Para rodar localmente:
+1.  **Backend**: `cd backend && composer install && php artisan serve`
+2.  **Frontend**: `cd frontend && npm install && npm run dev`
+
+Para produção, consulte `DEPLOY_CPANEL/INSTRUÇÕES.md`.
+
+---
+© 2026 **Zedeck's Training System**. Todos os direitos reservados.

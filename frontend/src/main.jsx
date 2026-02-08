@@ -9,6 +9,8 @@ import './index.css';
 import 'flag-icons/css/flag-icons.min.css';
 import './i18n'; // Start i18n
 
+import { Toaster } from 'react-hot-toast';
+
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -17,6 +19,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ErrorBoundary>
         <AuthProvider>
           <RouterProvider router={router} />
+          <Toaster position="top-right" />
         </AuthProvider>
       </ErrorBoundary>
     </QueryClientProvider>
