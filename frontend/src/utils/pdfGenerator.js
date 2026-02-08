@@ -94,7 +94,7 @@ export const downloadPDF = (doc, user = 'Estudante') => {
     // In a real app, this would use jsPDF to generate a binary and download it.
     // Here we open a print window for demonstration.
     const w = window.open('', '_blank');
-    w.document.write(generateHTML(doc.type, { ...doc, user, amount: '4.500,00 MT' }));
+    w.document.write(generateHTML(doc.type, { ...doc, user, amount: '4 500,00 MZN' }));
     w.document.close();
     // w.print(); // Optional: Auto print
 };

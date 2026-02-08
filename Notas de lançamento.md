@@ -22,6 +22,9 @@
   - Ajuste de altura nos cards laterais para evitar sobreposição do rodapé.
   - **Redistribuição de Widgets:** Otimização do espaço em branco movendo widgets de engajamento para a coluna principal, criando um visual denso e profissional.
   - Footer estático e limpo.
+- **Dogma Financeiro Aplicado:**
+  - **Moeda Oficial:** Padronização total para **MZN** (substituindo MT/MTn).
+  - **Formato Numérico:** Rigorosamente "1 000,00" (Espaço como separador de milhar).
 
 ---
 

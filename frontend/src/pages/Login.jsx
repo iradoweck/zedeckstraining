@@ -41,7 +41,7 @@ export default function Login() {
         try {
             await login(email, password);
             localStorage.setItem('show_login_success', 'true');
-            navigate('/dashboard');
+            navigate('/dashboard/estudante/overview');
         } catch (err) {
             console.error("Login error:", err);
             setError(t('invalid_credentials', 'Invalid credentials'));

@@ -64,7 +64,7 @@ function TabButton({ active, onClick, icon: Icon, label }) {
             onClick={onClick}
             className={`gap-2 ${active ? "" : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"}`}
         >
-            <Icon size={18} />
+            {Icon && <Icon size={18} />}
             {label}
         </Button>
     )
@@ -101,7 +101,7 @@ function DashboardOverview() {
                 />
                 <StatsCard
                     title="Revenue"
-                    value="254,450 MT"
+                    value="254 450,00 MZN"
                     icon={DollarSign}
                     trend="down"
                     trendValue="2%"

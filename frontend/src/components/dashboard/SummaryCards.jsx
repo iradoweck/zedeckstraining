@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 const formatCurrency = (value, currency = 'MZN') => {
     return new Intl.NumberFormat('pt-MZ', {
-        style: 'currency',
-        currency: currency,
-    }).format(value);
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }).format(value).replace(/\s/g, ' ') + ' ' + currency;
 };
 
 export const FinancialSummaryCard = ({ data, isLoading }) => {

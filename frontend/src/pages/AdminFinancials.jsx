@@ -10,7 +10,7 @@ import { TrendingUp, TrendingDown, DollarSign, CreditCard } from "lucide-react";
 
 export default function AdminFinancials() {
     // Mock Data
-    const [transactions, setTransactions] = useState([
+    const [transactions] = useState([
         { id: 1, type: "income", category: "Tuition", amount: 5000, date: "2025-06-01", description: "Matrícula João Silva" },
         { id: 2, type: "expense", category: "Utilities", amount: 1200, date: "2025-06-02", description: "Internet Bill" },
         { id: 3, type: "income", category: "Course Fee", amount: 3500, date: "2025-06-03", description: "Curso Inglês - Maria" },
@@ -79,7 +79,7 @@ export default function AdminFinancials() {
                                         </div>
                                     </div>
                                     <span className={`font-bold ${t.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                                        {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString()} MT
+                                        {t.type === 'income' ? '+' : '-'}{t.amount.toLocaleString('pt-MZ').replace(/,/g, ' ').replace(/\./g, ',')} MZN
                                     </span>
                                 </div>
                             ))}
@@ -96,7 +96,7 @@ export default function AdminFinancials() {
                         <form className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label>Amount (MT)</Label>
+                                    <Label>Amount (MZN)</Label>
                                     <Input placeholder="0.00" type="number" />
                                 </div>
                                 <div className="space-y-2">

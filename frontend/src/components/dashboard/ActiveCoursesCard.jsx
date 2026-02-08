@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Card } from '../ui/card';
 import { Link } from 'react-router-dom';
 
+// Verified: ActiveCoursesCard does not display currency. Moving to docs.
 export const ActiveCoursesCard = ({ classes, isLoading }) => {
     const { t } = useTranslation();
 

@@ -95,7 +95,7 @@ export const InvoiceTable = ({ transactions, isLoading, onPay, onDownload }) => 
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 text-gray-900 dark:text-white font-mono">
-                                        {new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(tx.amount)}
+                                        {new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(tx.amount).replace(/\./g, ',').replace(/\s/g, ' ')} MZN
                                     </td>
                                     <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-sm">
                                         {tx.due_date ? new Date(tx.due_date).toLocaleDateString() : '-'}

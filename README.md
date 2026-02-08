@@ -76,8 +76,8 @@ Uma arquitetura híbrida focada em performance e segurança.
 | Versão | Módulo | Progresso |
 | :--- | :--- | :--- |
 | **v1.2.3** | **Base Dashboard (Layout, i18n)** | ✅ Concluído |
-| **v1.2.4** | **Visão Geral (Student Overview)** | ✅ Layout Unificado (Ajustes Finais) |
-| **v1.2.5** | **Motor Financeiro (Lógica)** | 📅 Planeado |
+| **v1.2.4** | **Visão Geral (Student Overview)** | ✅ Concluído |
+| **v1.2.5** | **Motor Financeiro (Lógica)** | 📅 Planeado (Próximo) |
 | **v1.3.0** | **Admin Dashboard** | 📅 Planeado |
 
 ---
