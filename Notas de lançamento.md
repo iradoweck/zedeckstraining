@@ -1,28 +1,26 @@
 # Notas de Lançamento
 
-## v1.2.3 - Base da Dashboard do Estudante (2026-02-06)
-**Foco:** Infraestrutura Base, Navegação e Segurança.
+## v1.2.3 - Base da Dashboard do Estudante (2026-02-08)
+**Foco:** Infraestrutura Base, Navegação Premium e Internacionalização Completa.
 
 ### 🚀 Novidades
-- **Nova Estrutura de Pastas:** Dashboard organizada em `src/app/dashboard/estudante`.
+- **Topbar Inteligente:**
+  - Relógio Digital em tempo real (i18n).
+  - Menu de Perfil (Dropdown) com acesso rápido a configurações e logout.
 - **Navegação Reformulada:**
-  - Sidebar com links específicos para o estudante (Visão Geral, Financeiro, etc.).
-  - Indicação clara da versão v1.2.3 no rodapé do menu.
+  - Sidebar interativa com ícones consistentes (`User`, `LogOut`).
+  - Terminologia profissional: Adoção de **"Estudante"** em todo o sistema.
 - **Página Overview:**
-  - Cards de resumo financeiro e aulas ativas.
-  - Alertas prioritários.
-- **UX Aprimorada & Feedback Imersivo:**
-  - **Notificações Globais:** Sistema de *Toasts* (Notificações) integrado ao `main.jsx` para feedback visual em toda a aplicação.
-  - **Login:** Mensagem de sucesso ("Login realizado Com sucesso" / "Login successful") com fundo **Verde Esmeralda**.
-  - **Logout:** Mensagem de despedida ("Saiu com Sucesso, Até breve!" / "Logged out successfully...") com fundo **Dark Mode**.
-  - **Internacionalização (i18n):** Todo o ciclo de entrada e saída traduzido (PT/EN).
-  - Tratamento de erro 404 para rotas inexistentes.
+  - Cards de resumo financeiro e aulas ativas (Mock).
+  - Alertas prioritários e visualização de status da conta.
+- **UX Imersiva:**
+  - **Notificações:** Feedback visual (Toasts) para Login/Logout.
+  - **i18n:** Suporte total a PT/EN, incluindo formatos de data.
 
 ### 🛠️ Técnico
 - Implementação de `StudentLayout` com proteção RBAC.
-- Refatoração do `Router.jsx` para suportar rotas aninhadas.
-- **Correção de Arquitetura:** Movido `<Toaster />` para `main.jsx` corrigindo visibilidade de notificações pós-redirect.
-- Persistência de estado de UI usando flags temporárias em `localStorage`.
+- Otimização do `i18n.js` para carregamento dinâmico de chaves.
+- Correção de ícones e padronização visual (Lucide React).
 
 ---
 

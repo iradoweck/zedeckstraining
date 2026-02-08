@@ -78,6 +78,7 @@ export default function StudentLayout() {
                     user={user}
                     toggleTheme={toggleTheme}
                     isDark={isDark}
+                    onLogout={logout}
                 />
 
                 <main className="flex-1 p-4 md:p-8 pt-20 md:pt-24 max-w-7xl mx-auto w-full animate-in fade-in duration-500">
