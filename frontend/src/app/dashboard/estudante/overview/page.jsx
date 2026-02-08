@@ -11,6 +11,7 @@ import { LastActivityCard } from '../../../../components/dashboard/LastActivityC
 import { QuickServicesCard } from '../../../../components/dashboard/QuickServicesCard';
 import { InvoiceTable } from '../../../../components/dashboard/InvoiceTable';
 import { PaymentModal } from '../../../../components/dashboard/PaymentModal';
+import { TasksWidget } from '../../../../components/dashboard/TasksWidget';
 import { useAuth } from '../../../../context/AuthContext';
 import { downloadPDF } from '../../../../utils/pdfGenerator';
 
@@ -76,52 +77,53 @@ export default function StudentOverview() {
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto pb-10">
-            {/* Bloco 6: Alertas Importantes (Banner Global) */}
+            {/* Bloco Alertas: Mantém posição original */}
             <DashboardAlerts summary={financialSummary} />
 
+            {/* Linha 1: 3 Colunas (Identidade | Total a Pagar | Próximo Vencimento) */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="h-full">
+                    <StudentStatusCard
+                        data={financialSummary || { student_name: user?.name, status: 'regular' }}
+                        isLoading={isLoadingFinance}
+                    />
+                </div>
+                <div className="h-full">
+                    <FinancialSummaryCard
+                        data={financialSummary || {}}
+                        isLoading={isLoadingFinance}
+                    />
+                </div>
+                <div className="h-full">
+                    <NextDueCard
+                        data={financialSummary || {}}
+                        isLoading={isLoadingFinance}
+                    />
+                </div>
+            </div>
+
+            {/* Linha 2: Grid Desigual (2/3 + 1/3) */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {/* Coluna Principal (Esquerda - 2/3) */}
+                {/* Coluna Esquerda (2/3) - Cursos & Faturas */}
                 <div className="lg:col-span-2 space-y-6">
+                    {/* Bloco 2: Cursos Ativos */}
+                    <ActiveCoursesCard
+                        classes={classes}
+                        isLoading={isLoadingClasses}
+                    />
 
-                    {/* Bloco 1: Identidade do Estudante */}
-                    <div className="h-auto">
-                        <StudentStatusCard
-                            data={financialSummary || { student_name: user?.name, status: 'regular' }}
-                            isLoading={isLoadingFinance}
-                        />
-                    </div>
-
-                    {/* Bloco 3: Situação Financeira (Cards Lado a Lado) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <FinancialSummaryCard
-                            data={financialSummary || {}}
-                            isLoading={isLoadingFinance}
-                        />
-                        <NextDueCard
-                            data={financialSummary || {}}
-                            isLoading={isLoadingFinance}
-                        />
-                    </div>
-
-                    {/* Tabela de Faturas (Merged from Image 1) */}
+                    {/* Tabela de Faturas */}
                     <InvoiceTable
                         transactions={transactions}
                         isLoading={isLoadingTransactions}
                         onPay={handlePay}
                         onDownload={handleDownload}
                     />
-
-                    {/* Bloco 2: Cursos Ativos */}
-                    <ActiveCoursesCard
-                        classes={classes}
-                        isLoading={isLoadingClasses}
-                    />
                 </div>
 
-                {/* Coluna Lateral (Direita - 1/3) */}
-                <div className="space-y-6">
-
+                {/* Coluna Direita (1/3) - Atividade, Docs & Tarefas */}
+                <div className="space-y-6 flex flex-col">
                     {/* Bloco 4: Última Atividade */}
                     <LastActivityCard
                         data={lastActivity}
@@ -130,9 +132,13 @@ export default function StudentOverview() {
 
                     {/* Bloco 5: Documentos Rápidos */}
                     <QuickServicesCard
-                        isLoading={isLoadingFinance} // Usa loading do financeiro como proxy
+                        isLoading={isLoadingFinance}
                     />
 
+                    {/* Bloco Novo: Tarefas */}
+                    <div className="flex-1 min-h-[300px]">
+                        <TasksWidget />
+                    </div>
                 </div>
             </div>
 

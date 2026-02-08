@@ -366,6 +366,20 @@ const resources = {
             "forgot_password_desc_title": "Redefinir Senha",
 
 
+            // v1.2.4 Mock Data (Tasks & Notifications)
+            "task_admin_profile": "Completar Perfil de Estudante",
+            "task_trainer_assignment": "Entregar Projeto de Web Design",
+            "task_student_study": "Estudar para Exame Final",
+            "task_financial_download": "Baixar Guia de Pagamento",
+            "source_admin": "Admin",
+            "source_trainer": "Formador",
+            "source_student": "Eu",
+            "notif_invoice_title": "Fatura de Março Disponível",
+            "notif_class_title": "Aula de Web Design começou",
+            "notif_welcome_title": "Bem-vindo ao ZTS v1.2.4",
+            "notif_invoice_desc": "Não esqueça de pagar até dia 10.",
+            "notif_class_desc": "Entre na sala agora.",
+            "notif_welcome_desc": "Explore as novidades do Painel do Estudante."
         }
     },
     en: {
@@ -727,9 +741,22 @@ const resources = {
             "too_weak": "Password is too weak. Try adding numbers or symbols.",
 
             "success": "Success",
-            "saving": "Saving..."
+            "saving": "Saving...",
 
-
+            // v1.2.4 Mock Data (Tasks & Notifications)
+            "task_admin_profile": "Complete Student Profile",
+            "task_trainer_assignment": "Submit Web Design Project",
+            "task_student_study": "Study for Final Exam",
+            "task_financial_download": "Download Payment Guide",
+            "source_admin": "Admin",
+            "source_trainer": "Trainer",
+            "source_student": "Me",
+            "notif_invoice_title": "March Invoice Available",
+            "notif_class_title": "Web Design Class Started",
+            "notif_welcome_title": "Welcome to ZTS v1.2.4",
+            "notif_invoice_desc": "Don't forget to pay by the 10th.",
+            "notif_class_desc": "Join the class now.",
+            "notif_welcome_desc": "Explore the new Student Dashboard features."
         }
     }
 };

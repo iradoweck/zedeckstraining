@@ -19,7 +19,9 @@ const Topbar = ({ onMenuClick, user, toggleTheme, isDark, onLogout }) => {
     const { t, i18n } = useTranslation();
     const [currentTime, setCurrentTime] = React.useState(new Date());
     const [isProfileOpen, setIsProfileOpen] = React.useState(false);
+    const [isNotifOpen, setIsNotifOpen] = React.useState(false);
     const profileRef = React.useRef(null);
+    const notifRef = React.useRef(null);
 
     // Update Clock
     React.useEffect(() => {
@@ -32,6 +34,9 @@ const Topbar = ({ onMenuClick, user, toggleTheme, isDark, onLogout }) => {
         const handleClickOutside = (event) => {
             if (profileRef.current && !profileRef.current.contains(event.target)) {
                 setIsProfileOpen(false);
+            }
+            if (notifRef.current && !notifRef.current.contains(event.target)) {
+                setIsNotifOpen(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -72,10 +77,46 @@ const Topbar = ({ onMenuClick, user, toggleTheme, isDark, onLogout }) => {
             {/* Right: Actions */}
             <div className="flex items-center gap-2 sm:gap-4">
                 {/* Notifications */}
-                <Button variant="ghost" size="icon" className="relative text-gray-500 hover:text-blue-600 dark:text-gray-400">
-                    <Bell className="w-5 h-5" />
-                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900"></span>
-                </Button>
+                <div className="relative" ref={notifRef}>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setIsNotifOpen(!isNotifOpen)}
+                        className="relative text-gray-500 hover:text-blue-600 dark:text-gray-400"
+                    >
+                        <Bell className="w-5 h-5" />
+                        <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900"></span>
+                    </Button>
+
+                    {isNotifOpen && (
+                        <div className="fixed top-16 right-4 w-[calc(100vw-2rem)] sm:absolute sm:top-full sm:right-0 sm:mt-2 sm:w-80 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 py-2 animate-in fade-in slide-in-from-top-2 z-50">
+                            <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                <h3 className="font-semibold text-sm text-gray-900 dark:text-white">{t('notifications', 'Notificações')}</h3>
+                                <span className="text-xs text-blue-600 dark:text-blue-400 cursor-pointer hover:underline">{t('mark_all_read', 'Ler todas')}</span>
+                            </div>
+                            <div className="max-h-64 overflow-y-auto">
+                                {[
+                                    { id: 1, titleKey: 'notif_invoice_title', time: '2 min atrás', type: 'info', read: false },
+                                    { id: 2, titleKey: 'notif_class_title', time: '1 hora atrás', type: 'success', read: false },
+                                    { id: 3, titleKey: 'notif_welcome_title', time: '1 dia atrás', type: 'system', read: true },
+                                ].map((notif) => (
+                                    <div key={notif.id} className={`px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer border-b border-gray-50 dark:border-gray-800/50 last:border-0 ${!notif.read ? 'bg-blue-50/30 dark:bg-blue-900/10' : ''}`}>
+                                        <div className="flex justify-between items-start mb-1">
+                                            <p className={`text-sm ${!notif.read ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300'}`}>
+                                                {t(notif.titleKey)}
+                                            </p>
+                                            {!notif.read && <span className="w-2 h-2 bg-blue-500 rounded-full mt-1.5"></span>}
+                                        </div>
+                                        <p className="text-xs text-gray-400">{notif.time}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="p-2 border-t border-gray-100 dark:border-gray-700 text-center">
+                                <Button variant="ghost" size="sm" className="w-full text-xs text-gray-500">{t('view_all_notifications', 'Ver todas')}</Button>
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 {/* Theme Toggle */}
                 <Button
@@ -135,7 +176,7 @@ const Topbar = ({ onMenuClick, user, toggleTheme, isDark, onLogout }) => {
                             <div className="my-2 border-t border-gray-100 dark:border-gray-700"></div>
 
                             <button
-                                onClick={onLogout} // Assuming onLogout is passed to Topbar or handled via context if not passed
+                                onClick={onLogout}
                                 className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors text-left"
                             >
                                 <span className="p-1.5 bg-red-50 dark:bg-red-900/20 rounded-lg">

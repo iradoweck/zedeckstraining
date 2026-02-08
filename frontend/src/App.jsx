@@ -22,8 +22,8 @@ function App() {
           <Route path="/password-reset/:token" element={<ResetPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          {/* Student Dashboard Routes (v1.2.3 Architecture) */}
-          <Route path="/dashboard" element={<Navigate to="/dashboard/estudante" replace />} />
+          {/* Student Dashboard Routes (v1.2.4 Refined) */}
+          <Route path="/dashboard" element={<Navigate to="/dashboard/estudante/overview" replace />} />
 
           <Route path="/dashboard/estudante" element={<StudentLayout />}>
             <Route index element={<Navigate to="overview" replace />} />
