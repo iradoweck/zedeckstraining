@@ -67,7 +67,7 @@ export default function StudentLayout() {
                 isOpen={isSidebarOpen}
                 onClose={() => setIsSidebarOpen(false)}
                 isCollapsed={isCollapsed}
-                toggleCollapse={() => setIsCollapsed(!isCollapsed)}
+                toggleCollapse={() => setIsCollapsed(prev => !prev)}
                 userStatus={user?.status || 'regular'}
                 onLogout={logout}
             />
