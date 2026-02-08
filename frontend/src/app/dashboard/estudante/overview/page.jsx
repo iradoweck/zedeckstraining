@@ -2,23 +2,24 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../../../services/api';
 import { mockFinancials } from '../../../../services/mockFinancials';
-import { Card } from '../../../../components/ui/card';
-import { Button } from '../../../../components/ui/button';
-import { BookOpen, Calendar, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import IDCardModal from '../../../../components/student/IDCardModal';
-import { FinancialSummaryCard, NextDueCard } from '../../../../components/dashboard/SummaryCards';
-import { StudentStatusCard } from '../../../../components/dashboard/StudentStatusCard';
+// Components
 import { DashboardAlerts } from '../../../../components/dashboard/DashboardAlerts';
+import { StudentStatusCard } from '../../../../components/dashboard/StudentStatusCard';
+import { FinancialSummaryCard, NextDueCard } from '../../../../components/dashboard/SummaryCards';
+import { ActiveCoursesCard } from '../../../../components/dashboard/ActiveCoursesCard';
+import { LastActivityCard } from '../../../../components/dashboard/LastActivityCard';
+import { QuickServicesCard } from '../../../../components/dashboard/QuickServicesCard';
+import { InvoiceTable } from '../../../../components/dashboard/InvoiceTable';
+import { PaymentModal } from '../../../../components/dashboard/PaymentModal';
 import { useAuth } from '../../../../context/AuthContext';
+import { downloadPDF } from '../../../../utils/pdfGenerator';
 
 export default function StudentOverview() {
     const { user } = useAuth();
-    const { t } = useTranslation();
-    const [showIDModal, setShowIDModal] = useState(false);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
 
-    // Fetch Classes (Real API)
+    // 1. Fetch Classes (Dados de Aulas)
     const { data: classes, isLoading: isLoadingClasses } = useQuery({
         queryKey: ['my-classes'],
         queryFn: async () => {
@@ -26,109 +27,122 @@ export default function StudentOverview() {
                 const res = await api.get('/classes');
                 return res.data;
             } catch (err) {
-                console.warn("API Classes fetch failed, using empty list for now", err);
-                return [];
+                console.warn("API Classes fetch failed, using mock/empty", err);
+                // Return mock classes if API fails for demo
+                return [
+                    { id: 1, course: { title: "Web Design Fullstack" }, modality: "presencial", room: "A02", start_date: "2026-02-01", format: "Normal" },
+                    { id: 2, course: { title: "Inglês Técnico" }, modality: "online", start_date: "2026-02-05", format: "Intensivo", isBlocked: false }
+                ];
             }
         }
     });
 
-    // Fetch Financial Summary (Mock)
+    // 2. Fetch Financial Summary (Resumo Financeiro)
     const { data: financialSummary, isLoading: isLoadingFinance } = useQuery({
         queryKey: ['financial-summary'],
         queryFn: mockFinancials.getSummary
     });
 
+    // 3. Fetch Last Activity (Última Atividade)
+    const { data: lastActivity, isLoading: isLoadingActivity } = useQuery({
+        queryKey: ['last-activity'],
+        queryFn: mockFinancials.getLastActivity
+    });
+
+    // 4. Fetch Transactions (Faturas para a Tabela)
+    const { data: transactions, isLoading: isLoadingTransactions, refetch: refetchTransactions } = useQuery({
+        queryKey: ['financial-transactions'],
+        queryFn: mockFinancials.getTransactions
+    });
+
+    // Handlers
+    const handlePay = (invoice) => {
+        setSelectedInvoice(invoice);
+        setShowPaymentModal(true);
+    };
+
+    const handleDownload = (invoice) => {
+        downloadPDF({
+            ...invoice,
+            title: `Fatura #${invoice.id}`,
+            type: invoice.type === 'payment' ? 'Receipt' : 'Invoice'
+        }, user?.name);
+    };
+
+    const handlePaymentConfirm = (invoice) => {
+        console.log("Payment confirmed for", invoice);
+        refetchTransactions();
+    };
+
     return (
-        <div className="space-y-6">
-            {/* Alerts Section */}
+        <div className="space-y-6 max-w-7xl mx-auto pb-10">
+            {/* Bloco 6: Alertas Importantes (Banner Global) */}
             <DashboardAlerts summary={financialSummary} />
 
-            {/* Financial & Status Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {/* 1. Student Identity Status */}
-                <StudentStatusCard
-                    data={financialSummary || { student_name: user?.name, status: 'regular' }}
-                    isLoading={isLoadingFinance}
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                {/* 2. Financial Overview */}
-                <FinancialSummaryCard
-                    data={financialSummary || {}}
-                    isLoading={isLoadingFinance}
-                />
+                {/* Coluna Principal (Esquerda - 2/3) */}
+                <div className="lg:col-span-2 space-y-6">
 
-                {/* 3. Next Payment */}
-                <NextDueCard
-                    data={financialSummary || {}}
-                    isLoading={isLoadingFinance}
-                />
-            </div>
+                    {/* Bloco 1: Identidade do Estudante */}
+                    <div className="h-auto">
+                        <StudentStatusCard
+                            data={financialSummary || { student_name: user?.name, status: 'regular' }}
+                            isLoading={isLoadingFinance}
+                        />
+                    </div>
 
-            {/* Active Classes Section */}
-            <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">{t('my_active_classes', 'Minhas Aulas Ativas')}</h2>
-                    <Button variant="outline" size="sm" className="hidden sm:flex">
-                        {t('view_all', 'Ver Todas')}
-                    </Button>
+                    {/* Bloco 3: Situação Financeira (Cards Lado a Lado) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <FinancialSummaryCard
+                            data={financialSummary || {}}
+                            isLoading={isLoadingFinance}
+                        />
+                        <NextDueCard
+                            data={financialSummary || {}}
+                            isLoading={isLoadingFinance}
+                        />
+                    </div>
+
+                    {/* Tabela de Faturas (Merged from Image 1) */}
+                    <InvoiceTable
+                        transactions={transactions}
+                        isLoading={isLoadingTransactions}
+                        onPay={handlePay}
+                        onDownload={handleDownload}
+                    />
+
+                    {/* Bloco 2: Cursos Ativos */}
+                    <ActiveCoursesCard
+                        classes={classes}
+                        isLoading={isLoadingClasses}
+                    />
                 </div>
 
-                {isLoadingClasses ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
-                        {[1, 2].map(i => (
-                            <div key={i} className="h-48 bg-gray-200 dark:bg-gray-800 rounded-xl"></div>
-                        ))}
-                    </div>
-                ) : classes?.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {classes.map((cls) => (
-                            <Card key={cls.id} className="group hover:shadow-xl transition-all duration-300 border-gray-100 dark:border-gray-700 overflow-hidden bg-white dark:bg-gray-800">
-                                <div className="h-32 bg-gray-100 dark:bg-gray-700/50 w-full relative overflow-hidden">
-                                    <div className="absolute inset-0 flex items-center justify-center text-gray-300 dark:text-gray-600 group-hover:scale-110 transition-transform duration-500">
-                                        <BookOpen size={48} />
-                                    </div>
-                                    <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider text-primary shadow-sm">
-                                        {cls.format}
-                                    </div>
-                                </div>
-                                <div className="p-5">
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1 line-clamp-1">{cls.course.title}</h3>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{cls.name}</p>
+                {/* Coluna Lateral (Direita - 1/3) */}
+                <div className="space-y-6">
 
-                                    <div className="space-y-2 mb-5">
-                                        <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                                            <Calendar size={14} className="text-gray-400" />
-                                            <span>{new Date(cls.start_date).toLocaleDateString()}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                                            <Clock size={14} className="text-gray-400" />
-                                            <span className="text-green-600 dark:text-green-400 font-medium">Em Andamento</span>
-                                        </div>
-                                    </div>
+                    {/* Bloco 4: Última Atividade */}
+                    <LastActivityCard
+                        data={lastActivity}
+                        isLoading={isLoadingActivity}
+                    />
 
-                                    <Link
-                                        to={`/classroom/${cls.id}`}
-                                        className="block w-full py-2 bg-gray-50 dark:bg-gray-700/50 hover:bg-primary hover:text-white text-primary dark:text-blue-400 dark:hover:text-white font-medium rounded-lg transition-all text-sm text-center"
-                                    >
-                                        {t('access_classroom', 'Acessar Sala de Aula')}
-                                    </Link>
-                                </div>
-                            </Card>
-                        ))}
-                    </div>
-                ) : (
-                    <Card className="p-10 text-center border-dashed border-2 bg-gray-50 dark:bg-gray-800/50">
-                        <BookOpen className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-1">{t('no_classes', 'Nenhuma aula encontrada')}</h3>
-                        <p className="text-gray-500 text-sm mb-6">{t('no_classes_desc', 'Você ainda não está matriculado em nenhuma turma ativa.')}</p>
-                        <Button className="bg-primary hover:bg-blue-700">
-                            {t('browse_courses', 'Ver Cursos Disponíveis')}
-                        </Button>
-                    </Card>
-                )}
+                    {/* Bloco 5: Documentos Rápidos */}
+                    <QuickServicesCard
+                        isLoading={isLoadingFinance} // Usa loading do financeiro como proxy
+                    />
+
+                </div>
             </div>
 
-            {showIDModal && <IDCardModal user={user} onClose={() => setShowIDModal(false)} />}
+            {/* Payment Modal */}
+            <PaymentModal
+                isOpen={showPaymentModal}
+                onClose={() => setShowPaymentModal(false)}
+                invoice={selectedInvoice}
+                onConfirm={handlePaymentConfirm}
+            />
         </div>
     );
 }

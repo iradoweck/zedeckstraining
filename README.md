@@ -1,6 +1,6 @@
 # ZTS – Zedeck’s Training System
 
-![ZTS Version](https://img.shields.io/badge/version-v1.2.3-blue?style=for-the-badge&logo=appveyor) ![Status](https://img.shields.io/badge/status-active-success?style=for-the-badge) ![Stack](https://img.shields.io/badge/stack-TALL+React-orange?style=for-the-badge)
+![ZTS Version](https://img.shields.io/badge/version-v1.2.4-blue?style=for-the-badge&logo=appveyor) ![Status](https://img.shields.io/badge/status-active-success?style=for-the-badge) ![Stack](https://img.shields.io/badge/stack-TALL+React-orange?style=for-the-badge)
 
 > **Plataforma Integrada de Gestão Académica e Financeira**
 
@@ -76,7 +76,7 @@ Uma arquitetura híbrida focada em performance e segurança.
 | Versão | Módulo | Progresso |
 | :--- | :--- | :--- |
 | **v1.2.3** | **Base Dashboard (Layout, i18n)** | ✅ Concluído |
-| **v1.2.4** | **Visão Geral (Student Overview)** | 🚧 Em Desenvolvimento |
+| **v1.2.4** | **Visão Geral (Student Overview)** | ✅ Layout Unificado (Ajustes Finais) |
 | **v1.2.5** | **Motor Financeiro (Lógica)** | 📅 Planeado |
 | **v1.3.0** | **Admin Dashboard** | 📅 Planeado |
 

@@ -1,5 +1,27 @@
 # Notas de Lançamento
 
+## v1.2.4 - Visão Geral do Estudante (Student Overview) (2026-02-08)
+**Foco:** Criação do Painel Visão Geral, Fusão de Layouts e Tabela Financeira Integrada.
+
+### 🚀 Novidades
+- **Criação da Visão Geral (Overview):**
+  - O painel principal (`/dashboard`) agora oferece uma experiência completa e unificada.
+  - **Identidade:** Card com Foto, ID Imutável e Status da Conta.
+  - **Resumo Financeiro:** Dívida Total, Próximo Vencimento e Última Atividade.
+  - **Acesso Rápido:** Lista de Cursos Ativos e Downloads de Documentos.
+- **Integração de Faturas:**
+  - Tabela completa de "Faturas & Pagamentos" incorporada diretamente na tela inicial.
+  - Elimina a necessidade de navegar para abas secundárias para ações comuns.
+- **Novos Componentes (v1.2.4):**
+  - **Card de Identidade:** Status da conta (Ativo/Bloqueado) com ID imutável e foto.
+  - **Última Atividade:** Design compacto mostrando a transação mais recente sem poluir o visual.
+  - **Documentos Rápidos:** Acesso direto a PDFs (Faturas, Declarações) sem navegação profunda.
+- **Correções de Layout:**
+  - Ajuste de altura nos cards laterais para evitar sobreposição do rodapé.
+  - Footer estático e limpo.
+
+---
+
 ## v1.2.3 - Base da Dashboard do Estudante (2026-02-08)
 **Foco:** Infraestrutura Base, Navegação Premium e Internacionalização Completa.
 

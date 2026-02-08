@@ -13,10 +13,10 @@ const getDaysDifference = (dateString) => {
 
 export const mockFinancials = {
     getSummary: async () => {
-        // Simulate API delay
+        // Simular delay da API
         await new Promise(resolve => setTimeout(resolve, 800));
 
-        // Logic Simulation
+        // Lógica Simulada
         const nextDueDate = "2026-02-10";
         const daysRemaining = getDaysDifference(nextDueDate);
 
@@ -24,26 +24,38 @@ export const mockFinancials = {
         let balance = 0;
         let totalDue = 4500;
 
-        // Simulate Overdue Logic (Toggle this to test states)
+        // Simular Lógica de Atraso (Alterar para testar estados)
         const isSimulatedOverdue = false;
 
         if (isSimulatedOverdue) {
-            status = "overdue"; // or 'blocked' if > 30 days
-            balance = 4500 * 0.15; // 15% fine
+            status = "overdue"; // ou 'blocked' se > 30 dias
+            balance = 4500 * 0.15; // Multa de 15%
             totalDue += balance;
         }
 
         return {
-            balance: balance, // Debt/Fine
+            balance: balance, // Dívida/Multa
             total_paid: 15000,
             total_due: totalDue,
             next_due_date: nextDueDate,
             days_remaining: daysRemaining,
             currency: "MZN",
             status: status, // regular, pending, overdue, blocked
-            student_id: "ZT-2026-0042",
-            student_name: "Muacy", // Should come from auth context normally
+            student_id: "ZT-2026-0042", // ID Imutável
+            student_name: "Muacy", // Deve vir do contexto de auth
             photo_url: null
+        };
+    },
+
+    getLastActivity: async () => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            type: "invoice_issued", // payment_received, invoice_issued
+            title: "Fatura de Março Emitida",
+            date: "2026-02-01",
+            amount: 4500,
+            currency: "MZN",
+            status: "pending"
         };
     },
 
