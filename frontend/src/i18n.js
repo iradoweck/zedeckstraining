@@ -379,7 +379,23 @@ const resources = {
             "notif_welcome_title": "Bem-vindo ao ZTS v1.2.4",
             "notif_invoice_desc": "Não esqueça de pagar até dia 10.",
             "notif_class_desc": "Entre na sala agora.",
-            "notif_welcome_desc": "Explore as novidades do Painel do Estudante."
+            "notif_welcome_desc": "Explore as novidades do Painel do Estudante.",
+
+            // v1.2.4 New Widgets
+            "academic_performance": "Desempenho Académico",
+            "avg_grade": "Média Geral",
+            "out_of_20": "de 20 valores",
+            "attendance": "Frequência",
+            "classes_attended": "Aulas Assistidas",
+            "performance_note": "Ótimo desempenho! Continue assim.",
+            "school_notices": "Comunicados",
+            "view_all_notices": "Ver todos os avisos",
+            "notice_imp": "Importante",
+            "notice_info": "Info",
+            "notice_holiday_title": "Feriado Nacional",
+            "notice_holiday_desc": "Sem aulas dia 12 de Out devido ao feriado.",
+            "notice_exam_title": "Exame de Web Design",
+            "notice_exam_desc": "Prepare-se para o exame prático dia 15 Out."
         }
     },
     en: {
@@ -756,7 +772,23 @@ const resources = {
             "notif_welcome_title": "Welcome to ZTS v1.2.4",
             "notif_invoice_desc": "Don't forget to pay by the 10th.",
             "notif_class_desc": "Join the class now.",
-            "notif_welcome_desc": "Explore the new Student Dashboard features."
+            "notif_welcome_desc": "Explore the new Student Dashboard features.",
+
+            // v1.2.4 New Widgets
+            "academic_performance": "Academic Performance",
+            "avg_grade": "Avg Grade",
+            "out_of_20": "out of 20",
+            "attendance": "Attendance",
+            "classes_attended": "Classes Attended",
+            "performance_note": "Great performance! Keep it up.",
+            "school_notices": "Notices",
+            "view_all_notices": "View all notices",
+            "notice_imp": "Important",
+            "notice_info": "Info",
+            "notice_holiday_title": "National Holiday",
+            "notice_holiday_desc": "No classes on Oct 12th due to holiday.",
+            "notice_exam_title": "Web Design Exam",
+            "notice_exam_desc": "Prepare for the practical exam on Oct 15th."
         }
     }
 };

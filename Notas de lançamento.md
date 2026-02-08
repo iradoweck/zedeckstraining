@@ -16,8 +16,11 @@
   - **Card de Identidade:** Status da conta (Ativo/Bloqueado) com ID imutável e foto.
   - **Última Atividade:** Design compacto mostrando a transação mais recente sem poluir o visual.
   - **Documentos Rápidos:** Acesso direto a PDFs (Faturas, Declarações) sem navegação profunda.
-- **Correções de Layout:**
+  - **Desempenho Académico:** Gráficos visuais de Média e Frequência.
+  - **Comunicados:** Lista de avisos importantes (Exames, Feriados) integrada ao dashboard.
+- **Correções de Layout & Balanceamento:**
   - Ajuste de altura nos cards laterais para evitar sobreposição do rodapé.
+  - **Redistribuição de Widgets:** Otimização do espaço em branco movendo widgets de engajamento para a coluna principal, criando um visual denso e profissional.
   - Footer estático e limpo.
 
 ---

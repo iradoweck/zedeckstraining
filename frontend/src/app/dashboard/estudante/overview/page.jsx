@@ -12,6 +12,8 @@ import { QuickServicesCard } from '../../../../components/dashboard/QuickService
 import { InvoiceTable } from '../../../../components/dashboard/InvoiceTable';
 import { PaymentModal } from '../../../../components/dashboard/PaymentModal';
 import { TasksWidget } from '../../../../components/dashboard/TasksWidget';
+import { PerformanceWidget } from '../../../../components/dashboard/PerformanceWidget';
+import { AnnouncementsWidget } from '../../../../components/dashboard/AnnouncementsWidget';
 import { useAuth } from '../../../../context/AuthContext';
 import { downloadPDF } from '../../../../utils/pdfGenerator';
 
@@ -112,6 +114,12 @@ export default function StudentOverview() {
                         classes={classes}
                         isLoading={isLoadingClasses}
                     />
+
+                    {/* Bloco 3: Desempenho e Comunicados (Lado a Lado) */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <PerformanceWidget />
+                        <AnnouncementsWidget />
+                    </div>
 
                     {/* Tabela de Faturas */}
                     <InvoiceTable
