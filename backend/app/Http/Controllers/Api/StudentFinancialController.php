@@ -16,6 +16,9 @@ class StudentFinancialController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+        if ($user) {
+            $user->refresh(); // Force reload from DB to get latest wallet_balance
+        }
 
         // 1. Total Due (Sum of pending/partial/overdue invoices + penalties)
         $totalDue = $user->invoices()
@@ -39,18 +42,27 @@ class StudentFinancialController extends Controller
         // 4. Status
         $status = $user->financial_status;
 
-        return response()->json([
+        // 5. Penalty Total
+        $penaltyTotal = $user->invoices()
+            ->whereIn('status', ['pending', 'partial', 'overdue'])
+            ->sum('penalty_amount');
+
+        $response = [
             'balance' => $totalDue, // Current Debt
+            'penalty_total' => $penaltyTotal, // Specifically fines
             'total_paid' => $user->financialTransactions()->where('type', 'payment')->sum('amount'),
             'total_due' => $totalDue,
             'next_due_date' => $nextDue ? $nextDue->due_date->format('Y-m-d') : null,
-            'days_remaining' => $nextDue ? now()->diffInDays($nextDue->due_date, false) : null,
+            'days_remaining' => $nextDue ? (int) now()->startOfDay()->diffInDays($nextDue->due_date->startOfDay(), false) : null,
             'currency' => 'MZN',
             'status' => $status,
             'student_id' => $user->student_code ?? 'N/A',
             'student_name' => $user->name,
-            'photo_url' => $user->profile_photo
-        ]);
+            'photo_url' => $user->profile_photo,
+            'wallet_balance' => $user->wallet_balance
+        ];
+
+        return response()->json($response);
     }
 
     /**

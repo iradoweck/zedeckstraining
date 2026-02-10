@@ -6,11 +6,11 @@ import {
     CheckCircle,
     Clock,
     AlertCircle,
-    Search,
     Filter
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
+import { formatCurrency } from '../../utils/format';
 
 export const InvoiceTable = ({ transactions, isLoading, onPay, onDownload }) => {
     const { t } = useTranslation();
@@ -95,7 +95,7 @@ export const InvoiceTable = ({ transactions, isLoading, onPay, onDownload }) => 
                                         </div>
                                     </td>
                                     <td className="px-6 py-5 text-gray-900 dark:text-white font-mono font-medium whitespace-nowrap">
-                                        {new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(tx.amount).replace(/\./g, ',').replace(/\s/g, ' ')} MZN
+                                        {formatCurrency(tx.amount)}
                                     </td>
                                     <td className="px-6 py-5 text-gray-500 dark:text-gray-400 text-sm whitespace-nowrap">
                                         {tx.due_date ? new Date(tx.due_date).toLocaleDateString('pt-PT') : '-'}

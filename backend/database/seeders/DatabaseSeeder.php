@@ -26,6 +26,23 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        // Create Test Student
+        $student = User::firstOrCreate(
+            ['email' => 'aluno@zedecks.com'],
+            [
+                'name' => 'Abel J. Simal',
+                'password' => 'password',
+                'role' => 'student',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Seed courses
+        $this->call([
+            CourseSeeder::class,
+            FinancialSeeder::class, // Ensure Financials are seeded for the student
+        ]);
+
         // Optional: Seed courses if needed
         $this->call(CourseSeeder::class);
     }

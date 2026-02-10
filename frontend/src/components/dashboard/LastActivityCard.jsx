@@ -2,6 +2,7 @@ import React from 'react';
 import { Activity, ArrowRight, Download, FileText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
+import { formatCurrency } from '../../utils/format';
 
 export const LastActivityCard = ({ data, isLoading }) => {
     const { t } = useTranslation();
@@ -13,11 +14,7 @@ export const LastActivityCard = ({ data, isLoading }) => {
     // Se não houver dados
     if (!data) return null;
 
-    const { title, date, amount, currency, status } = data;
-
-    const formatCurrency = (val, curr) => {
-        return new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: curr }).format(val);
-    };
+    const { title, date, amount, status } = data;
 
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between">
@@ -37,7 +34,7 @@ export const LastActivityCard = ({ data, isLoading }) => {
                     <div>
                         <h4 className="font-bold text-gray-900 dark:text-white leading-tight">{title}</h4>
                         <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">
-                            {formatCurrency(amount, currency)}
+                            {formatCurrency(amount)}
                         </p>
                         <span className={`inline-block mt-1 px-2 py-0.5 text-[10px] font-bold uppercase rounded-full ${status === 'pending' ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-green-100 text-green-700'
                             }`}>

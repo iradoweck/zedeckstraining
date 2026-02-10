@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../../../services/api';
-import { mockFinancials } from '../../../../services/mockFinancials';
+import { financialService } from '../../../../services/financial.service';
 // Components
 import { DashboardAlerts } from '../../../../components/dashboard/DashboardAlerts';
 import { StudentStatusCard } from '../../../../components/dashboard/StudentStatusCard';
@@ -31,7 +31,6 @@ export default function StudentOverview() {
                 return res.data;
             } catch (err) {
                 console.warn("API Classes fetch failed, using mock/empty", err);
-                // Return mock classes if API fails for demo
                 return [
                     { id: 1, course: { title: "Web Design Fullstack" }, modality: "presencial", room: "A02", start_date: "2026-02-01", format: "Normal" },
                     { id: 2, course: { title: "Inglês Técnico" }, modality: "online", start_date: "2026-02-05", format: "Intensivo", isBlocked: false }
@@ -43,19 +42,35 @@ export default function StudentOverview() {
     // 2. Fetch Financial Summary (Resumo Financeiro)
     const { data: financialSummary, isLoading: isLoadingFinance } = useQuery({
         queryKey: ['financial-summary'],
-        queryFn: mockFinancials.getSummary
+        queryFn: financialService.getSummary
     });
 
-    // 3. Fetch Last Activity (Última Atividade)
+    // 3. Fetch Last Activity (Última Atividade - Derivado do Extrato)
     const { data: lastActivity, isLoading: isLoadingActivity } = useQuery({
         queryKey: ['last-activity'],
-        queryFn: mockFinancials.getLastActivity
+        queryFn: async () => {
+            const txs = await financialService.getTransactions();
+            if (txs && txs.length > 0) {
+                // Format to match LastActivityCard expectations
+                const last = txs[0];
+                return {
+                    id: last.id,
+                    date: last.created_at,
+                    description: last.description,
+                    amount: last.amount,
+                    currency: 'MZN', // FIX: Required by LastActivityCard
+                    type: last.type === 'payment' ? 'payment' : 'invoice',
+                    status: 'completed'
+                };
+            }
+            return null;
+        }
     });
 
-    // 4. Fetch Transactions (Faturas para a Tabela)
+    // 4. Fetch Invoices (Faturas para a Tabela)
     const { data: transactions, isLoading: isLoadingTransactions, refetch: refetchTransactions } = useQuery({
-        queryKey: ['financial-transactions'],
-        queryFn: mockFinancials.getTransactions
+        queryKey: ['financial-invoices'], // Changed key to match context
+        queryFn: financialService.getInvoices
     });
 
     // Handlers

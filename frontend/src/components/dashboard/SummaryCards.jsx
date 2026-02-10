@@ -2,12 +2,7 @@ import React from 'react';
 import { CreditCard, Calendar, TrendingUp, AlertTriangle, ShieldAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const formatCurrency = (value, currency = 'MZN') => {
-    return new Intl.NumberFormat('pt-MZ', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    }).format(value).replace(/\s/g, ' ') + ' ' + currency;
-};
+import { formatCurrency } from '../../utils/format';
 
 export const FinancialSummaryCard = ({ data, isLoading }) => {
     const { t } = useTranslation();
@@ -16,7 +11,7 @@ export const FinancialSummaryCard = ({ data, isLoading }) => {
         return <div className="h-32 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse"></div>;
     }
 
-    const { status, total_due, balance, currency } = data;
+    const { status, total_due, penalty_total } = data;
 
     // Status Config
     const statusConfig = {
@@ -36,12 +31,12 @@ export const FinancialSummaryCard = ({ data, isLoading }) => {
                         {t('total_debt', 'Total a Pagar')}
                     </h3>
                     <div className="mt-2 text-3xl font-bold text-gray-900 dark:text-white">
-                        {formatCurrency(total_due, currency)}
+                        {formatCurrency(total_due)}
                     </div>
-                    {balance > 0 && (
+                    {penalty_total > 0 && (
                         <p className="text-xs text-red-500 mt-1 font-medium flex items-center">
                             <AlertTriangle className="w-3 h-3 mr-1" />
-                            {t('includes_fine', 'Inclui {{amount}} de multa', { amount: formatCurrency(balance, currency) })}
+                            {t('includes_fine', 'Inclui {{amount}} de multa', { amount: formatCurrency(penalty_total) })}
                         </p>
                     )}
                 </div>

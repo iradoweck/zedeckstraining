@@ -13,8 +13,9 @@ import {
 // Components
 import { FinancialSummaryCard, NextDueCard } from '../../../../components/dashboard/SummaryCards';
 import { InvoiceTable } from '../../../../components/dashboard/InvoiceTable';
-import { Button } from '../../../../components/ui/button'; // Assuming button exists
+import { Button } from '../../../../components/ui/button';
 import { PaymentModal } from '../../../../components/dashboard/PaymentModal';
+import { formatCurrency } from '../../../../utils/format';
 
 export default function StudentFinancials() {
     const { t } = useTranslation();
@@ -23,19 +24,23 @@ export default function StudentFinancials() {
     const [showPaymentModal, setShowPaymentModal] = useState(false);
 
     // 1. Fetch Summary
-    const { data: summary, isLoading: loadingSummary } = useQuery({
+    const { data: summary, isLoading: loadingSummary, refetch: refetchSummary } = useQuery({
         queryKey: ['financial-summary'],
-        queryFn: financialService.getSummary
+        queryFn: async () => {
+            const data = await financialService.getSummary();
+            console.log('FRONTEND_DEBUG_SUMMARY:', data);
+            return data;
+        }
     });
 
     // 2. Fetch Invoices
-    const { data: invoices, isLoading: loadingInvoices } = useQuery({
+    const { data: invoices, isLoading: loadingInvoices, refetch: refetchInvoices } = useQuery({
         queryKey: ['financial-invoices'],
         queryFn: financialService.getInvoices
     });
 
     // 3. Fetch Transactions (Ledger)
-    const { data: transactions, isLoading: loadingTransactions } = useQuery({
+    const { data: transactions, isLoading: loadingTransactions, refetch: refetchTransactions } = useQuery({
         queryKey: ['financial-transactions'],
         queryFn: financialService.getTransactions
     });
@@ -43,6 +48,12 @@ export default function StudentFinancials() {
     const handlePay = (invoice) => {
         setSelectedInvoice(invoice);
         setShowPaymentModal(true);
+    };
+
+    const handlePaymentConfirm = () => {
+        refetchSummary();
+        refetchInvoices();
+        refetchTransactions();
     };
 
     return (
@@ -70,7 +81,7 @@ export default function StudentFinancials() {
                     isLoading={loadingSummary}
                 />
 
-                {/* Total Paid / Wallet Balance Card (New) */}
+                {/* Total Paid / Wallet Balance Card */}
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col justify-between relative overflow-hidden">
                     {loadingSummary ? (
                         <div className="animate-pulse space-y-4">
@@ -84,7 +95,7 @@ export default function StudentFinancials() {
                                     {t('total_paid', 'Total Pago (Ano)')}
                                 </span>
                                 <div className="text-3xl font-bold text-gray-900 dark:text-white mt-2">
-                                    {new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2 }).format(summary?.total_paid || 0)} <span className="text-sm text-gray-400 font-normal">MZN</span>
+                                    {formatCurrency(summary?.total_paid || 0)}
                                 </div>
                             </div>
                             <div className="absolute right-0 top-0 p-6 opacity-10">
@@ -92,8 +103,8 @@ export default function StudentFinancials() {
                             </div>
                             <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center z-10">
                                 <span className="text-sm text-gray-500">{t('wallet_balance', 'Saldo em Carteira')}:</span>
-                                <span className="text-sm font-bold text-green-600">
-                                    {new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2 }).format(0)} MZN
+                                <span className={`text-sm font-bold ${summary?.wallet_balance < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                                    {formatCurrency(summary?.wallet_balance || 0)}
                                 </span>
                             </div>
                         </>
@@ -108,8 +119,8 @@ export default function StudentFinancials() {
                     <button
                         onClick={() => setActiveTab('invoices')}
                         className={`flex-1 py-4 text-sm font-medium text-center border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'invoices'
-                                ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800'
+                            ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800'
                             }`}
                     >
                         <FileText className="w-4 h-4" />
@@ -118,8 +129,8 @@ export default function StudentFinancials() {
                     <button
                         onClick={() => setActiveTab('transactions')}
                         className={`flex-1 py-4 text-sm font-medium text-center border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'transactions'
-                                ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800'
+                            ? 'border-blue-500 text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-900/10'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50 dark:text-gray-400 dark:hover:text-gray-200 dark:hover:bg-gray-800'
                             }`}
                     >
                         <History className="w-4 h-4" />
@@ -174,8 +185,8 @@ export default function StudentFinancials() {
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${tx.type === 'payment' ? 'bg-green-100 text-green-800' :
-                                                                tx.type === 'penalty' ? 'bg-red-100 text-red-800' :
-                                                                    'bg-gray-100 text-gray-800'
+                                                            tx.type === 'penalty' ? 'bg-red-100 text-red-800' :
+                                                                'bg-gray-100 text-gray-800'
                                                             }`}>
                                                             {tx.type === 'payment' ? 'Pagamento' :
                                                                 tx.type === 'penalty' ? 'Multa' :
@@ -184,10 +195,10 @@ export default function StudentFinancials() {
                                                     </td>
                                                     <td className={`px-6 py-4 text-sm font-mono text-right font-medium ${tx.type === 'payment' ? 'text-green-600' : 'text-red-600'
                                                         }`}>
-                                                        {tx.type === 'payment' ? '+' : '-'} {new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2 }).format(Math.abs(tx.amount))} MZN
+                                                        {tx.type === 'payment' ? '+' : '-'}{formatCurrency(Math.abs(tx.amount))}
                                                     </td>
                                                     <td className="px-6 py-4 text-sm font-mono text-right text-gray-500">
-                                                        {new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2 }).format(tx.balance_after)} MZN
+                                                        {formatCurrency(tx.balance_after)}
                                                     </td>
                                                 </tr>
                                             ))
@@ -204,8 +215,8 @@ export default function StudentFinancials() {
             <PaymentModal
                 isOpen={showPaymentModal}
                 onClose={() => setShowPaymentModal(false)}
+                onConfirm={handlePaymentConfirm}
                 invoice={selectedInvoice}
-            // onConfirm={() => refetch()} 
             />
         </div>
     );

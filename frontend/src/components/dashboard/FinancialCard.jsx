@@ -1,6 +1,7 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Clock, CreditCard } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { formatCurrency } from '../../utils/format';
 
 const FinancialCard = ({ summary, isLoading }) => {
     const { t } = useTranslation();
@@ -21,11 +22,6 @@ const FinancialCard = ({ summary, isLoading }) => {
     // Default empty state check
     if (!summary) return null;
 
-    const formatter = new Intl.NumberFormat('pt-MZ', {
-        style: 'currency',
-        currency: summary.currency || 'MZN'
-    });
-
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -38,7 +34,7 @@ const FinancialCard = ({ summary, isLoading }) => {
 
             <div className="flex items-baseline gap-2 mb-6">
                 <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {formatter.format(summary.total_due)}
+                    {formatCurrency(summary.total_due)}
                 </span>
                 {summary.total_due > 0 && (
                     <span className="text-xs font-medium text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -57,7 +53,7 @@ const FinancialCard = ({ summary, isLoading }) => {
                         <span className="text-xs text-gray-500 font-medium">{t('paid', 'Pago')}</span>
                     </div>
                     <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
-                        {formatter.format(summary.total_paid)}
+                        {formatCurrency(summary.total_paid)}
                     </p>
                 </div>
 

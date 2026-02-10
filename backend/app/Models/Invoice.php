@@ -29,6 +29,17 @@ class Invoice extends Model
         'items' => 'array'
     ];
 
+    protected $appends = ['description'];
+
+    public function getDescriptionAttribute()
+    {
+        // Try to get description from items JSON, fallback to Type
+        if (!empty($this->items) && isset($this->items['desc'])) {
+            return $this->items['desc'];
+        }
+        return ucfirst($this->type) . ' #' . $this->reference;
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

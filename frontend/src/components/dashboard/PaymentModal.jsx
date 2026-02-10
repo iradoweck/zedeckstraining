@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, CreditCard, Upload, CheckCircle, Smartphone, Building } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../ui/button';
+import { formatCurrency } from '../../utils/format';
 
 export const PaymentModal = ({ invoice, isOpen, onClose, onConfirm }) => {
     const { t } = useTranslation();
@@ -49,7 +50,7 @@ export const PaymentModal = ({ invoice, isOpen, onClose, onConfirm }) => {
                             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{invoice.description}</p>
                         </div>
                         <div className="text-xl font-bold text-blue-700 dark:text-blue-400">
-                            {new Intl.NumberFormat('pt-MZ', { style: 'currency', currency: 'MZN' }).format(invoice.amount)}
+                            {formatCurrency(invoice.amount)}
                         </div>
                     </div>
 
@@ -68,8 +69,8 @@ export const PaymentModal = ({ invoice, isOpen, onClose, onConfirm }) => {
                                 <button
                                     onClick={() => setTab('auto')}
                                     className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${tab === 'auto'
-                                            ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white'
-                                            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
+                                        ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white'
+                                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
                                         }`}
                                 >
                                     <Smartphone className="w-4 h-4 mr-2" />
@@ -78,8 +79,8 @@ export const PaymentModal = ({ invoice, isOpen, onClose, onConfirm }) => {
                                 <button
                                     onClick={() => setTab('manual')}
                                     className={`flex-1 flex items-center justify-center py-2 text-sm font-medium rounded-md transition-all ${tab === 'manual'
-                                            ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white'
-                                            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
+                                        ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white'
+                                        : 'text-gray-500 hover:text-gray-700 dark:text-gray-400'
                                         }`}
                                 >
                                     <Building className="w-4 h-4 mr-2" />
