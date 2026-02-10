@@ -40,7 +40,9 @@ class User extends Authenticatable
         'education_level',
         'has_special_needs',
         'special_needs_description',
-        'student_code'
+        'student_code',
+        'financial_status',
+        'wallet_balance'
     ];
 
     /**
@@ -84,5 +86,15 @@ class User extends Authenticatable
     public function certificates()
     {
         return $this->hasMany(Certificate::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    public function financialTransactions()
+    {
+        return $this->hasMany(FinancialTransaction::class);
     }
 }

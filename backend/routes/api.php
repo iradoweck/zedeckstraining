@@ -45,10 +45,11 @@ Route::prefix('v1')->group(function () {
         // User Management (Admin)
         Route::apiResource('users', \App\Http\Controllers\Api\UserController::class);
 
-        // Feature: Financials (Planned for v1.2.4)
-        // Route::prefix('financials')->group(function () {
-        //     Route::get('/summary', [FinancialController::class, 'summary']);
-        //     Route::get('/transactions', [FinancialController::class, 'index']);
-        // });
+        // Feature: Financials (v1.2.5)
+        Route::prefix('financials')->group(function () {
+            Route::get('/summary', [App\Http\Controllers\Api\StudentFinancialController::class, 'summary']);
+            Route::get('/invoices', [App\Http\Controllers\Api\StudentFinancialController::class, 'invoices']);
+            Route::get('/transactions', [App\Http\Controllers\Api\StudentFinancialController::class, 'transactions']);
+        });
     });
 });

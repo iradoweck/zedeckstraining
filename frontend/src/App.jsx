@@ -7,6 +7,7 @@ import ResetPassword from './pages/ResetPassword';
 import Landing from './pages/Landing';
 import StudentLayout from './app/dashboard/estudante/layout';
 import StudentOverview from './app/dashboard/estudante/overview/page';
+import StudentFinancials from './app/dashboard/estudante/financials/page';
 
 import { Toaster } from 'react-hot-toast';
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/dashboard/estudante" element={<StudentLayout />}>
             <Route index element={<Navigate to="overview" replace />} />
             <Route path="overview" element={<StudentOverview />} />
+            <Route path="financeiro" element={<StudentFinancials />} />
             {/* Placeholders for future phases to prevent 404 crashes on click */}
             <Route path="*" element={<div className="p-10">Página em construção (v1.2.x)</div>} />
           </Route>

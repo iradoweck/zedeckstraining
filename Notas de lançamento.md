@@ -1,5 +1,28 @@
 # Notas de Lançamento
 
+## v1.2.5 - Motor Financeiro (The Financial Engine) (2026-02-10)
+**Foco:** Implementação do núcleo financeiro real, auditoria e automação de penalidades.
+
+### 🚀 Novidades
+- **Painel Financeiro Detalhado:**
+  - Nova página `/dashboard/estudante/financeiro` com abas inteligentes.
+  - **Faturas em Aberto:** Lista clara do que deve ser pago.
+  - **Extrato (Ledger):** Histórico imutável de todas as transações (Pagamentos, Taxas, Multas).
+- **Cards de KPI Reais:**
+  - Conexão direta com o Backend para exibir **Dívida Total**, **Próximo Vencimento** e **Total Pago no Ano**.
+- **Automação Financeira (Backend):**
+  - **Multa Automática:** O sistema aplica automaticamente **15% de multa** em faturas atrasadas há mais de 7 dias (Dogma ZTS).
+  - **Auditoria:** Toda movimentação (cobrança ou pagamento) gera um registro na tabela `financial_transactions`.
+  - **Status do Aluno:** Atualização automática para "Bloqueado" em caso de inadimplência crítica.
+
+### 🛠️ Técnico
+- **Banco de Dados:** Criação das tabelas `invoices` e `financial_transactions`.
+- **API:** Endpoints `/api/v1/financials/*` implementados e protegidos.
+- **Frontend Service:** Migração de `mockFinancials` para `financial.service.js` (Real API).
+- **Artisan Command:** Criado comando `financial:check-overdue` para processamento diário de dívidas.
+
+---
+
 ## v1.2.4 - Visão Geral do Estudante (Student Overview) (2026-02-08)
 **Foco:** Criação do Painel Visão Geral, Fusão de Layouts e Tabela Financeira Integrada.
 
