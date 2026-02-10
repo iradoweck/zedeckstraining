@@ -68,42 +68,42 @@ export const InvoiceTable = ({ transactions, isLoading, onPay, onDownload }) => 
             </div>
 
             <div className="overflow-x-auto">
-                <table className="w-full text-left">
+                <table className="w-full text-left min-w-[800px]">
                     <thead className="bg-gray-50 dark:bg-gray-900/50 text-gray-500 dark:text-gray-400 text-xs uppercase tracking-wider">
                         <tr>
                             <th className="px-6 py-4 font-medium">{t('description', 'Descrição')}</th>
-                            <th className="px-6 py-4 font-medium">{t('amount', 'Valor')}</th>
-                            <th className="px-6 py-4 font-medium">{t('due_date', 'Vencimento')}</th>
-                            <th className="px-6 py-4 font-medium">{t('status', 'Estado')}</th>
-                            <th className="px-6 py-4 font-medium text-right">{t('actions', 'Ações')}</th>
+                            <th className="px-6 py-4 font-medium whitespace-nowrap">{t('amount', 'Valor')}</th>
+                            <th className="px-6 py-4 font-medium whitespace-nowrap">{t('due_date', 'Vencimento')}</th>
+                            <th className="px-6 py-4 font-medium whitespace-nowrap">{t('status', 'Estado')}</th>
+                            <th className="px-6 py-4 font-medium text-right whitespace-nowrap">{t('actions', 'Ações')}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                         {filteredTransactions.length === 0 ? (
                             <tr>
                                 <td colSpan="5" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                                    {t('no_invoices', 'Nhuma fatura encontrada.')}
+                                    {t('no_invoices', 'Nenhuma fatura encontrada.')}
                                 </td>
                             </tr>
                         ) : (
                             filteredTransactions.map((tx) => (
-                                <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
-                                    <td className="px-6 py-4">
+                                <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
+                                    <td className="px-6 py-5">
                                         <div className="flex flex-col">
-                                            <span className="font-medium text-gray-900 dark:text-white">{tx.description}</span>
-                                            <span className="text-xs text-gray-500 dark:text-gray-400">{tx.id}</span>
+                                            <span className="font-semibold text-gray-900 dark:text-white text-base">{tx.description}</span>
+                                            <span className="text-xs text-gray-400 font-mono mt-0.5">{tx.id}</span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-gray-900 dark:text-white font-mono">
+                                    <td className="px-6 py-5 text-gray-900 dark:text-white font-mono font-medium whitespace-nowrap">
                                         {new Intl.NumberFormat('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(tx.amount).replace(/\./g, ',').replace(/\s/g, ' ')} MZN
                                     </td>
-                                    <td className="px-6 py-4 text-gray-500 dark:text-gray-400 text-sm">
-                                        {tx.due_date ? new Date(tx.due_date).toLocaleDateString() : '-'}
+                                    <td className="px-6 py-5 text-gray-500 dark:text-gray-400 text-sm whitespace-nowrap">
+                                        {tx.due_date ? new Date(tx.due_date).toLocaleDateString('pt-PT') : '-'}
                                     </td>
-                                    <td className="px-6 py-4">
+                                    <td className="px-6 py-5 whitespace-nowrap">
                                         {getStatusBadge(tx.status)}
                                     </td>
-                                    <td className="px-6 py-4 text-right space-x-2">
+                                    <td className="px-6 py-5 text-right space-x-2 whitespace-nowrap">
                                         {(tx.status === 'pending' || tx.status === 'overdue') && (
                                             <Button
                                                 size="sm"
